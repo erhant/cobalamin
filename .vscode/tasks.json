@@ -1,0 +1,35 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Open Book",
+      "type": "shell",
+      "command": "mdbook serve",
+      "isBackground": true,
+      "group": "none",
+      "presentation": {
+        "reveal": "always"
+      },
+      "problemMatcher": [],
+      "icon": {
+        "id": "book",
+        "color": "terminal.ansiBlue"
+      }
+    },
+    {
+      "label": "Claude Code",
+      "type": "shell",
+      "command": "claude",
+      "isBackground": true,
+      "group": "none",
+      "presentation": {
+        "reveal": "always"
+      },
+      "problemMatcher": [],
+      "icon": {
+        "id": "hubot",
+        "color": "terminal.ansiYellow"
+      }
+    }
+  ]
+}

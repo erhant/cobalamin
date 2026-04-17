@@ -1,0 +1,17 @@
+[book]
+title = "cobalamine"
+authors = ["erhant"]
+language = "en"
+
+# uses KaTeX instead of MathJax, much better interop
+[preprocessor.katex]
+after = ["links"]
+
+# converts mermaid drawings to SVG
+[preprocessor.mermaid]
+command = "mdbook-mermaid"
+
+[output.html]
+additional-css = ["./utils/mermaid-center.css"]
+additional-js = ["./utils/mermaid.min.js", "./utils/mermaid-init.js"]
+git-repository-url = "https://github.com/erhant/cobalamine"

@@ -8,6 +8,7 @@
 - [Prefix Sums & Difference Arrays](./dsa/prefix-diff.md)
 - [Backtracking](./dsa/backtracking.md)
 - [Trees](./dsa/trees.md)
+- [Strings](./dsa/strings.md)
 - [Sqrt Decomposition](./dsa/sqrt-decomposition.md)
 
 # Math

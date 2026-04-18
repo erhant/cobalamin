@@ -120,6 +120,41 @@ function isPerfectSquare(n: number): boolean {
 
 $O(\log n)$ — avoids floating-point issues with `Math.sqrt`. For large numbers (beyond $2^{53}$), use `BigInt`.
 
+### Integer Square Root (`floor(sqrt(x))`)
+
+Unlike the perfect-square case, there's usually no exact hit — we want the largest `m` with `m * m <= x`. Template 3 is the natural fit:
+
+```typescript
+function mySqrt(x: number): number {
+  let l = 0,
+    r = x;
+  while (l <= r) {
+    const mid = (l + r) >>> 1;
+    if (mid * mid <= x) l = mid + 1;
+    else r = mid - 1;
+  }
+  return r; // largest m with m*m <= x
+}
+```
+
+After the loop, `l === r + 1`, and `r` is the answer. Also handles `x = 0` cleanly.
+
+**Common trap:** writing Template 2 (`while (l < r)`) and `return mid` at the end.
+
+```typescript
+// BROKEN
+while (l < r) {
+  const mid = (l + r) >>> 1;
+  const sq = mid * mid;
+  if (sq === x) return mid;
+  else if (sq < x) l = mid + 1;
+  else r = mid;
+}
+return mid; // ← wrong
+```
+
+`mid` is the last midpoint examined, not the loop's final invariant point. It can land on either side of the answer (e.g. `x = 3` returns `2`; `x = 8` returns `3`; `x = 0` returns `undefined`). If you must use Template 2, return `l - 1`, not `mid`.
+
 This pattern generalizes: any time you need to find a value where some monotonic condition flips (e.g. "minimum capacity such that X fits", "smallest speed to finish in time"), binary search over the answer space.
 
 ## Tip: `(r + l) >> 1` vs `Math.floor((r + l) / 2)`

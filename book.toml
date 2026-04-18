@@ -12,6 +12,6 @@ after = ["links"]
 command = "mdbook-mermaid"
 
 [output.html]
-additional-css = ["./utils/mermaid-center.css"]
-additional-js = ["./utils/mermaid.min.js", "./utils/mermaid-init.js"]
+additional-css = ["./vendor/mermaid-center.css"]
+additional-js = ["./vendor/mermaid.min.js", "./vendor/mermaid-init.js"]
 git-repository-url = "https://github.com/erhant/cobalamine"

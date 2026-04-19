@@ -106,6 +106,57 @@ $$
 
 Computed via fast exponentiation (square-and-multiply) in $O(\log p)$.
 
+## Space Optimization: 2D → 1D by Row Sweep
+
+For problems where every query is a **top-left-anchored submatrix** $(0, 0) \to (r, c)$, the full 2D prefix-sum grid is wasteful. You only ever need the row directly above.
+
+**Standard 2D recurrence** (with inclusion-exclusion):
+
+$$
+\text{pfx}[r][c] = \text{pfx}[r-1][c] + \text{pfx}[r][c-1] - \text{pfx}[r-1][c-1] + \text{val}(r, c)
+$$
+
+**Row-sweep form.** Let $\text{rowSum}(r, c) = \sum_{k=0}^{c} \text{val}(r, k)$. Then:
+
+$$
+\text{pfx}[r][c] = \text{pfx}[r-1][c] + \text{rowSum}(r, c)
+$$
+
+No subtraction — we're stacking a row strip onto the previous row's value, so the overlap rectangle never appears. Keep a 1D `pfx[c]` that after row $r$ holds $\text{pfx}[r][c]$; within each row, accumulate `rowSum` left-to-right and add it in:
+
+```typescript
+const pfx = new Array(cols).fill(0);
+let ans = 0;
+
+for (let r = 0; r < rows; r++) {
+  let rowSum = 0;
+  for (let c = 0; c < cols; c++) {
+    rowSum += grid[r][c];
+    pfx[c] += rowSum; // pfx[r-1][c] + rowSum(r, c) = pfx[r][c]
+    if (pfx[c] <= k) ans++; // or whatever the per-rectangle predicate is
+  }
+}
+```
+
+**O(C) space, O(R·C) time** — time is optimal (every cell must be read). The row-sweep form also collapses the usual three special cases (first row, first column, interior) into a single uniform update: `pfx.fill(0)` correctly represents the empty "row −1" strip.
+
+### Parallel Monotone State
+
+Any **monotone** per-rectangle property can ride along in a parallel 1D array, updated the same way. Example: "has at least one X in $(0,0) \to (r,c)$":
+
+```typescript
+const hasX = new Array(cols).fill(false);
+// inside the inner loop:
+rowHasX ||= grid[r][c] === "X";
+hasX[c] ||= rowHasX;
+```
+
+OR is idempotent, so double-counting the overlap doesn't hurt — no subtract term needed. Same pattern works for any associative-idempotent monoid (min, max, bitwise OR/AND, set union).
+
+### When This Works
+
+The pattern applies when **every query rectangle shares a fixed corner** (here, $(0, 0)$). If you need arbitrary sub-rectangles $(r_1, c_1) \to (r_2, c_2)$, you need the full 2D prefix grid — the row-sweep version can't answer those in $O(1)$.
+
 ## Fenwick Tree (Binary Indexed Tree)
 
 $O(\log n)$ point update + prefix sum queries:

@@ -7,9 +7,11 @@
 - [Monotonic Stack](./dsa/monotonic-stack.md)
 - [Prefix Sums & Difference Arrays](./dsa/prefix-diff.md)
 - [Backtracking](./dsa/backtracking.md)
-- [Trees](./dsa/trees.md)
+- [Binary Trees](./dsa/binary-trees.md)
+- [Graphs](./dsa/graphs.md)
+- [Union-Find](./dsa/union-find.md)
 - [Strings](./dsa/strings.md)
-- [Sqrt Decomposition](./dsa/sqrt-decomposition.md)
+- [Square-Root Decomposition](./dsa/sqrt-decomposition.md)
 
 # Math
 

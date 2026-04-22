@@ -4,9 +4,16 @@
 >
 > This repo should be consumed regularly to maintain a healthy problem-solving & engineering diet. It contains several programming tricks, Data-Structures & Algorithms, along with cryptography and mathematics notes.
 
-The entire repo is an [mdbook](https://rust-lang.github.io/mdBook/) book.
+## Contents
+
+## How to Use
+
+The entire repo is an [mdbook](https://rust-lang.github.io/mdBook/) book with Mermaid and KaTeX support. You can read it on GitHub or clone and serve it locally:
 
 ```sh
-# serve & open the book
+# serve & hot-reload on changes
 mdbook serve
+
+# just build the book
+mdbook build
 ```

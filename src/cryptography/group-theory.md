@@ -16,13 +16,13 @@ The **order** of a group is $|G|$ — its number of elements. The order of an el
 
 ### Examples you'll meet
 
-| Group                              | Operation         | Identity      | Size                      |
-| ---------------------------------- | ----------------- | ------------- | ------------------------- |
-| $(\mathbb{Z}/n\mathbb{Z},\; +)$    | addition mod $n$  | $0$           | $n$                       |
-| $(\mathbb{Z}/n\mathbb{Z})^{\ast}$  | mult. mod $n$     | $1$           | $\varphi(n)$              |
-| $(\mathbb{F}_p,\; +)$              | field addition    | $0$           | $p$                       |
-| $(\mathbb{F}_p^{\ast},\; \cdot)$   | field mult.       | $1$           | $p - 1$                   |
-| $E(\mathbb{F}_p)$ (elliptic curve) | chord-and-tangent | $\mathcal{O}$ | $\approx p$ (Hasse bound) |
+| Group                              | Operation            | Identity      | Size                      |
+| ---------------------------------- | -------------------- | ------------- | ------------------------- |
+| $(\mathbb{Z}/n\mathbb{Z},\; +)$    | addition mod $n$     | $0$           | $n$                       |
+| $(\mathbb{Z}/n\mathbb{Z})^{\ast}$  | mult. mod $n$        | $1$           | $\varphi(n)$              |
+| $(\mathbb{F}_p,\; +)$              | field addition       | $0$           | $p$                       |
+| $(\mathbb{F}_p^{\ast},\; \cdot)$   | field multiplication | $1$           | $p - 1$                   |
+| $E(\mathbb{F}_p)$ (elliptic curve) | chord-and-tangent    | $\mathcal{O}$ | $\approx p$ (Hasse bound) |
 
 ## Subgroups
 
@@ -74,7 +74,7 @@ via $k \mapsto g^k$. Inverting this map is the **discrete log problem** — easy
 **Not always.** It's cyclic exactly when $n \in \{1,\, 2,\, 4,\, p^k,\, 2p^k\}$ for odd prime $p$. Crucially:
 
 - $(\mathbb{F}_p^{\ast},\; \cdot)$ is **always cyclic** for prime $p$ — so we can always find a primitive root mod $p$.
-- $(\mathbb{Z}/pq\mathbb{Z})^{\ast}$ (RSA's group) is **not cyclic** — it decomposes as $(\mathbb{Z}/p\mathbb{Z})^{\ast} \times (\mathbb{Z}/q\mathbb{Z})^{\ast}$ by CRT.
+- $(\mathbb{Z}/pq\mathbb{Z})^{\ast}$ (RSA's group) is **not cyclic** — it decomposes as $(\mathbb{Z}/p\mathbb{Z})^{\ast} \times (\mathbb{Z}/q\mathbb{Z})^{\ast}$ by CRT (Chinese Remainder Theorem).
 
 ### Finding a generator
 
@@ -118,6 +118,50 @@ Cosets are the right way to think about "working modulo a subgroup." When we wri
 When $H$ is **normal** (automatic in abelian groups), the set of cosets itself forms a group under $(gH) \cdot (g'H) = (g g')H$. We write it $G / H$, the **quotient group**. Its size is $[G : H]$.
 
 Example: $\mathbb{Z} / n\mathbb{Z}$ literally means "integers modulo the subgroup $n\mathbb{Z}$" — the notation _is_ the construction. Same idea gives $(\mathbb{Z}/p\mathbb{Z})^{\ast} / \{\pm 1\}$, the group where quadratic residues and non-residues get identified (useful for analyzing the Jacobi symbol).
+
+## Chinese Remainder Theorem
+
+For coprime moduli $m, n$ (i.e. $\gcd(m, n) = 1$), there is a ring isomorphism
+
+$$
+\mathbb{Z}/mn\mathbb{Z} \;\cong\; \mathbb{Z}/m\mathbb{Z} \times \mathbb{Z}/n\mathbb{Z}, \qquad x \mapsto (x \bmod m,\; x \bmod n)
+$$
+
+The map is a bijection — any pair of residues $(a, b)$ pins down a unique $x \bmod mn$ — and it respects both $+$ and $\cdot$. So every computation mod $mn$ splits into two independent computations mod $m$ and mod $n$ that you can run side-by-side and reassemble at the end.
+
+Extended to $k$ pairwise-coprime moduli $n_1, \ldots, n_k$ with $n = \prod_i n_i$:
+
+$$
+\mathbb{Z}/n\mathbb{Z} \;\cong\; \prod_{i=1}^{k} \mathbb{Z}/n_i\mathbb{Z}
+$$
+
+Restricting to units gives the corresponding multiplicative-group decomposition:
+
+$$
+(\mathbb{Z}/mn\mathbb{Z})^{\ast} \;\cong\; (\mathbb{Z}/m\mathbb{Z})^{\ast} \times (\mathbb{Z}/n\mathbb{Z})^{\ast}
+$$
+
+which is why $\varphi$ is multiplicative on coprime arguments ($\varphi(mn) = \varphi(m)\,\varphi(n)$), and why $(\mathbb{Z}/pq\mathbb{Z})^{\ast}$ — RSA's group — is a product of two smaller cyclic groups rather than a single cyclic group.
+
+### Constructive form
+
+Given $a \equiv x \pmod{m}$ and $b \equiv x \pmod{n}$ with $\gcd(m, n) = 1$, reconstruct $x \bmod mn$ as
+
+$$
+x \;\equiv\; a \cdot n \cdot (n^{-1} \bmod m) \;+\; b \cdot m \cdot (m^{-1} \bmod n) \pmod{mn}
+$$
+
+The modular inverses come from XGCD (see [Modular Inverse](../math/arithmetic.md#modular-inverse)). Once precomputed, each reconstruction is $O(1)$ multiplications — which is what makes the splitting a genuine speedup rather than just a conceptual trick.
+
+### Why crypto cares
+
+CRT is one of the quietest but most load-bearing tools in this section:
+
+- **RSA-CRT decryption / signing (~$4\times$ speedup).** With the private $(p, q)$, compute $c^d \bmod p$ and $c^d \bmod q$ on half-sized moduli and recombine. Since schoolbook modular exponentiation is cubic in bit-length, the total cost drops from $\sim L^3$ to $\sim L^3 / 4$. A single bit-flip during one of the two half-computations also enables the classic **RSA-CRT fault attack** — a $\gcd$ on the faulty signature leaks a factor of $N$.
+- **Pohlig–Hellman reduction.** If $|G| = n = \prod p_i^{e_i}$, CRT on exponents decomposes a discrete log in $G$ into independent DLs in each subgroup of order $p_i^{e_i}$. Total cost becomes $O\!\bigl(\sum_i e_i \sqrt{p_i}\bigr)$ — devastating if any $p_i$ is small. **This is the reason cryptographic groups insist on prime (or near-prime) order:** composite orders leak their prime-factor structure, and CRT is the exact statement of that leak.
+- **Secret sharing via residues.** Mignotte's and Asmuth–Bloom's constructions use pairwise-coprime moduli $n_1 < n_2 < \cdots$: the secret $s$ lives in a range above the product of any $k - 1$ moduli but below the product of any $k$, and shares are $s \bmod n_i$. Any $k$ shareholders reconstruct $s$ via CRT; fewer than $k$ leave $s$ uniformly ambiguous in a large window.
+
+Running theme: composite-order structures fracture along their prime factorization. Designs either **avoid** composite orders (modern elliptic curves use prime-order subgroups) or **weaponize** the decomposition for speed (RSA-CRT).
 
 ## Finite Fields
 

@@ -1,5 +1,61 @@
 # Prefix Sums & Difference Arrays
 
+Two complementary preprocessing tricks, often the cheapest way to flip the cost between queries and updates:
+
+- **Prefix sums** turn $O(n)$ _range queries_ into $O(1)$ after $O(n)$ precomputation.
+- **Difference arrays** turn $O(n)$ _range updates_ into $O(1)$, reconstructed later in $O(n)$.
+
+They're **inverses** of each other. Let $a$ be the original array:
+
+$$
+\text{pfx}[i] = \sum_{k \le i} a[k] \quad\iff\quad a[i] = \text{pfx}[i] - \text{pfx}[i - 1]
+$$
+
+$$
+d[i] = a[i] - a[i - 1] \quad\iff\quad a[i] = \sum_{k \le i} d[k]
+$$
+
+Differencing and prefix-summing undo each other — that duality is why the same mental model powers both the "fast query" and "fast update" regimes.
+
+When to reach for them:
+
+- **$O(1)$ range-sum queries** on a static array (the textbook case).
+- **$O(1)$ range updates + $O(n)$ finalize**, when all updates arrive before any query.
+- **Counting subarrays with an additive property** (sums to $k$, divisible by $k$, ...) by pairing prefix sums against a hash map — the running sum lets any subarray sum be read as a difference of two values you've already seen.
+- **2D versions** via inclusion–exclusion, with a specialized row-sweep form when every query shares a fixed corner.
+- **Dynamic case** — if the array itself keeps changing between queries, plain prefix sums are wrong on the very next update; switch to a Fenwick or segment tree.
+
+## Basics
+
+### Prefix Sum
+
+```ts
+const pfx = new Array(nums.length + 1).fill(0);
+for (let i = 0; i < nums.length; i++) {
+  pfx[i + 1] = pfx[i] + nums[i];
+}
+```
+
+Sum of `nums[l..r]` (inclusive) is `pfx[r + 1] - pfx[l]`. The leading `0` lets `l = 0` work without a special case — the "empty prefix" is a real, addressable state.
+
+### Difference Array
+
+For range updates. Given many "add $v$ to every element in $[l, r]$" updates, applying each directly is $O(n)$ per update. Instead, apply each in $O(1)$ and reconstruct once at the end:
+
+```typescript
+const d = new Array(n + 1).fill(0);
+
+function rangeAdd(l: number, r: number, v: number) {
+  d[l] += v;
+  d[r + 1] -= v; // cancellation one past the end
+}
+
+// after all updates, reconstruct the final array:
+for (let i = 1; i < n; i++) d[i] += d[i - 1];
+```
+
+The `+v` at `l` "turns on" the increment; the `-v` at `r + 1` "turns it off"; the prefix-sum sweep applies each increment to exactly the positions it should cover. This same cancellation idea — place an effect and place its inverse one step past the range — generalizes to the multiplicative and strided variants later in this chapter.
+
 ## Prefix Sum + Hash Map for Subarray Queries
 
 Any subarray sum is the difference of two prefix sums:

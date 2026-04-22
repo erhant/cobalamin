@@ -1,4 +1,24 @@
-# Trees
+# Binary Trees
+
+A rooted tree where every node has **at most two children** — conventionally `left` and `right`. The structure is recursive: each subtree is itself a binary tree, which is why nearly every algorithm on them is a one-line recursion plus a combine step.
+
+The core move: solve for the left subtree, solve for the right subtree, then combine with the current node. Most of the skill is picking the **direction of information flow** — top-down (pass context down the recursion) vs bottom-up (return a value up). Getting that choice right often turns a hard problem into a five-line DFS.
+
+Common specializations:
+
+- **Binary Search Tree (BST)** — left subtree values $<$ node $<$ right subtree values. In-order traversal yields sorted order; search / insert / delete in $O(h)$.
+- **Heap** — complete shape + partial order (parent $\le$ or $\ge$ children). Priority-queue operations in $O(\log n)$ on an implicit array.
+- **Balanced trees** (AVL, red-black, treap) — $O(\log n)$ height guaranteed, at the cost of rotation bookkeeping.
+
+Problem patterns to recognize:
+
+- **Traversal** — preorder, inorder, postorder, level-order. Each exposes a different invariant (BST $\to$ inorder is sorted; postorder is the natural order for bottom-up aggregation).
+- **Aggregations** — depth, height, diameter, subtree sum, path sum. Almost always a post-order DFS returning a structured value (e.g. `[heightHere, bestAnswerSoFar]`).
+- **Construction** — rebuild from a pair of traversals (preorder + inorder, postorder + inorder); the recursive structure of traversals is exactly the recursive structure of the tree.
+- **Path queries** — lowest common ancestor (LCA), root-to-leaf paths, longest path through a node.
+- **Structural hashing** — serialize each subtree into a canonical string to detect duplicates or equality.
+
+General graph algorithms (BFS/DFS, cycle detection, shortest paths, topological order) live in [Graphs](./graphs.md). The techniques below are specifically those that exploit the two-children-per-node structure.
 
 ## Traversal Orders
 

@@ -1,20 +1,60 @@
 # Backtracking
 
+A systematic way to enumerate candidate solutions by building them one step at a time and **abandoning a partial candidate as soon as it can't lead to a valid solution**. That "abandon early" is the whole point — strip it out and you're just doing brute force.
+
+Picture a **search tree**: the root is the empty state, each node is a partial candidate, and each edge is one choice extending it. Complete solutions live at specific nodes (often leaves). Backtracking is DFS over this tree with aggressive pruning — every subtree rejected at its root kills every candidate below it.
+
+It's the right tool when:
+
+- You need to **enumerate** all solutions (permutations, subsets, combinations, partitions, all paths, ...).
+- You need **one** solution, but the space is too large for brute force and has easily-checkable local constraints (N-queens, Sudoku, word search on a grid).
+- The search space is combinatorial and has structure that lets you rule out whole subtrees cheaply (a partial sum already exceeds the target, a letter already placed conflicts, a queen threatens the current column, ...).
+
+Three things determine efficiency, in order of importance:
+
+1. **Pruning** — reject candidates that can't extend to a solution, as early as possible. A single good cut can eliminate an enormous subtree. This is the lever to optimize.
+2. **Choice ordering** — try promising candidates first to hit a solution (or a prune) sooner. Sorting candidates or using heuristics like "most constrained variable" helps.
+3. **In-place state** — mutate the partial candidate, recurse, then undo. Snapshotting at each level is usually too slow.
+
 ## General Outline
 
-```
-function backtrack(state):
-    if IS_COMPLETE(state):
-        RECORD(snapshot of state)
-        return
+```ts
+function backtrack(state: State): void {
+    if (isComplete(state)) {
+      // full solution — copy, don't alias
+      // e.g. [...arr] in JS, list.copy() in Python
+      record(snapshot of state);
+      return;
+    }
 
-    for candidate in CANDIDATES(state):
-        if !IS_VALID(candidate, state): continue
 
-        APPLY(candidate, state)       // choose
-        backtrack(state)              // explore
-        UNDO(candidate, state)        // un-choose
+    for (const candidate of CANDIDATES(state)) {
+        // prune: don't even recurse
+        if (!IS_VALID(candidate, state)) {
+            continue;
+        }
+
+        // choose: extend the state
+        APPLY(candidate, state);
+        // explore: recurse
+        backtrack(state);
+        // un-choose: restore for the next sibling
+        UNDO(candidate, state);
+    }
+}
 ```
+
+Five slots to fill for any problem:
+
+- **`state`** — the partial candidate (e.g. the current prefix array) plus any auxiliary structures needed for fast validity checks (`used[]`, column/diagonal sets for N-queens, remaining sum, ...).
+- **`IS_COMPLETE`** — when does `state` represent a finished solution? Often `cur.length === n` or `sum === target`. Sometimes you record at every node (e.g. subsets), in which case there's no separate completion test.
+- **`CANDIDATES`** — the next choices to try. The shape of this set is what distinguishes permutations (all unused) from subsets/combinations (everything past index `start`) — see the next section.
+- **`IS_VALID`** — the **pruning** predicate. The sooner this rejects a candidate, the more of the search tree you skip. Anything you can check before applying belongs here.
+- **`APPLY` / `UNDO`** — symmetric mutations. Whatever `APPLY` changes (push to list, mark used, add to sum, flip a board cell), `UNDO` must exactly reverse **after** the recursive call returns. Miss one and later calls see corrupted state — these bugs are brutal to track down.
+
+**Record = snapshot.** When you record a complete solution, always copy the state (`[...current]`). The live array keeps mutating; aliasing it means every recorded solution ends up pointing at the final (usually empty) state.
+
+**Why undo instead of passing immutable state?** A fresh copy per call turns an $O(\text{nodes})$ algorithm into $O(\text{nodes} \cdot \text{depth})$ in both time and space. Mutate-recurse-undo is the standard for a reason.
 
 ## Permutation vs Subset vs Combination
 

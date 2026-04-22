@@ -113,6 +113,19 @@ const set = (i: number) => {
 };
 ```
 
+## Bertrand's Postulate
+
+> For every integer $n \ge 1$, there is a prime $p$ with $n < p \le 2n$.
+
+Equivalently, consecutive primes $p_k, p_{k+1}$ satisfy $p_{k+1} < 2 p_k$ — the gap never exceeds the prime itself. Proved by Chebyshev (1852); Erdős later gave a short combinatorial proof using central binomial coefficients.
+
+Useful whenever you need "a prime larger than $X$":
+
+- **Random prime sampling.** Scan up from $X + 1$ (or sample uniformly from $(X, 2X]$) and primality-test each candidate. A prime is guaranteed within $X$ steps; the Prime Number Theorem gives an expected gap of $\sim \ln X$ near $X$, so in practice it's $O(\log X)$ trials. This is the workhorse for picking rolling-hash bases, double-hashing moduli, and RSA-style key generation.
+- **Existence arguments** — "there's a prime somewhere in this range" without caring which one. Classic application: $n!$ always has a prime factor in $(n/2, n]$.
+
+The sharp modern form is the Prime Number Theorem: $\pi(2n) - \pi(n) \sim n / \ln n$, so there aren't just $\ge 1$ primes in $(n, 2n]$ — there are asymptotically $n / \ln n$ of them.
+
 ## Euler's Totient Function
 
 $\varphi(n)$ counts the integers in $[1, n]$ that are coprime to $n$:

@@ -124,20 +124,55 @@ function xgcd(a: number, b: number): [number, number, number] {
 }
 ```
 
-**Modular inverse** using XGCD:
+## Modular Inverse
+
+The **inverse** of $a$ modulo $m$ is the integer $a^{-1}$ with
+
+$$
+a \cdot a^{-1} \equiv 1 \pmod{m}
+$$
+
+It exists iff $\gcd(a, m) = 1$ — non-coprime elements have no inverse, since they can't generate the full group $(\mathbb{Z}/m)^{\ast}$. Two standard ways to compute it.
+
+### Via XGCD (any modulus)
+
+If $\gcd(a, m) = 1$ then XGCD gives $x, y$ with $a x + m y = 1$. Reducing mod $m$ kills the $m y$ term, so $a x \equiv 1 \pmod{m}$ and $x$ is the inverse. Normalize the sign at the end since XGCD can return negative coefficients:
 
 ```typescript
 // Returns x such that (a * x) % m === 1, assumes gcd(a, m) === 1
 function modinv(a: number, m: number): number {
   const [, x] = xgcd(a, m);
-  return ((x % m) + m) % m; // ensure positive
+  return ((x % m) + m) % m; // normalize to [0, m)
 }
 ```
 
-> Alternatively, when $m$ is prime, the modular inverse is $a^{m-2} \bmod m$ by Fermat's little theorem:
->
-> $$
-> a^{m-1} \equiv 1 \pmod{m} \;\implies\; a^{m-2} \equiv a^{-1} \pmod{m}
-> $$
+$O(\log m)$ steps. **The general-case workhorse** — the only requirement is coprimality, with no assumption on the structure of $m$.
 
-> See [Primes](./math-primes.md) for primality testing, sieves, and Euler's totient $\varphi$.
+### Via Fermat's Little Theorem (prime modulus)
+
+If $p$ is prime and $\gcd(a, p) = 1$, Fermat gives
+
+$$
+a^{p-1} \equiv 1 \pmod{p} \;\implies\; a^{p-2} \equiv a^{-1} \pmod{p}
+$$
+
+So the inverse is a single modular exponentiation:
+
+```typescript
+// Returns x such that (a * x) % p === 1, assumes p prime and a % p !== 0
+function modinvPrime(a: number, p: number): number {
+  return powmod(a, p - 2, p);
+}
+```
+
+$O(\log p)$ multiplications. Slower than XGCD by a small constant (fast-exp does ~$1.5 \log p$ multiplies vs XGCD's ~$\log m$ divisions), but one line — convenient when `powmod` is already in your toolbox.
+
+**Generalization — Euler.** For any coprime pair, Euler's theorem gives $a^{\varphi(m) - 1} \equiv a^{-1} \pmod{m}$. Only practical when $\varphi(m)$ is easy (prime, prime power, or $m$ with known factorization); for general $m$, fall back to XGCD.
+
+### When to use which
+
+- **Arbitrary modulus** — XGCD. Always works.
+- **Prime modulus, already using `powmod`** — Fermat. One line, no new machinery.
+- **Many inverses modulo the same prime $p$** — precompute $\operatorname{inv}[1 .. p-1]$ via the $O(p)$ recurrence $\operatorname{inv}[i] = -\lfloor p/i \rfloor \cdot \operatorname{inv}[p \bmod i] \bmod p$, with $\operatorname{inv}[1] = 1$. Cheaper than $p$ separate `powmod` calls, and amortizes even better if many queries.
+
+> See [Primes](./primes.md) for primality testing, sieves, and Euler's totient $\varphi$.

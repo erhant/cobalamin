@@ -24,3 +24,11 @@
 - [Factoring Assumption](./cryptography/factoring.md)
 - [Discrete Logarithm](./cryptography/discrete-log.md)
 - [Signatures](./cryptography/signatures.md)
+
+# Rust
+
+- [Associated Types vs. Generics](./rust/associated-types-vs-generics.md)
+- [Copy vs. Clone](./rust/copy-vs-clone.md)
+- [Lifetimes](./rust/lifetimes.md)
+- [`impl Trait` vs. `dyn Trait`](./rust/impl-trait-vs-dyn-trait.md)
+- [Interior Mutability](./rust/interior-mutability.md)

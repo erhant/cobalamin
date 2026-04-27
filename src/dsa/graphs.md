@@ -70,7 +70,7 @@ $O(V + E)$. Using a `head` index instead of `Array.shift()` avoids the $O(n)$ re
 
 **Multi-source BFS.** Seed the queue with every source at distance $0$, then run the same loop. Produces "distance to nearest source" for every cell in one sweep — the standard trick for "rotting oranges", "walls and gates", "distance from each zero to the nearest one", etc.
 
-**0–1 BFS.** When edge weights are only $0$ or $1$, a plain `Deque` suffices: push `0`-weight edges to the front, `1`-weight to the back. Same $O(V + E)$ as BFS, no heap needed.
+**0-1 BFS.** When edge weights are only $0$ or $1$, a plain `Deque` suffices: push `0`-weight edges to the front, `1`-weight to the back. Same $O(V + E)$ as BFS, no heap needed.
 
 ## DFS
 
@@ -92,7 +92,9 @@ $O(V + E)$. The same skeleton powers connectivity, component sizes, topological 
 **Directed graph — three colors.** White = unvisited, gray = on the current DFS stack, black = fully processed. Any edge to a gray vertex is a back-edge, i.e. a cycle.
 
 ```typescript
-const WHITE = 0, GRAY = 1, BLACK = 2;
+const WHITE = 0,
+  GRAY = 1,
+  BLACK = 2;
 const color = new Array(n).fill(WHITE);
 
 function hasCycle(u: number): boolean {
@@ -120,7 +122,11 @@ Repeatedly emit any vertex with indegree $0$, then "remove" it by decrementing i
 
 ```typescript
 const indeg = new Array(n).fill(0);
-for (const nbrs of adj) for (const v of nbrs) indeg[v]++;
+for (const nbrs of adj) {
+  for (const v of nbrs) {
+    indeg[v]++;
+  }
+}
 
 const queue: number[] = [];
 for (let u = 0; u < n; u++) if (indeg[u] === 0) queue.push(u);
@@ -190,10 +196,16 @@ $O((V + E) \log V)$ with a binary heap. JS has no built-in priority queue — br
 A grid is a graph in disguise: every cell is a vertex, adjacencies are the 4 (sometimes 8) neighbors. No explicit adjacency list needed — generate neighbors on the fly:
 
 ```typescript
-const DIRS: [number, number][] = [[-1, 0], [1, 0], [0, -1], [0, 1]];
+const DIRS: [number, number][] = [
+  [-1, 0],
+  [1, 0],
+  [0, -1],
+  [0, 1],
+];
 
 for (const [dr, dc] of DIRS) {
-  const nr = r + dr, nc = c + dc;
+  const nr = r + dr,
+    nc = c + dc;
   if (nr < 0 || nr >= rows || nc < 0 || nc >= cols) continue;
   if (grid[nr][nc] === BLOCKED) continue;
   // visit (nr, nc)
@@ -206,17 +218,17 @@ for (const [dr, dc] of DIRS) {
 
 ## Cheat Sheet
 
-| Problem                                 | Tool                         | Time                        |
-| --------------------------------------- | ---------------------------- | --------------------------- |
-| Reachability / connected components     | DFS or BFS                   | $O(V + E)$                  |
-| Shortest path, unweighted               | BFS                          | $O(V + E)$                  |
-| Shortest path, weights in $\{0, 1\}$    | 0–1 BFS (deque)              | $O(V + E)$                  |
-| Shortest path, non-negative weights     | Dijkstra                     | $O((V + E) \log V)$         |
-| Shortest path, negative weights         | Bellman-Ford                 | $O(VE)$                     |
-| All-pairs shortest paths                | Floyd-Warshall               | $O(V^3)$                    |
-| Topological order (DAG)                 | Kahn's or DFS post-order     | $O(V + E)$                  |
-| Cycle in directed graph                 | DFS three-coloring           | $O(V + E)$                  |
-| Cycle in undirected graph               | DSU or DFS-with-parent       | $O((V + E) \cdot \alpha(V))$ |
-| Minimum spanning tree                   | Kruskal (DSU) or Prim (heap) | $O(E \log E)$               |
-| Strongly connected components           | Tarjan / Kosaraju            | $O(V + E)$                  |
-| Bipartite check / 2-coloring            | BFS                          | $O(V + E)$                  |
+| Problem                              | Tool                         | Time                         |
+| ------------------------------------ | ---------------------------- | ---------------------------- |
+| Reachability / connected components  | DFS or BFS                   | $O(V + E)$                   |
+| Shortest path, unweighted            | BFS                          | $O(V + E)$                   |
+| Shortest path, weights in $\{0, 1\}$ | 0-1 BFS (deque)              | $O(V + E)$                   |
+| Shortest path, non-negative weights  | Dijkstra                     | $O((V + E) \log V)$          |
+| Shortest path, negative weights      | Bellman-Ford                 | $O(VE)$                      |
+| All-pairs shortest paths             | Floyd-Warshall               | $O(V^3)$                     |
+| Topological order (DAG)              | Kahn's or DFS post-order     | $O(V + E)$                   |
+| Cycle in directed graph              | DFS three-coloring           | $O(V + E)$                   |
+| Cycle in undirected graph            | DSU or DFS-with-parent       | $O((V + E) \cdot \alpha(V))$ |
+| Minimum spanning tree                | Kruskal (DSU) or Prim (heap) | $O(E \log E)$                |
+| Strongly connected components        | Tarjan / Kosaraju            | $O(V + E)$                   |
+| Bipartite check / 2-coloring         | BFS                          | $O(V + E)$                   |

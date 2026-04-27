@@ -1,8 +1,47 @@
 # Primes
 
+```mermaid
+flowchart TB
+  subgraph r1[" "]
+    direction LR
+    n2["2"] ~~~ n3["3"] ~~~ n4["4"] ~~~ n5["5"] ~~~ n6["6"] ~~~ n7["7"]
+  end
+  subgraph r2[" "]
+    direction LR
+    n8["8"] ~~~ n9["9"] ~~~ n10["10"] ~~~ n11["11"] ~~~ n12["12"] ~~~ n13["13"]
+  end
+  subgraph r3[" "]
+    direction LR
+    n14["14"] ~~~ n15["15"] ~~~ n16["16"] ~~~ n17["17"] ~~~ n18["18"] ~~~ n19["19"]
+  end
+  subgraph r4[" "]
+    direction LR
+    n20["20"] ~~~ n21["21"] ~~~ n22["22"] ~~~ n23["23"] ~~~ n24["24"] ~~~ n25["25"]
+  end
+  subgraph r5[" "]
+    direction LR
+    n26["26"] ~~~ n27["27"] ~~~ n28["28"] ~~~ n29["29"] ~~~ n30["30"] ~~~ n31["31"]
+  end
+
+  classDef prime stroke-width:3px,fill:none
+  classDef comp stroke-dasharray:3 3,fill:none,opacity:0.35
+
+  class n2,n3,n5,n7,n11,n13,n17,n19,n23,n29,n31 prime
+  class n4,n6,n8,n9,n10,n12,n14,n15,n16,n18,n20,n21,n22,n24,n25,n26,n27,n28,n30 comp
+
+  style r1 fill:none,stroke:none
+  style r2 fill:none,stroke:none
+  style r3 fill:none,stroke:none
+  style r4 fill:none,stroke:none
+  style r5 fill:none,stroke:none
+```
+
 Three primitives that cover most "is this prime / list all primes up to N / count coprimes" questions.
 
-## Naive Primality Test (Trial Division)
+## Trial Division
+
+> [!NOTE]
+> Also known as the "Naive Primality Test".
 
 To check whether $n$ is prime, try to divide by every candidate factor. Two observations cut the work:
 
@@ -42,6 +81,7 @@ function isPrime(n: number): boolean {
 
 Same big-O, ~3× faster in practice.
 
+> [!IMPORTANT]
 > For $n$ beyond $\sim 10^{12}$, trial division is too slow. Use **Miller-Rabin** (probabilistic, fast) or deterministic variants with fixed witness sets that work up to specific bounds — e.g. witnesses $\{2,\, 3,\, 5,\, 7,\, 11,\, 13,\, 17,\, 19,\, 23,\, 29,\, 31,\, 37\}$ are deterministic up to $3.3 \cdot 10^{14}$.
 
 ## Sieve of Eratosthenes

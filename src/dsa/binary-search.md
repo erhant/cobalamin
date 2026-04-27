@@ -160,6 +160,64 @@ return mid; // ← wrong
 
 This pattern generalizes: whenever you need the largest/smallest value where a monotonic condition flips (minimum capacity, smallest speed, largest dividend), binary-search over the answer space.
 
+## Max of Min / Min of Max
+
+A whole family of problems asks for the **largest minimum** or **smallest maximum** of some derived quantity: "place $k$ items so the smallest gap is as large as possible", "split an array into $m$ chunks so the heaviest chunk is as light as possible", "pick $k$ workers so the slowest finishes earliest". The configuration space is exponential, but the answer is one number — and feasibility in that number is monotone, so binary-search **the answer** itself.
+
+- **Max of min**: predicate $p(d) =$ "is some configuration with every gap $\ge d$ achievable?" — true for small $d$, false for large. Find the **last `true`**.
+- **Min of max**: predicate $p(c) =$ "can we keep every part $\le c$?" — true for large $c$, false for small. Find the **first `true`**.
+
+Min-of-max is straight `partitionPoint`. Max-of-min is its mirror, with a midpoint bias to avoid stalling:
+
+```typescript
+// largest d with feasible(d) === true
+let lo = lowestPossible,
+  hi = highestPossible;
+while (lo < hi) {
+  const mid = lo + ((hi - lo + 1) >> 1); // bias up
+  if (feasible(mid)) lo = mid;
+  else hi = mid - 1;
+}
+return lo;
+```
+
+The `+1` bias matters. When `hi - lo === 1` and `feasible(lo)` holds, plain `(lo + hi) >> 1` rounds down to `lo`, `lo = mid` is a no-op, and the loop stalls. Rounding up forces `mid === hi`, so progress is guaranteed.
+
+### Example: aggressive cows
+
+Place $k$ cows in stalls at sorted positions `pos[]` so the minimum pairwise distance is as large as possible. Feasibility for a candidate $d$: greedy sweep — place the first cow at `pos[0]`, then take the next stall whenever it's at least $d$ past the last placement.
+
+```typescript
+function maxMinDistance(pos: number[], k: number): number {
+  pos.sort((a, b) => a - b);
+
+  const feasible = (d: number): boolean => {
+    let placed = 1,
+      last = pos[0];
+    for (let i = 1; i < pos.length && placed < k; i++) {
+      if (pos[i] - last >= d) {
+        placed++;
+        last = pos[i];
+      }
+    }
+    return placed >= k;
+  };
+
+  let lo = 1,
+    hi = pos[pos.length - 1] - pos[0];
+  while (lo < hi) {
+    const mid = lo + ((hi - lo + 1) >> 1);
+    if (feasible(mid)) lo = mid;
+    else hi = mid - 1;
+  }
+  return lo;
+}
+```
+
+$O(n \log n)$ for the sort plus $O(n \log(\text{range}))$ for the search.
+
+Same shape covers "maximize the minimum Manhattan distance between $k$ points on a square's boundary" (unroll the perimeter to 1D, then it's aggressive cows on a circular track), "split array into $m$ subarrays minimizing the largest sum", "minimum eating speed to finish all bananas in $h$ hours", and most LeetCode "maximize the minimum ..." / "minimize the maximum ..." prompts. The hard part is usually writing `feasible` — once it's there, the binary search is mechanical.
+
 ## Searching a Sorted Matrix
 
 A matrix where each row is sorted and the first element of each row is greater than the last of the previous row can be treated as a **flat sorted array**:

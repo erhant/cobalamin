@@ -22,7 +22,7 @@ When to reach for them:
 - **$O(1)$ range-sum queries** on a static array (the textbook case).
 - **$O(1)$ range updates + $O(n)$ finalize**, when all updates arrive before any query.
 - **Counting subarrays with an additive property** (sums to $k$, divisible by $k$, ...) by pairing prefix sums against a hash map — the running sum lets any subarray sum be read as a difference of two values you've already seen.
-- **2D versions** via inclusion–exclusion, with a specialized row-sweep form when every query shares a fixed corner.
+- **2D versions** via inclusion-exclusion, with a specialized row-sweep form when every query shares a fixed corner.
 - **Dynamic case** — if the array itself keeps changing between queries, plain prefix sums are wrong on the very next update; switch to a Fenwick or segment tree.
 
 ## Basics

@@ -193,3 +193,41 @@ function backtrack(start: number) {
 **How non-consecutive subsets like `[1, 3]` are generated:** after picking `1` at `i=0` and recursing, the inner call picks `2` at `i=1`, backtracks (pops `2`), then the `for` loop **continues** to `i=2` and picks `3`. The loop naturally skips elements — no explicit "skip" logic needed.
 
 With `start` index, the `used` array is unnecessary — the index range already prevents revisiting.
+
+## Generate Parentheses
+
+Build all well-formed strings of `n` pairs of parens. Different shape from the patterns above: instead of picking from a fixed collection, the candidate alphabet is just `(` and `)`, and **structural constraints** drive the pruning:
+
+- Add `(` only if some opener is still available (`open < n`).
+- Add `)` only if there's an unmatched `(` (`close < open`).
+
+Without those guards you'd enumerate $2^{2n}$ binary strings and filter; with them, the recursion visits only valid prefixes — exactly $C_n = \binom{2n}{n} / (n + 1)$ many strings (Catalan).
+
+```typescript
+function generateParenthesis(n: number): string[] {
+  const ans: string[] = [];
+  const cur: string[] = [];
+
+  function backtrack(open: number, close: number) {
+    if (cur.length === 2 * n) {
+      ans.push(cur.join(""));
+      return;
+    }
+    if (open < n) {
+      cur.push("(");
+      backtrack(open + 1, close);
+      cur.pop();
+    }
+    if (close < open) {
+      cur.push(")");
+      backtrack(open, close + 1);
+      cur.pop();
+    }
+  }
+
+  backtrack(0, 0);
+  return ans;
+}
+```
+
+Counters travel as parameters (cheap, immutable copies); the prefix is a mutable list (mutate-recurse-undo, same as before). `cur.join("")` snapshots the string at record time — pushing `cur` itself would alias the live array. The "validity" predicate isn't checked after generating a candidate — it's baked into the two `if` guards, which is the cleanest form of pruning: invalid extensions are never tried in the first place.

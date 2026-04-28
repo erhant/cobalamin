@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this repo is
 
-Personal notes on Data Structures & Algorithms, Math, and Cryptography, authored as an [mdBook](https://rust-lang.github.io/mdBook/). All prose lives in `src/` as Markdown; `book/` is the generated HTML output (gitignored but may be present locally — never edit it by hand).
+Personal notes on Data Structures & Algorithms, Math, and Cryptography, authored as an [mdBook](https://rust-lang.github.io/mdBook/). All prose lives in `corrin/` as Markdown; `book/` is the generated HTML output (gitignored but may be present locally — never edit it by hand).
 
 ## Commands
 
@@ -25,10 +25,10 @@ If `mdbook serve` fails, first check that both preprocessors are installed (`car
 
 ## Adding, renaming, or removing a page
 
-**Always update `src/SUMMARY.md` in the same change.** It is the table of contents mdBook reads to decide what to build — pages not listed there do not appear in the rendered book, and stale entries pointing at renamed/deleted files break the build.
+**Always update `corrin/SUMMARY.md` in the same change.** It is the table of contents mdBook reads to decide what to build — pages not listed there do not appear in the rendered book, and stale entries pointing at renamed/deleted files break the build.
 
-1. Create / rename / delete the `.md` file under the appropriate subdirectory of `src/` (`dsa/`, `math/`, or `cryptography/`).
-2. Update the matching entry in `src/SUMMARY.md` under the right top-level section (`# Techniques`, `# Math`, `# Cryptography`) — adjust both the title and the path.
+1. Create / rename / delete the `.md` file under the appropriate subdirectory of `corrin/` (`dsa/`, `math/`, or `cryptography/`).
+2. Update the matching entry in `corrin/SUMMARY.md` under the right top-level section (`# Techniques`, `# Math`, `# Cryptography`) — adjust both the title and the path.
 
 This applies even to small edits: if you rename a page, fix the `SUMMARY.md` link; if you delete one, remove the line.
 
@@ -36,5 +36,5 @@ This applies even to small edits: if you rename a page, fix the `SUMMARY.md` lin
 
 - Code examples are written in **TypeScript**, even for algorithm/crypto content.
 - Math uses KaTeX inline (`$...$`) and display (`$$...$$`) syntax — not MathJax.
-- Diagrams use mermaid fenced blocks (```` ```mermaid ````).
+- Diagrams use mermaid fenced blocks (` ```mermaid `).
 - The tone is terse/operational (see existing pages): lead with the idea, then a minimal working snippet, then edge cases or complexity notes. Avoid tutorial-style padding.

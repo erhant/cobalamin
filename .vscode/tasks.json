@@ -2,10 +2,24 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "Open Book",
+      "label": "Serve Book",
       "type": "shell",
       "command": "mdbook serve",
       "isBackground": true,
+      "group": "none",
+      "presentation": {
+        "reveal": "always"
+      },
+      "problemMatcher": [],
+      "icon": {
+        "id": "book",
+        "color": "terminal.ansiBlue"
+      }
+    },
+    {
+      "label": "Open Book",
+      "type": "shell",
+      "command": "mdbook build && open ./book/index.html",
       "group": "none",
       "presentation": {
         "reveal": "always"

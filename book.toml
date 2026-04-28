@@ -2,6 +2,7 @@
 title = "cobalamine"
 authors = ["erhant"]
 language = "en"
+src = "corrin"
 
 # uses KaTeX instead of MathJax, much better interop
 [preprocessor.katex]

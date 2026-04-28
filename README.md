@@ -4,10 +4,6 @@
 >
 > This repo should be consumed regularly to maintain a healthy problem-solving & engineering diet. It contains several programming tricks, Data-Structures & Algorithms, along with cryptography and mathematics notes.
 
-## Contents
-
-## How to Use
-
 The entire repo is an [mdbook](https://rust-lang.github.io/mdBook/) book with Mermaid and KaTeX support. You can read it on GitHub or clone and serve it locally:
 
 ```sh
@@ -17,3 +13,9 @@ mdbook serve
 # just build the book
 mdbook build
 ```
+
+Contents of the book are under [`/corrin`](corrin/) as Markdown files. The generated HTML output will be under `/book`. We also have boilerplate codes for playing around from time to time (e.g. while solving questions with a new technique) under [`/cobalt`](cobalt/).
+
+> [!NOTE]
+>
+> The naming of these directories is a bit whimsical, but the idea relates to the cobalamin theme: corrin is a core structure in the B12 molecule, while cobalt is the central metal ion. So corrin = content, cobalt = code.

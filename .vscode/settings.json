@@ -1,0 +1,7 @@
+{
+  "github.copilot.enable": {
+    "typescript": false,
+    "rust": false,
+    "python": false
+  }
+}

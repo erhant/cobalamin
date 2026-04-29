@@ -6,6 +6,7 @@
       "name": "ts",
       "devDependencies": {
         "@types/bun": "latest",
+        "@types/node": "latest",
         "typescript": "^5",
       },
     },

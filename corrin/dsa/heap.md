@@ -7,12 +7,16 @@ The "complete" shape — every level full except possibly the last, which is fil
 ```
 index:   0   1   2   3   4   5   6
 value:  [1,  3,  2,  7,  5,  4,  9]
+```
 
-         1
-        / \
-       3   2
-      / \ / \
-     7  5 4  9
+```mermaid
+graph TD
+    n0(("1<br/>i=0")) --> n1(("3<br/>i=1"))
+    n0 --> n2(("2<br/>i=2"))
+    n1 --> n3(("7<br/>i=3"))
+    n1 --> n4(("5<br/>i=4"))
+    n2 --> n5(("4<br/>i=5"))
+    n2 --> n6(("9<br/>i=6"))
 ```
 
 For a node at index `i`:

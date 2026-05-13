@@ -112,7 +112,11 @@ Complexity is $O(N \log \log N)$ — the harmonic-ish sum $\sum_{p \le N} N / p$
 
 ### Variant: smallest prime factor (SPF)
 
-Store the smallest prime factor of each $n$ instead of a boolean. This gives $O(\log n)$ **factoring** for free afterward — repeatedly divide by $\operatorname{spf}[n]$.
+The **smallest prime factor** of $n$, written $\operatorname{spf}(n)$, is the smallest prime dividing $n$ — for primes themselves $\operatorname{spf}(p) = p$. E.g. $\operatorname{spf}(12) = 2$, $\operatorname{spf}(35) = 5$, $\operatorname{spf}(7) = 7$.
+
+Why store it: with $\operatorname{spf}[n]$ precomputed for every $n \le N$, you can **factor any $n \le N$ in $O(\log n)$** — keep dividing by $\operatorname{spf}[n]$ until you hit 1. Without precomputation, factoring costs $O(\sqrt{n})$ per query, which adds up fast over many queries.
+
+The construction is a one-line tweak of Eratosthenes: instead of recording "is $k$ composite?", record the prime that first reached $k$. Since outer primes are visited in ascending order, the first to mark $k$ is its smallest factor.
 
 ```typescript
 function spfSieve(N: number): number[] {
@@ -139,7 +143,59 @@ function factor(n: number, spf: number[]): number[] {
 }
 ```
 
-> **Linear sieve variant.** A slightly trickier sieve marks each composite exactly once by its smallest prime factor, running in $O(N)$ and building SPF + Möbius + totient in one sweep. The $\log \log N$ factor in the classical sieve comes from composites being marked multiple times (once per prime factor) — fix that and you get $O(N)$. Rarely worth the complexity for $N \le 10^7$, where the classical sieve is already fast enough.
+Same $O(N \log \log N)$ build cost as the boolean sieve. The same template — store something more informative than a bit per slot — gives sieves for the Möbius function $\mu(n)$, the divisor count $\tau(n)$, the divisor sum $\sigma(n)$, and any multiplicative function with a clean formula on prime powers (totient is the worked example below).
+
+### Variant: linear sieve
+
+The classical sieve marks each composite once **per prime factor** — that's where the $\log \log N$ factor comes from. Mark each composite exactly once and you get $O(N)$.
+
+The trick: every composite $c$ has a unique smallest prime factor $p$, so $c = p \cdot m$ with $\operatorname{spf}(m) \ge p$. Iterate $m$ in the outer loop, and in the inner loop multiply by primes $p \le \operatorname{spf}(m)$ — that decomposition hits every composite once and only once.
+
+```typescript
+function linearSieve(N: number): { spf: number[]; primes: number[] } {
+  const spf = new Array(N + 1).fill(0);
+  const primes: number[] = [];
+  for (let i = 2; i <= N; i++) {
+    if (spf[i] === 0) {
+      spf[i] = i;
+      primes.push(i);
+    }
+    for (const p of primes) {
+      if (p > spf[i] || p * i > N) break;
+      spf[p * i] = p;
+    }
+  }
+  return { spf, primes };
+}
+```
+
+The break on `p > spf[i]` is what makes it linear: once $p$ exceeds $\operatorname{spf}(i)$, the composite $p \cdot i$ would be reached more "naturally" by a different pair (smaller prime, larger $i'$), so we skip it here to avoid double-marking.
+
+In practice the constant factor is close enough to the classical sieve that the latter usually wins for $N \le 10^7$. The linear sieve shines when you also need primes, SPF, $\mu$, and $\varphi$ computed simultaneously in one pass — each can be updated at the unique mark-point of every composite.
+
+### Variant: segmented sieve
+
+For $N$ beyond what fits in memory (say $N \sim 10^{12}$, or you only want primes in a high window like $[10^{12},\, 10^{12} + 10^6]$), sieve in chunks. The observation: every composite $c \le R$ has a prime factor $\le \sqrt{R}$, so the **small primes** up to $\sqrt{R}$ are enough to cross out composites in any window $[L, R]$.
+
+```typescript
+function segmentedSieve(L: number, R: number): boolean[] {
+  const limit = Math.floor(Math.sqrt(R));
+  const small = sieve(limit); // classical sieve, from above
+  const isPrime = new Array(R - L + 1).fill(true);
+
+  for (let p = 2; p <= limit; p++) {
+    if (!small[p]) continue;
+    // first multiple of p that is >= max(L, p^2)
+    let start = Math.max(p * p, Math.ceil(L / p) * p);
+    for (let k = start; k <= R; k += p) isPrime[k - L] = false;
+  }
+  // 0 and 1 are not prime; handle them if they fall in the window
+  for (let i = Math.max(L, 0); i <= Math.min(R, 1); i++) isPrime[i - L] = false;
+  return isPrime;
+}
+```
+
+Memory drops from $O(R)$ to $O(\sqrt{R} + (R - L))$. Time is the same $O((R - L) \log \log R + \sqrt{R} \log \log \sqrt{R})$. Real-world prime-counting tools (`primecount`, large-bound Sieve-of-Atkin implementations) work this way under the hood, paged across many windows so that the working set stays in cache.
 
 ### Memory note
 

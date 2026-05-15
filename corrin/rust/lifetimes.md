@@ -6,7 +6,7 @@ The borrow checker's job: for every reference, prove it's not used after the thi
 
 ## Why they exist
 
-Given only signatures, the compiler has to choose *conservatively*. Consider:
+Given only signatures, the compiler has to choose _conservatively_. Consider:
 
 ```rust
 fn longest(a: &str, b: &str) -> &str {
@@ -20,7 +20,7 @@ Which input's lifetime does the return share? Without annotations, it's ambiguou
 fn longest<'a>(a: &'a str, b: &'a str) -> &'a str { /* ... */ }
 ```
 
-Read `'a` as "some lifetime I'll call 'a'." The signature says: *the return lives at least as long as the shorter of the two inputs*. The caller is now free to use the result for that duration and no longer.
+Read `'a` as "some lifetime I'll call 'a'." The signature says: _the return lives at least as long as the shorter of the two inputs_. The caller is now free to use the result for that duration and no longer.
 
 `'a` is introduced in the generic list `<'a>` exactly like a type parameter. It's monomorphized away — at runtime, there is no `'a`.
 
@@ -96,9 +96,9 @@ fn choose<'a, 'b: 'a>(x: &'a i32, y: &'b i32) -> &'a i32 {
 
 ## Variance, briefly
 
-Lifetimes are subtyped: if `'long: 'short`, then `&'long T` is usable where `&'short T` is expected. The compiler automatically *shortens* lifetimes as needed (covariance over `&T`). This is why you can pass a `&'static str` into a function expecting `&'a str`.
+Lifetimes are subtyped: if `'long: 'short`, then `&'long T` is usable where `&'short T` is expected. The compiler automatically _shortens_ lifetimes as needed (covariance over `&T`). This is why you can pass a `&'static str` into a function expecting `&'a str`.
 
-`&mut T` is *invariant* in `T`. That's why you can't treat a `&mut &'long str` as `&mut &'short str` — the borrow checker won't let you, because through the `&mut` you could write a shorter-lifetime reference back and violate the longer borrow's contract. You don't need to derive these rules from scratch; just know that subtyping exists and `&mut` is stricter than `&`.
+`&mut T` is _invariant_ in `T`. That's why you can't treat a `&mut &'long str` as `&mut &'short str` — the borrow checker won't let you, because through the `&mut` you could write a shorter-lifetime reference back and violate the longer borrow's contract. You don't need to derive these rules from scratch; just know that subtyping exists and `&mut` is stricter than `&`.
 
 ## Common gotchas
 

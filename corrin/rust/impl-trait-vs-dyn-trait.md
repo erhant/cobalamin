@@ -2,8 +2,8 @@
 
 Two ways to say "some type that implements this trait." Same surface syntax, fundamentally different machinery.
 
-- **`impl Trait`** is a *single concrete type*, hidden from the signature. The compiler monomorphizes — each call site gets its own specialized code. **Static dispatch.**
-- **`dyn Trait`** is a *type-erased value* behind a fat pointer carrying a vtable. One piece of code handles every implementor. **Dynamic dispatch.**
+- **`impl Trait`** is a _single concrete type_, hidden from the signature. The compiler monomorphizes — each call site gets its own specialized code. **Static dispatch.**
+- **`dyn Trait`** is a _type-erased value_ behind a fat pointer carrying a vtable. One piece of code handles every implementor. **Dynamic dispatch.**
 
 If you care about performance and every caller uses one known type, `impl Trait`. If you need a heterogeneous collection or plugin-style flexibility, `dyn Trait`.
 
@@ -28,7 +28,7 @@ Key properties:
       if b { 0..10 } else { (0..10).filter(|_| true) }  // error: mismatched types
   }
   ```
-  Both branches must produce the *same* concrete type.
+  Both branches must produce the _same_ concrete type.
 
 ### Positions where `impl Trait` appears
 
@@ -36,7 +36,7 @@ Key properties:
 - **Argument position** (`fn f(x: impl Trait)`): sugar for `fn f<T: Trait>(x: T)`. Same monomorphization.
 - **Associated type position** and `let` bindings are also allowed, with similar semantics.
 
-Argument-position `impl Trait` is just a generic with a cleaner syntax — the caller still chooses the type. Return-position `impl Trait` is the opposite: the *callee* chooses, and the caller never learns which one.
+Argument-position `impl Trait` is just a generic with a cleaner syntax — the caller still chooses the type. Return-position `impl Trait` is the opposite: the _callee_ chooses, and the caller never learns which one.
 
 ## `dyn Trait`: dynamic dispatch
 
@@ -68,15 +68,15 @@ Not every trait can be made into `dyn Trait`. A trait is **object-safe** only if
 
 ## Size and ABI
 
-|                      | `impl Trait`                       | `dyn Trait`                       |
-| -------------------- | ---------------------------------- | --------------------------------- |
-| Dispatch             | static (direct call)               | dynamic (vtable indirection)      |
-| Sized?               | yes (concrete hidden type)         | no — use `&`, `Box`, `Rc`, etc.   |
-| Monomorphization     | yes (one copy per type)            | no (one copy, many vtables)       |
-| Inlining across call | yes                                | no                                |
-| Heterogeneous values | no                                 | yes                               |
-| Pointer layout       | thin (if any)                      | fat (data + vtable)               |
-| Object safety needed | no                                 | yes                               |
+|                      | `impl Trait`               | `dyn Trait`                     |
+| -------------------- | -------------------------- | ------------------------------- |
+| Dispatch             | static (direct call)       | dynamic (vtable indirection)    |
+| Sized?               | yes (concrete hidden type) | no — use `&`, `Box`, `Rc`, etc. |
+| Monomorphization     | yes (one copy per type)    | no (one copy, many vtables)     |
+| Inlining across call | yes                        | no                              |
+| Heterogeneous values | no                         | yes                             |
+| Pointer layout       | thin (if any)              | fat (data + vtable)             |
+| Object safety needed | no                         | yes                             |
 
 ## Picking between them
 

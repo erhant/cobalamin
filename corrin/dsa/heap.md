@@ -27,13 +27,13 @@ For a node at index `i`:
 
 Operations and complexity:
 
-| Operation       | Cost          | How                                                        |
-| --------------- | ------------- | ---------------------------------------------------------- |
-| `peek`          | $O(1)$        | return `a[0]`                                              |
-| `push(v)`       | $O(\log n)$   | append, then sift up                                       |
-| `pop`           | $O(\log n)$   | swap root with last, pop last, sift down the new root      |
-| `heapify(arr)`  | $O(n)$        | sift-down from `n/2 - 1` down to `0`                       |
-| arbitrary remove / decrease-key | $O(n)$ search + $O(\log n)$ fix | usually replaced with **lazy deletion**          |
+| Operation                       | Cost                            | How                                                   |
+| ------------------------------- | ------------------------------- | ----------------------------------------------------- |
+| `peek`                          | $O(1)$                          | return `a[0]`                                         |
+| `push(v)`                       | $O(\log n)$                     | append, then sift up                                  |
+| `pop`                           | $O(\log n)$                     | swap root with last, pop last, sift down the new root |
+| `heapify(arr)`                  | $O(n)$                          | sift-down from `n/2 - 1` down to `0`                  |
+| arbitrary remove / decrease-key | $O(n)$ search + $O(\log n)$ fix | usually replaced with **lazy deletion**               |
 
 `heapify` being $O(n)$ — not $O(n \log n)$ — is a tight analysis: most nodes are near the bottom and sift down only a constant number of levels.
 

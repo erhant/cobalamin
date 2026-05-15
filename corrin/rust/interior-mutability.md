@@ -1,22 +1,22 @@
 # Interior Mutability
 
-Rust's core borrow rule: at any moment, a value has **either** many `&T` readers **or** exactly one `&mut T` writer — never both. Interior mutability is the controlled escape hatch that lets you mutate through a `&T` by moving the check from *compile time* to *run time* (or into hardware atomics).
+Rust's core borrow rule: at any moment, a value has **either** many `&T` readers **or** exactly one `&mut T` writer — never both. Interior mutability is the controlled escape hatch that lets you mutate through a `&T` by moving the check from _compile time_ to _run time_ (or into hardware atomics).
 
 The primitive underneath is `UnsafeCell<T>`. It's the only legal way to mutate through a shared reference — the compiler specifically exempts it from `&T`'s no-mutation rule. Every safe interior-mutability type wraps an `UnsafeCell<T>` and adds a safety discipline on top:
 
-| Type         | Checks performed     | Threading        | Borrow granted              |
-| ------------ | -------------------- | ---------------- | --------------------------- |
-| `Cell<T>`    | none (no borrowing)  | single-threaded  | none — get/set only         |
-| `RefCell<T>` | runtime borrow count | single-threaded  | `&T` / `&mut T` dynamically |
-| `Mutex<T>`   | OS lock              | multi-threaded   | `&mut T` via guard          |
-| `RwLock<T>`  | OS lock (rw)         | multi-threaded   | `&T` (many) or `&mut T`     |
-| `AtomicU32`… | hardware atomics     | multi-threaded   | none — load/store only      |
+| Type         | Checks performed     | Threading       | Borrow granted              |
+| ------------ | -------------------- | --------------- | --------------------------- |
+| `Cell<T>`    | none (no borrowing)  | single-threaded | none — get/set only         |
+| `RefCell<T>` | runtime borrow count | single-threaded | `&T` / `&mut T` dynamically |
+| `Mutex<T>`   | OS lock              | multi-threaded  | `&mut T` via guard          |
+| `RwLock<T>`  | OS lock (rw)         | multi-threaded  | `&T` (many) or `&mut T`     |
+| `AtomicU32`… | hardware atomics     | multi-threaded  | none — load/store only      |
 
 Pick the weakest tool that does the job. Every row down adds overhead or failure modes.
 
 ## `Cell<T>`: no borrowing, just get/set
 
-`Cell<T>` never hands out a reference to its contents. You read by *copying out*, and write by *replacing*. No borrow checking needed because there are no borrows.
+`Cell<T>` never hands out a reference to its contents. You read by _copying out_, and write by _replacing_. No borrow checking needed because there are no borrows.
 
 ```rust
 use std::cell::Cell;
@@ -56,13 +56,13 @@ w.push(4);
 
 The reference-counting bookkeeping lives in the `RefCell` header (two counters, roughly). `borrow` returns `Ref<'_, T>`, `borrow_mut` returns `RefMut<'_, T>`; the counters are decremented on drop.
 
-Use it when the *aliasing pattern is dynamic* — e.g., a tree where a node temporarily hands a mutable view to a visitor, or a cache mutated from within a traversal. Reach for `try_borrow` / `try_borrow_mut` when the panic would otherwise be an assertion of program correctness you aren't sure about.
+Use it when the _aliasing pattern is dynamic_ — e.g., a tree where a node temporarily hands a mutable view to a visitor, or a cache mutated from within a traversal. Reach for `try_borrow` / `try_borrow_mut` when the panic would otherwise be an assertion of program correctness you aren't sure about.
 
 Still single-threaded (`!Sync`).
 
 ## `Mutex<T>` and `RwLock<T>`: threaded versions
 
-Cross-thread interior mutability needs synchronization. `Mutex<T>` gives `&mut T` access under a lock; `RwLock<T>` gives many `&T` readers *or* one `&mut T` writer. Both implement `Sync` (provided `T: Send`).
+Cross-thread interior mutability needs synchronization. `Mutex<T>` gives `&mut T` access under a lock; `RwLock<T>` gives many `&T` readers _or_ one `&mut T` writer. Both implement `Sync` (provided `T: Send`).
 
 ```rust
 use std::sync::{Arc, Mutex};
@@ -90,7 +90,7 @@ Use `RwLock` only when reads dominate writes by a lot — the bookkeeping is hea
 
 ## `Rc` and `Arc`: ownership, not mutability
 
-Smart pointers that allow *multiple owners* of the same value. They don't give you mutation on their own — you combine them with a cell/lock if you need both:
+Smart pointers that allow _multiple owners_ of the same value. They don't give you mutation on their own — you combine them with a cell/lock if you need both:
 
 - `Rc<RefCell<T>>` — single-threaded, many owners, mutable contents.
 - `Arc<Mutex<T>>` — multi-threaded, many owners, mutable contents.

@@ -16,3 +16,4 @@ command = "mdbook-mermaid"
 additional-css = ["./vendor/mermaid-center.css"]
 additional-js = ["./vendor/mermaid.min.js", "./vendor/mermaid-init.js"]
 git-repository-url = "https://github.com/erhant/cobalamine"
+default-theme = "light"

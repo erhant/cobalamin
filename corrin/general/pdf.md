@@ -3,8 +3,8 @@
 ## Splitting & Arranging Pages
 
 - Open the PDF in Preview.
-- Go to the "View" menu and select "Thumbnails" to show the thumbnail sidebar.
-- Drag and drop pages in the thumbnail sidebar to rearrange them.
+- Go to the <kbd>View</kbd> menu and select <kbd>Thumbnails</kbd> to show the thumbnail sidebar.
+- Drag and drop pages in the thumbnail sidebar to **rearrange** them.
 - Drag a page out of the thumbnail sidebar to create a new PDF with just that page.
 
 ## Joining Photos of PDFs into a Single PDF

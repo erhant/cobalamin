@@ -2,8 +2,8 @@
 
 Both let a trait talk about "some other type", but they differ in **how many of those types a given implementor can have**.
 
-- **Generic parameter** (`trait Foo<T>`): the trait is *parameterized*. A single type can implement `Foo<A>`, `Foo<B>`, `Foo<C>` independently — one impl per `T`.
-- **Associated type** (`trait Foo { type T; }`): the trait *owns* the type. A single type implements `Foo` at most once, and that impl picks the `T`.
+- **Generic parameter** (`trait Foo<T>`): the trait is _parameterized_. A single type can implement `Foo<A>`, `Foo<B>`, `Foo<C>` independently — one impl per `T`.
+- **Associated type** (`trait Foo { type T; }`): the trait _owns_ the type. A single type implements `Foo` at most once, and that impl picks the `T`.
 
 Mental model: generics are inputs, associated types are outputs.
 
@@ -22,9 +22,9 @@ trait Iter {
 }
 ```
 
-In `Convert<T>`, `T` is chosen by the *caller* — it's part of the trait's name. `i32: Convert<String>` and `i32: Convert<f64>` are two unrelated trait impls.
+In `Convert<T>`, `T` is chosen by the _caller_ — it's part of the trait's name. `i32: Convert<String>` and `i32: Convert<f64>` are two unrelated trait impls.
 
-In `Iter`, `Self::Item` is chosen by the *implementor* and fixed for that type. `Vec<u8>` decides once that iterating yields `u8`, and there is no other choice.
+In `Iter`, `Self::Item` is chosen by the _implementor_ and fixed for that type. `Vec<u8>` decides once that iterating yields `u8`, and there is no other choice.
 
 ## When to pick which
 
@@ -89,7 +89,7 @@ fn g<I: Iterator<Item = u64>>(it: I) { /* ... */ }
 
 The `Item = u64` syntax only works because `Item` is associated. You cannot write `Convert<= String>` — for a generic parameter you simply name it positionally.
 
-This also means you can *leave associated types unbound*:
+This also means you can _leave associated types unbound_:
 
 ```rust
 fn sum<I: Iterator>(it: I) -> I::Item
@@ -112,12 +112,12 @@ Generic methods on a trait (not the trait itself being generic — that's fine) 
 
 ## Summary
 
-|                                  | Generic `trait Foo<T>`      | Associated `type T`              |
-| -------------------------------- | --------------------------- | -------------------------------- |
-| Impls per `Self`                 | many, one per `T`           | at most one                      |
-| Chosen by                        | caller (part of trait name) | implementor (fixed in the impl)  |
-| Inference at call site           | often needs turbofish       | falls out of `Self`              |
-| Bound syntax                     | `T: Foo<U>`                 | `T: Foo<Name = U>` or `T::Name`  |
-| Good fit                         | `From`, `Into`, `PartialEq` | `Iterator::Item`, `Add::Output`  |
+|                        | Generic `trait Foo<T>`      | Associated `type T`             |
+| ---------------------- | --------------------------- | ------------------------------- |
+| Impls per `Self`       | many, one per `T`           | at most one                     |
+| Chosen by              | caller (part of trait name) | implementor (fixed in the impl) |
+| Inference at call site | often needs turbofish       | falls out of `Self`             |
+| Bound syntax           | `T: Foo<U>`                 | `T: Foo<Name = U>` or `T::Name` |
+| Good fit               | `From`, `Into`, `PartialEq` | `Iterator::Item`, `Add::Output` |
 
 If multiple values of the related type make sense for the same `Self`, it's an input — go generic. If there's only ever one, it's an output — make it associated.

@@ -120,7 +120,8 @@ function minimumHammingDistance(
   for (let i = 0; i < n; i++) {
     const cnt = sets.get(uf.find(i))!; // this index's component multiset
     const have = cnt.get(target[i]) ?? 0; // supply of target[i] left in the component
-    if (have > 0) cnt.set(target[i], have - 1); // consume one — index can be matched
+    if (have > 0)
+      cnt.set(target[i], have - 1); // consume one — index can be matched
     else ans++; // no supply left — forced mismatch
   }
   return ans;

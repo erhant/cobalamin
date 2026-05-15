@@ -41,7 +41,7 @@ $$
 A_1, A_2 \text{ disjoint} \;\implies\; \Pr[A_1 \cup A_2] \;=\; \Pr[A_1] + \Pr[A_2].
 $$
 
-The union bound is the workhorse of security proofs. When we want to bound the chance that *any* of $k$ bad things happens, we sum the individual probabilities. It's loose — it ignores correlation — but loose-and-tractable beats tight-and-impossible. Combined with the fact that summing polynomially many [negligible](../cryptography/asymptotics.md) bounds stays negligible, this is what lets reduction proofs chain.
+The union bound is the workhorse of security proofs. When we want to bound the chance that _any_ of $k$ bad things happens, we sum the individual probabilities. It's loose — it ignores correlation — but loose-and-tractable beats tight-and-impossible. Combined with the fact that summing polynomially many [negligible](../cryptography/asymptotics.md) bounds stays negligible, this is what lets reduction proofs chain.
 
 ## Random variables
 
@@ -67,7 +67,7 @@ $$
 
 Two random variables $X, Y$ are independent when $\Pr[X = a \,\land\, Y = b] = \Pr[X = a] \cdot \Pr[Y = b]$ for all $a, b$.
 
-Independence is a strong assumption — it says knowing one outcome tells you nothing about the other. Crypto designs *engineer* independence (fresh nonces, freshly sampled keys) precisely because proofs become tractable when randomness is independent.
+Independence is a strong assumption — it says knowing one outcome tells you nothing about the other. Crypto designs _engineer_ independence (fresh nonces, freshly sampled keys) precisely because proofs become tractable when randomness is independent.
 
 ## Conditional probability and Bayes
 
@@ -99,7 +99,7 @@ Useful when you want $\Pr[\text{cause} \mid \text{evidence}]$ but only know $\Pr
 
 XOR ($\oplus$) is bitwise addition mod 2 on $\{0, 1\}^n$. The single most-used fact about it in cryptography:
 
-> **Theorem.** If $X$ is *any* random variable over $\{0, 1\}^n$ and $Y$ is uniform on $\{0, 1\}^n$ and independent of $X$, then $Z = X \oplus Y$ is uniform on $\{0, 1\}^n$.
+> **Theorem.** If $X$ is _any_ random variable over $\{0, 1\}^n$ and $Y$ is uniform on $\{0, 1\}^n$ and independent of $X$, then $Z = X \oplus Y$ is uniform on $\{0, 1\}^n$.
 
 **Proof.** For any fixed $z \in \{0, 1\}^n$,
 
@@ -147,7 +147,7 @@ function firstCollision(B: number): number {
 // Averaging over many trials lands near 1.25 * sqrt(B).
 ```
 
-**Why crypto cares.** A hash with $k$-bit output has $B = 2^k$ possible digests, so finding *any* collision takes $\approx 2^{k/2}$ hashes — not $2^k$. To get 128-bit collision security you need a 256-bit hash. The same square-root law governs:
+**Why crypto cares.** A hash with $k$-bit output has $B = 2^k$ possible digests, so finding _any_ collision takes $\approx 2^{k/2}$ hashes — not $2^k$. To get 128-bit collision security you need a 256-bit hash. The same square-root law governs:
 
 - generic discrete-log attacks (Pollard's rho — see [Discrete Logarithm](../cryptography/discrete-log.md)),
 - meet-in-the-middle attacks on double encryption,
@@ -170,7 +170,7 @@ $$
 H_\infty(X) \;=\; -\log_2 \!\left(\max_x \Pr[X = x]\right).
 $$
 
-It captures the *worst-case* predictability — driven by the most likely outcome, not the average. A distribution can have respectable Shannon entropy while having one outcome that's still easy to guess; min-entropy refuses to let the average wash out the danger.
+It captures the _worst-case_ predictability — driven by the most likely outcome, not the average. A distribution can have respectable Shannon entropy while having one outcome that's still easy to guess; min-entropy refuses to let the average wash out the danger.
 
 > **Rule of thumb.** A random variable is "good for crypto keys" when its **min-entropy** (not its Shannon entropy) is large enough — typically $H_\infty \ge \lambda$ for security parameter $\lambda$.
 

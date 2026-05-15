@@ -5,7 +5,7 @@ Cryptographic security is **asymptotic**. We index everything by a security para
 - "Efficient adversary" = runs in **polynomial time** in $n$.
 - "Adversary's success probability" = some function $\mu(n)$, and we want this to be **negligible**.
 
-This chapter defines those words precisely. Once they're nailed down, every security definition in this section follows the same template: *"for every poly-time adversary, the advantage is negligible"*.
+This chapter defines those words precisely. Once they're nailed down, every security definition in this section follows the same template: _"for every poly-time adversary, the advantage is negligible"_.
 
 ## Negligible functions
 
@@ -15,7 +15,7 @@ $$
 \mu(n) \;<\; \frac{1}{p(n)} \quad \text{for all } n \ge n_0.
 $$
 
-Equivalently, $\mu(n) \in O(1/p(n))$ for *every* polynomial $p$ — i.e. $\mu$ decays faster than any inverse polynomial.
+Equivalently, $\mu(n) \in O(1/p(n))$ for _every_ polynomial $p$ — i.e. $\mu$ decays faster than any inverse polynomial.
 
 The intuition: negligible means **"you can ignore it"**. Given polynomial computational resources, you can never amplify a negligible event into a noticeable one (see closure rules below). It's the formal version of "vanishingly small."
 
@@ -36,19 +36,19 @@ $$
 f(n) \;\ge\; \frac{1}{p(n)} \quad \text{for all } n \ge n_0.
 $$
 
-It's eventually bounded *below* by some inverse polynomial. This is the threshold for "the adversary actually has a real chance." A scheme that lets the adversary win with noticeable probability is broken in any practical sense.
+It's eventually bounded _below_ by some inverse polynomial. This is the threshold for "the adversary actually has a real chance." A scheme that lets the adversary win with noticeable probability is broken in any practical sense.
 
 ## Non-negligible $\ne$ noticeable
 
 A subtle point that catches people the first time. Negate the negligible definition carefully:
 
-| Property        | Definition (informal)                                      | Quantifier  |
-| --------------- | ---------------------------------------------------------- | ----------- |
-| negligible      | eventually below *every* inverse polynomial                | for all $p$ |
-| noticeable      | eventually above *some* inverse polynomial                 | exists $p$  |
-| non-negligible  | *not* eventually below every inverse polynomial            | (negation)  |
+| Property       | Definition (informal)                           | Quantifier  |
+| -------------- | ----------------------------------------------- | ----------- |
+| negligible     | eventually below _every_ inverse polynomial     | for all $p$ |
+| noticeable     | eventually above _some_ inverse polynomial      | exists $p$  |
+| non-negligible | _not_ eventually below every inverse polynomial | (negation)  |
 
-A non-negligible function only needs to *occasionally* exceed inverse polynomials; a noticeable function must do so *eventually for all large $n$*. The two coincide for monotone-ish functions, but oscillating ones can be non-negligible without being noticeable. Example:
+A non-negligible function only needs to _occasionally_ exceed inverse polynomials; a noticeable function must do so _eventually for all large $n$_. The two coincide for monotone-ish functions, but oscillating ones can be non-negligible without being noticeable. Example:
 
 $$
 f(n) \;=\; \begin{cases} 1/n & n \text{ even} \\ 2^{-n} & n \text{ odd} \end{cases}
@@ -66,16 +66,16 @@ These are the "almost certainly happens" probabilities: correctness of decryptio
 
 These definitions are useful precisely because they're **closed under the operations that appear in security reductions**:
 
-| Operation                                       | Result       |
-| ----------------------------------------------- | ------------ |
-| negligible $+$ negligible                       | negligible   |
-| sum of polynomially many negligible functions   | negligible   |
-| polynomial $\times$ negligible                  | negligible   |
-| polynomial $\times$ polynomial                  | polynomial   |
-| $1 -$ negligible                                | overwhelming |
-| $1 -$ overwhelming                              | negligible   |
+| Operation                                     | Result       |
+| --------------------------------------------- | ------------ |
+| negligible $+$ negligible                     | negligible   |
+| sum of polynomially many negligible functions | negligible   |
+| polynomial $\times$ negligible                | negligible   |
+| polynomial $\times$ polynomial                | polynomial   |
+| $1 -$ negligible                              | overwhelming |
+| $1 -$ overwhelming                            | negligible   |
 
-The crucial one — **poly × negligible = negligible** — is what powers reduction proofs. If a single subroutine fails with negligible probability $\mu(n)$, and we call it $q(n)$ times for some polynomial $q$, the chance that *any* call fails is at most $q(n) \cdot \mu(n)$ by the [union bound](../math/probability.md#events) — still negligible. So a polynomial-time adversary can only ever face polynomially many bad events, and the total badness stays negligible.
+The crucial one — **poly × negligible = negligible** — is what powers reduction proofs. If a single subroutine fails with negligible probability $\mu(n)$, and we call it $q(n)$ times for some polynomial $q$, the chance that _any_ call fails is at most $q(n) \cdot \mu(n)$ by the [union bound](../math/probability.md#events) — still negligible. So a polynomial-time adversary can only ever face polynomially many bad events, and the total badness stays negligible.
 
 ## A typical security statement
 

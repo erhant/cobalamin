@@ -205,7 +205,7 @@ function rabinKarp(t: string, p: string): number[] {
     if (hp === ht && t.slice(i, i + m) === p) out.push(i);
     if (i + m < n) {
       ht =
-        ((ht - (BigInt(t.charCodeAt(i)) * power) % MOD + MOD * MOD) * B +
+        ((ht - ((BigInt(t.charCodeAt(i)) * power) % MOD) + MOD * MOD) * B +
           BigInt(t.charCodeAt(i + m))) %
         MOD;
     }
@@ -264,13 +264,13 @@ Extends to **Aho-Corasick** (KMP over a trie) for matching many patterns at once
 
 ## Cheat Sheet
 
-| Problem                          | Tool                          | Time       |
-| -------------------------------- | ----------------------------- | ---------- |
-| `a` is a rotation of `b`         | `(a+a).includes(b)`           | $O(n)$     |
-| `s = t^k`, `k ≥ 2`               | `(s+s).slice(1,-1).includes(s)` | $O(n)$     |
-| Longest palindromic substring    | Expand-around-center          | $O(n^2)$   |
-| Longest palindromic substring    | Manacher's                    | $O(n)$     |
-| Single pattern in text           | KMP / Z-function              | $O(n + m)$ |
-| Multiple patterns in text        | Aho-Corasick                  | $O(n + m + z)$ |
-| Arbitrary substring equality     | Rolling hash                  | $O(1)$ after $O(n)$ |
-| Prefix queries                   | Trie                          | $O(L)$     |
+| Problem                       | Tool                            | Time                |
+| ----------------------------- | ------------------------------- | ------------------- |
+| `a` is a rotation of `b`      | `(a+a).includes(b)`             | $O(n)$              |
+| `s = t^k`, `k ≥ 2`            | `(s+s).slice(1,-1).includes(s)` | $O(n)$              |
+| Longest palindromic substring | Expand-around-center            | $O(n^2)$            |
+| Longest palindromic substring | Manacher's                      | $O(n)$              |
+| Single pattern in text        | KMP / Z-function                | $O(n + m)$          |
+| Multiple patterns in text     | Aho-Corasick                    | $O(n + m + z)$      |
+| Arbitrary substring equality  | Rolling hash                    | $O(1)$ after $O(n)$ |
+| Prefix queries                | Trie                            | $O(L)$              |

@@ -3,13 +3,13 @@
 Both traits duplicate a value, but they sit at very different layers.
 
 - **`Clone`** is an explicit, user-defined duplication. You call `.clone()` and the trait's code runs — arbitrarily expensive, may allocate, may do I/O.
-- **`Copy`** is an implicit, bitwise duplication. Assignment and pass-by-value *copy* the bytes instead of *moving* the value. No method runs.
+- **`Copy`** is an implicit, bitwise duplication. Assignment and pass-by-value _copy_ the bytes instead of _moving_ the value. No method runs.
 
 `Copy: Clone` — `Copy` is a supertrait of `Clone`. Every `Copy` type is also `Clone`, and `clone()` on a `Copy` type is just the bitwise copy. The reverse isn't true: `String` is `Clone` but not `Copy`.
 
 ## The move/copy distinction
 
-By default, Rust values *move* on assignment:
+By default, Rust values _move_ on assignment:
 
 ```rust
 let s = String::from("hi");
@@ -25,7 +25,7 @@ let y = x;
 println!("{x}");     // fine — x was copied, not moved
 ```
 
-There is no `.copy()` call. `Copy` changes what `let y = x;` *means* at the language level.
+There is no `.copy()` call. `Copy` changes what `let y = x;` _means_ at the language level.
 
 ## What `Copy` requires
 
@@ -83,7 +83,7 @@ You do **not** write `impl Copy` manually in practice — the behavior is fixed 
 
 ## Performance intuition
 
-"`Copy` is cheap, `Clone` might not be" is the usual heuristic, but it's about *semantics*, not size. A `[u8; 10_000]` is `Copy` and cloning it memcpys 10 KB every pass-by-value. A `Rc<T>` is `Clone` (bumps a refcount, ~one atomic/non-atomic increment) but not `Copy`.
+"`Copy` is cheap, `Clone` might not be" is the usual heuristic, but it's about _semantics_, not size. A `[u8; 10_000]` is `Copy` and cloning it memcpys 10 KB every pass-by-value. A `Rc<T>` is `Clone` (bumps a refcount, ~one atomic/non-atomic increment) but not `Copy`.
 
 If you have a large `Copy` struct, passing it by value is not free — prefer `&T`. `Copy` is about whether moves are allowed to duplicate, not about whether duplication is fast.
 
@@ -98,13 +98,13 @@ Once you make a public type `Copy`, removing that is a breaking change — downs
 
 ## Summary
 
-|                       | `Copy`                             | `Clone`                        |
-| --------------------- | ---------------------------------- | ------------------------------ |
-| Invocation            | implicit (assignment, pass-by-val) | explicit `.clone()`            |
-| Cost                  | fixed: bitwise memcpy              | arbitrary, user-defined        |
-| Can allocate?         | no                                 | yes                            |
-| Compatible with `Drop`| no                                 | yes                            |
-| Field requirement     | all fields `Copy`                  | all fields `Clone`             |
-| Typical impls         | primitives, `&T`, small PODs       | `String`, `Vec<T>`, `Rc<T>`, … |
+|                        | `Copy`                             | `Clone`                        |
+| ---------------------- | ---------------------------------- | ------------------------------ |
+| Invocation             | implicit (assignment, pass-by-val) | explicit `.clone()`            |
+| Cost                   | fixed: bitwise memcpy              | arbitrary, user-defined        |
+| Can allocate?          | no                                 | yes                            |
+| Compatible with `Drop` | no                                 | yes                            |
+| Field requirement      | all fields `Copy`                  | all fields `Clone`             |
+| Typical impls          | primitives, `&T`, small PODs       | `String`, `Vec<T>`, `Rc<T>`, … |
 
 Rule of thumb: if your type owns something that needs cleaning up, it's `Clone` at most. If it's a bag of bytes with no invariants, make it `Copy` too.

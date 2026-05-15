@@ -8,27 +8,36 @@ It's the right tool whenever you can phrase the question as "the answer is somew
 - **`lowerBound` / `upperBound`** — first index $\ge x$ or $> x$; underlies insertion point, count-in-range, first/last occurrence.
 - **Search on the answer** (parametric search) — "smallest capacity to ship in $D$ days", "minimum speed to finish on time", "largest value that still fits". Any problem where feasibility is monotone in a numeric parameter.
 - **Monotone inverse problems** — integer square root, $n$-th root, and similar.
-- **Sorted 2D matrix** — flatten to 1D and search once.
 
-Core invariant: maintain an interval known to contain the answer; each step halves it. Two idioms cover every case — pick based on whether you need an **exact match** or a **boundary**.
+> [!TIP]
+>
+> **The core idea**: maintain an interval known to contain the answer; each step halves it. Two idioms cover every case — pick based on whether you need an **exact match** or a **boundary**.
 
-## Closed-Interval Search (Exact Match)
+## Closed Variant
 
-Search interval is $[l, r]$, closed on both sides. Every `mid` is explicitly compared against the target.
+Search interval is $[l, r]$, meaning that it is **closed** on both sides. Every `mid` is explicitly compared against the target. The search terminates when `l > r`, or the answer is found.
 
 ```typescript
-let l = 0,
-  r = arr.length - 1;
-while (l <= r) {
-  const mid = (l + r) >> 1;
-  if (arr[mid] === num) return mid;
-  else if (arr[mid] < num) l = mid + 1;
-  else r = mid - 1;
+function binarySearch(arr: number[], target: number): number {
+  let [l, r] = [0, arr.length - 1];
+
+  while (l <= r) {
+    const mid = (r + l) >>> 1;
+    if (arr[mid] === target) {
+      return mid;
+    } else if (arr[mid] < target) {
+      l = mid + 1;
+    } else /* arr[mid] > target */ {
+      r = mid - 1;
+    }
+  }
+
+  // not found
+  return -1;
 }
-return -1; // not found
 ```
 
-Terminates when `l > r` (the interval crosses). Use this when you need to distinguish "found it" from "not found" at the element level.
+You can use this when you need to distinguish "found it" from "not found" at the element level, i.e. simply searching for an element.
 
 ## Half-Open / Boundary Search (`partitionPoint`)
 
@@ -51,15 +60,21 @@ Once you see the "first true" framing, **every `lowerBound` / `upperBound` / "mi
 
 ### Side-by-side
 
-|                | Closed-Interval            | Boundary                  |
-| -------------- | -------------------------- | ------------------------- |
-| Loop           | `while (l <= r)`           | `while (l < r)`           |
-| Interval       | $[l, r]$                   | $[l, r)$                  |
-| Right init     | `n - 1`                    | `n`                       |
-| Shrink         | `l = mid + 1, r = mid - 1` | `l = mid + 1, r = mid`    |
-| `mid` checked? | Yes, explicitly            | No, only narrows          |
-| Exits with     | `l > r` (crossed, empty)   | `l === r` (the answer)    |
-| Best for       | Exact match                | "First true" / boundaries |
+|                | Closed / Exact Match       | Half-Open / Boundary Search |
+| -------------- | -------------------------- | --------------------------- |
+| Loop Condition | `l <= r`                   | `l < r`                     |
+| Interval       | $[l, r]$                   | $[l, r)$                    |
+| Initial        | $[0, n - 1]$               | $[0, n)$                    |
+| Shrink         | `l = mid + 1, r = mid - 1` | `l = mid + 1, r = mid`      |
+| `mid` checked? | Yes, explicitly            | No, only narrows            |
+| Exits with     | `l > r` (crossed, empty)   | `l === r` (the answer)      |
+| Best for       | Exact match                | "First true" / boundaries   |
+
+> [!CAUTION]
+>
+> The `(r + l) >>> 1` pattern is a common shorthand for `Math.floor((l + r) / 2)`, but it uses bitwise ops which may default to 32-bits in Node etc.
+>
+> Furthermore, `l + r` can overflow for large indices. To be safe, prefer `l + ((r - l) >>> 1)` or it's equivalent `l + Math.floor((r - l) / 2)`.
 
 ## `lowerBound` and `upperBound`
 
@@ -68,8 +83,7 @@ Direct specializations of boundary search:
 ```typescript
 // first index where arr[idx] >= val
 function lowerBound(arr: number[], val: number): number {
-  let l = 0,
-    r = arr.length;
+  let [l, r] = [0, arr.length];
   while (l < r) {
     const mid = (l + r) >> 1;
     if (arr[mid] < val) l = mid + 1;
@@ -80,8 +94,7 @@ function lowerBound(arr: number[], val: number): number {
 
 // first index where arr[idx] > val
 function upperBound(arr: number[], val: number): number {
-  let l = 0,
-    r = arr.length;
+  let [l, r] = [0, arr.length];
   while (l < r) {
     const mid = (l + r) >> 1;
     if (arr[mid] <= val) l = mid + 1;
@@ -217,19 +230,3 @@ function maxMinDistance(pos: number[], k: number): number {
 $O(n \log n)$ for the sort plus $O(n \log(\text{range}))$ for the search.
 
 Same shape covers "maximize the minimum Manhattan distance between $k$ points on a square's boundary" (unroll the perimeter to 1D, then it's aggressive cows on a circular track), "split array into $m$ subarrays minimizing the largest sum", "minimum eating speed to finish all bananas in $h$ hours", and most LeetCode "maximize the minimum ..." / "minimize the maximum ..." prompts. The hard part is usually writing `feasible` — once it's there, the binary search is mechanical.
-
-## Searching a Sorted Matrix
-
-A matrix where each row is sorted and the first element of each row is greater than the last of the previous row can be treated as a **flat sorted array**:
-
-```typescript
-// flat index → row/col
-const r = Math.trunc(mid / numCols);
-const c = mid % numCols;
-```
-
-One binary search over $m \cdot n$ elements: $O(\log(m \cdot n)) = O(\log m + \log n)$.
-
-## Tip: `(l + r) >> 1` vs `Math.floor((l + r) / 2)`
-
-Equivalent for non-negative 32-bit integers; the bitshift is common shorthand. For values near $2^{31}$ where `l + r` can overflow, prefer `l + ((r - l) >> 1)`.

@@ -4,76 +4,76 @@ A reference for the symbols that appear throughout this section. Definitions and
 
 ## Security parameter and sampling
 
-| symbol                         | meaning                                                          |
-| ------------------------------ | ---------------------------------------------------------------- |
-| $\lambda$ or $n$               | security parameter (key length, $\log_2$ of group order, …)      |
-| $\text{poly}(n)$               | "some polynomial in $n$" — left unspecified                      |
-| $\text{negl}(n)$ or $\mu(n)$   | a [negligible function](./asymptotics.md#negligible-functions)   |
-| $x \xleftarrow{\$} S$          | sample $x$ uniformly at random from set $S$                      |
-| $x \leftarrow D$               | sample $x$ from distribution $D$                                 |
-| $y \gets A(x; r)$              | algorithm $A$ on input $x$ with internal randomness $r$          |
-| $y \xleftarrow{\$} A(x)$       | shorthand for $y \gets A(x; r)$ with $r$ uniform                 |
+| symbol                       | meaning                                                        |
+| ---------------------------- | -------------------------------------------------------------- |
+| $\lambda$ or $n$             | security parameter (key length, $\log_2$ of group order, …)    |
+| $\text{poly}(n)$             | "some polynomial in $n$" — left unspecified                    |
+| $\text{negl}(n)$ or $\mu(n)$ | a [negligible function](./asymptotics.md#negligible-functions) |
+| $x \xleftarrow{\$} S$        | sample $x$ uniformly at random from set $S$                    |
+| $x \leftarrow D$             | sample $x$ from distribution $D$                               |
+| $y \gets A(x; r)$            | algorithm $A$ on input $x$ with internal randomness $r$        |
+| $y \xleftarrow{\$} A(x)$     | shorthand for $y \gets A(x; r)$ with $r$ uniform               |
 
 ## Number and algebraic sets
 
-| symbol                           | meaning                                                             |
-| -------------------------------- | ------------------------------------------------------------------- |
-| $\mathbb{Z}$                     | integers                                                            |
-| $\mathbb{Z}/n\mathbb{Z}$         | integers modulo $n$ (additive group)                                |
-| $(\mathbb{Z}/n\mathbb{Z})^{\ast}$| units mod $n$ — invertible residues, has order $\varphi(n)$         |
-| $\mathbb{Z}_n$                   | shorthand for $\mathbb{Z}/n\mathbb{Z}$ (overloaded; check context)  |
-| $\mathbb{F}_p$                   | finite field with $p$ elements ($p$ prime)                          |
-| $\mathbb{F}_p^{\ast}$            | non-zero elements of $\mathbb{F}_p$ — cyclic of order $p - 1$       |
-| $\mathbb{F}_q$                   | finite field with $q = p^k$ elements                                |
-| $\mathbb{F}_{p^k}$               | degree-$k$ extension of $\mathbb{F}_p$                              |
-| $\mathbb{F}_{2^n}$               | **binary field** with $2^n$ elements (the $p = 2$ case)             |
+| symbol                            | meaning                                                            |
+| --------------------------------- | ------------------------------------------------------------------ |
+| $\mathbb{Z}$                      | integers                                                           |
+| $\mathbb{Z}/n\mathbb{Z}$          | integers modulo $n$ (additive group)                               |
+| $(\mathbb{Z}/n\mathbb{Z})^{\ast}$ | units mod $n$ — invertible residues, has order $\varphi(n)$        |
+| $\mathbb{Z}_n$                    | shorthand for $\mathbb{Z}/n\mathbb{Z}$ (overloaded; check context) |
+| $\mathbb{F}_p$                    | finite field with $p$ elements ($p$ prime)                         |
+| $\mathbb{F}_p^{\ast}$             | non-zero elements of $\mathbb{F}_p$ — cyclic of order $p - 1$      |
+| $\mathbb{F}_q$                    | finite field with $q = p^k$ elements                               |
+| $\mathbb{F}_{p^k}$                | degree-$k$ extension of $\mathbb{F}_p$                             |
+| $\mathbb{F}_{2^n}$                | **binary field** with $2^n$ elements (the $p = 2$ case)            |
 
 ### $\mathbb{F}_r$ vs $\mathbb{F}_p$ vs $\mathbb{F}_q$ in elliptic-curve contexts
 
 A frequent source of confusion. For a curve $E$ defined over $\mathbb{F}_p$ with a prime-order subgroup of size $r$:
 
-| field            | role                                                                              |
-| ---------------- | --------------------------------------------------------------------------------- |
-| $\mathbb{F}_p$   | **base field** — coordinates of curve points live here                            |
-| $\mathbb{F}_q$   | often used interchangeably with $\mathbb{F}_p$, or for an extension $q = p^k$     |
-| $\mathbb{F}_r$   | **scalar field** — exponents/scalars live here, where $r$ is the subgroup order   |
+| field          | role                                                                            |
+| -------------- | ------------------------------------------------------------------------------- |
+| $\mathbb{F}_p$ | **base field** — coordinates of curve points live here                          |
+| $\mathbb{F}_q$ | often used interchangeably with $\mathbb{F}_p$, or for an extension $q = p^k$   |
+| $\mathbb{F}_r$ | **scalar field** — exponents/scalars live here, where $r$ is the subgroup order |
 
 So in $[k] P$ you have $k \in \mathbb{F}_r$ but $P, [k]P \in E(\mathbb{F}_p)$. Hash-to-scalar maps $\{0, 1\}^{\ast} \to \mathbb{F}_r$; hash-to-curve lands in $E(\mathbb{F}_p)$. Mixing them up is a classic implementation bug.
 
 ## Polynomials and field extensions
 
-| symbol                          | meaning                                                              |
-| ------------------------------- | -------------------------------------------------------------------- |
-| $\mathbb{F}[X]$                 | polynomials in $X$ with coefficients in $\mathbb{F}$                 |
-| $\deg(f)$                       | degree of polynomial $f$                                             |
-| $\mathbb{F}[X]/(f(X))$          | quotient ring — polynomials mod $f$                                  |
-| $f \mid g$                      | $f$ divides $g$                                                      |
+| symbol                 | meaning                                              |
+| ---------------------- | ---------------------------------------------------- |
+| $\mathbb{F}[X]$        | polynomials in $X$ with coefficients in $\mathbb{F}$ |
+| $\deg(f)$              | degree of polynomial $f$                             |
+| $\mathbb{F}[X]/(f(X))$ | quotient ring — polynomials mod $f$                  |
+| $f \mid g$             | $f$ divides $g$                                      |
 
 A degree-$k$ extension is built as $\mathbb{F}_{p^k} \cong \mathbb{F}_p[X] / (f(X))$ for some irreducible $f$ of degree $k$. Elements are represented as polynomials of degree $< k$ over $\mathbb{F}_p$. Binary fields $\mathbb{F}_{2^n}$ are this construction with $p = 2$ and are popular in hardware (XOR is free).
 
 ## Groups and pairings
 
-| symbol                                | meaning                                                                |
-| ------------------------------------- | ---------------------------------------------------------------------- |
-| $\mathbb{G}$, $G$                     | a generic (usually cyclic) group                                       |
-| $g$, $\mathcal{G}$                    | a generator of $\mathbb{G}$                                            |
-| $\langle g \rangle$                   | cyclic subgroup generated by $g$                                       |
-| $\lvert G \rvert$, $\operatorname{ord}(G)$ | order of $G$                                                      |
-| $\operatorname{ord}(a)$               | order of element $a$                                                   |
-| $g^x$ (multiplicative)                | scalar exponentiation in multiplicative notation                       |
-| $[x] P$ or $x P$ (additive)           | scalar multiplication in additive notation (typical for EC groups)     |
-| $\mathcal{O}$                         | identity / point at infinity on an elliptic curve                      |
-| $\mathbb{G}_1, \mathbb{G}_2, \mathbb{G}_T$ | the three groups of a bilinear pairing                            |
-| $e : \mathbb{G}_1 \times \mathbb{G}_2 \to \mathbb{G}_T$ | a bilinear pairing                                |
+| symbol                                                  | meaning                                                            |
+| ------------------------------------------------------- | ------------------------------------------------------------------ |
+| $\mathbb{G}$, $G$                                       | a generic (usually cyclic) group                                   |
+| $g$, $\mathcal{G}$                                      | a generator of $\mathbb{G}$                                        |
+| $\langle g \rangle$                                     | cyclic subgroup generated by $g$                                   |
+| $\lvert G \rvert$, $\operatorname{ord}(G)$              | order of $G$                                                       |
+| $\operatorname{ord}(a)$                                 | order of element $a$                                               |
+| $g^x$ (multiplicative)                                  | scalar exponentiation in multiplicative notation                   |
+| $[x] P$ or $x P$ (additive)                             | scalar multiplication in additive notation (typical for EC groups) |
+| $\mathcal{O}$                                           | identity / point at infinity on an elliptic curve                  |
+| $\mathbb{G}_1, \mathbb{G}_2, \mathbb{G}_T$              | the three groups of a bilinear pairing                             |
+| $e : \mathbb{G}_1 \times \mathbb{G}_2 \to \mathbb{G}_T$ | a bilinear pairing                                                 |
 
 ## Probability and security statements
 
-| symbol                                  | meaning                                                          |
-| --------------------------------------- | ---------------------------------------------------------------- |
-| $\Pr[E]$                                | probability of event $E$                                         |
-| $\Pr[E \mid F]$                         | conditional: probability of $E$ given $F$                        |
-| $\mathcal{A}$                           | an adversary (usually probabilistic polynomial-time, PPT)        |
-| $\operatorname{Adv}_{\Pi}^{\text{X}}(\mathcal{A})$ | $\mathcal{A}$'s advantage against scheme $\Pi$ in game X    |
+| symbol                                             | meaning                                                   |
+| -------------------------------------------------- | --------------------------------------------------------- |
+| $\Pr[E]$                                           | probability of event $E$                                  |
+| $\Pr[E \mid F]$                                    | conditional: probability of $E$ given $F$                 |
+| $\mathcal{A}$                                      | an adversary (usually probabilistic polynomial-time, PPT) |
+| $\operatorname{Adv}_{\Pi}^{\text{X}}(\mathcal{A})$ | $\mathcal{A}$'s advantage against scheme $\Pi$ in game X  |
 
 A canonical security statement looks like:
 
@@ -85,14 +85,14 @@ Read as: "for every PPT adversary $\mathcal{A}$, there is a negligible function 
 
 ## Common shorthand
 
-| symbol               | meaning                                                              |
-| -------------------- | -------------------------------------------------------------------- |
-| $\bot$               | "abort", "reject", or "no valid output"                              |
-| $\top$               | "accept" / success (less common)                                     |
-| $\|$ or $\,\Vert\,$  | string concatenation                                                 |
-| $1^n$                | the all-ones string of length $n$ (a unary encoding of $n$)          |
-| $\langle x, y \rangle$ | tuple, pair, or inner product — context-dependent                  |
-| $H$                  | a hash function, often modeled as a random oracle                    |
-| $\stackrel{?}{=}$    | "check whether equal" (verification step)                            |
-| $:=$ or $\gets$      | assignment / definition                                              |
-| $\equiv$             | "is identical to" or "is congruent to" (for modular equalities)      |
+| symbol                 | meaning                                                         |
+| ---------------------- | --------------------------------------------------------------- |
+| $\bot$                 | "abort", "reject", or "no valid output"                         |
+| $\top$                 | "accept" / success (less common)                                |
+| $\|$ or $\,\Vert\,$    | string concatenation                                            |
+| $1^n$                  | the all-ones string of length $n$ (a unary encoding of $n$)     |
+| $\langle x, y \rangle$ | tuple, pair, or inner product — context-dependent               |
+| $H$                    | a hash function, often modeled as a random oracle               |
+| $\stackrel{?}{=}$      | "check whether equal" (verification step)                       |
+| $:=$ or $\gets$        | assignment / definition                                         |
+| $\equiv$               | "is identical to" or "is congruent to" (for modular equalities) |

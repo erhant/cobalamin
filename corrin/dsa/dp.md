@@ -19,12 +19,12 @@ $$V(s) = \bigoplus_{s \to s'} \big( w(s, s') \,\cdot\, V(s') \big)$$
 
 The combinator $\oplus$ is what kind of DP it is:
 
-| $\oplus$ | What you're computing                          |
-| -------- | ---------------------------------------------- |
-| `min`    | Shortest / cheapest path (e.g. coin change)    |
-| `max`    | Longest / most-valuable path (e.g. LIS, LCS)   |
+| $\oplus$ | What you're computing                                |
+| -------- | ---------------------------------------------------- |
+| `min`    | Shortest / cheapest path (e.g. coin change)          |
+| `max`    | Longest / most-valuable path (e.g. LIS, LCS)         |
 | `sum`    | Counting paths or expectation (e.g. paths in a grid) |
-| `or`     | Reachability / feasibility (e.g. subset sum)   |
+| `or`     | Reachability / feasibility (e.g. subset sum)         |
 
 The DAG-ness is essential: if state transitions had cycles, $V(s)$ would depend on itself and the recurrence wouldn't bottom out. Picking the right state space is exactly the act of finding parameters that make the dependency graph acyclic.
 
@@ -64,14 +64,18 @@ function solve(s: State): number {
   if (memo.has(k)) return memo.get(k)!;
   if (isBase(s)) return baseValue(s);
   let best = identity;
-  for (const [w, sNext] of transitions(s)) best = combine(best, w * solve(sNext));
+  for (const [w, sNext] of transitions(s))
+    best = combine(best, w * solve(sNext));
   memo.set(k, best);
   return best;
 }
 
 // bottom-up
 for (const s of statesInTopoOrder()) {
-  if (isBase(s)) { V[s] = baseValue(s); continue; }
+  if (isBase(s)) {
+    V[s] = baseValue(s);
+    continue;
+  }
   let best = identity;
   for (const [w, sNext] of transitions(s)) best = combine(best, w * V[sNext]);
   V[s] = best;
@@ -129,12 +133,17 @@ State indexed by two integers — typically two strings/arrays, or one array plu
 **0/1 Knapsack.** State `(i, w)` = "best value using items `[0..i)` with capacity $w$".
 
 ```typescript
-const dp: number[][] = Array.from({ length: n + 1 }, () => new Array(W + 1).fill(0));
+const dp: number[][] = Array.from({ length: n + 1 }, () =>
+  new Array(W + 1).fill(0),
+);
 for (let i = 1; i <= n; i++) {
   for (let w = 0; w <= W; w++) {
     dp[i][w] = dp[i - 1][w]; // skip item i-1
     if (weight[i - 1] <= w)
-      dp[i][w] = Math.max(dp[i][w], dp[i - 1][w - weight[i - 1]] + value[i - 1]);
+      dp[i][w] = Math.max(
+        dp[i][w],
+        dp[i - 1][w - weight[i - 1]] + value[i - 1],
+      );
   }
 }
 return dp[n][W];
@@ -174,22 +183,22 @@ Use bitmask DP when the state has to remember the **identity** of the set, not j
 
 ### The trick: subset as integer
 
-| Op                        | Meaning                                |
-| ------------------------- | -------------------------------------- |
-| `mask & (1 << i)`         | is element $i$ in the set?             |
-| `mask \| (1 << i)`        | add element $i$                        |
-| `mask & ~(1 << i)`        | remove element $i$                     |
-| `mask ^ (1 << i)`         | toggle element $i$                     |
-| `mask & (mask - 1)`       | clear lowest set bit                   |
-| `s = (s - 1) & mask`      | step to next non-empty submask of mask |
+| Op                   | Meaning                                |
+| -------------------- | -------------------------------------- |
+| `mask & (1 << i)`    | is element $i$ in the set?             |
+| `mask \| (1 << i)`   | add element $i$                        |
+| `mask & ~(1 << i)`   | remove element $i$                     |
+| `mask ^ (1 << i)`    | toggle element $i$                     |
+| `mask & (mask - 1)`  | clear lowest set bit                   |
+| `s = (s - 1) & mask` | step to next non-empty submask of mask |
 
-Iteration order is the natural topological order on the subset lattice: if transitions only *add* elements, iterate `mask` ascending — every `mask'` with `mask' ⊃ mask` comes later. If transitions *remove* elements, iterate descending.
+Iteration order is the natural topological order on the subset lattice: if transitions only _add_ elements, iterate `mask` ascending — every `mask'` with `mask' ⊃ mask` comes later. If transitions _remove_ elements, iterate descending.
 
 ### State
 
 Two shapes recur:
 
-- **`(mask, position)`** — when which element was placed last matters (TSP, Hamiltonian paths, "best path through a chosen subset"). The mask records *what*, the position records *where you are*.
+- **`(mask, position)`** — when which element was placed last matters (TSP, Hamiltonian paths, "best path through a chosen subset"). The mask records _what_, the position records _where you are_.
 - **`mask`** alone — when only the set matters (assignment, partition into groups, set cover). The "next slot to fill" is implicit: `popcount(mask)` says how many elements have been processed.
 
 Add a position dimension only when transitions actually depend on it. Every extra dimension multiplies the table.
@@ -232,7 +241,7 @@ function tsp(d: number[][]): number {
 
 1. **Check $n$ is small.** $2^n$ table size means $n \le 20$ for comfort, $n \le 22$ at the limit.
 2. **State.** Start with `mask` alone; add a position dimension only if transitions need it.
-3. **Transition.** Either *grow* the mask (add an element) or *peel* it (process the lowest set bit, or iterate submasks).
+3. **Transition.** Either _grow_ the mask (add an element) or _peel_ it (process the lowest set bit, or iterate submasks).
 4. **Order.** Ascending `mask` for growing transitions; descending for peeling.
 5. **Answer.** Almost always at `mask = (1 << n) - 1` (full set), minimized/maximized over the position dimension if present.
 
@@ -245,7 +254,7 @@ function tsp(d: number[][]): number {
 
 ### Pitfalls
 
-- **Operator precedence in JS/TS.** `&` binds *looser* than `===`, so `mask & (1 << i) === 0` parses as `mask & ((1 << i) === 0)`. Always parenthesize: `(mask & (1 << i)) === 0`.
+- **Operator precedence in JS/TS.** `&` binds _looser_ than `===`, so `mask & (1 << i) === 0` parses as `mask & ((1 << i) === 0)`. Always parenthesize: `(mask & (1 << i)) === 0`.
 - **`1 << n` for $n \ge 31$.** JS bitwise ops are 32-bit signed; `1 << 31` is negative. For $n \le 30$ you're safe; beyond that, use `2 ** n` for the table size or switch to `BigInt`.
 - **No native `popcount`.** Either loop (`while (m) { m &= m - 1; c++; }`) or precompute a table for all masks once at startup.
 
@@ -283,7 +292,7 @@ Place the most significant digit $d_0$:
 
 Total: $300 + 50 + 8 = 358$. ✓
 
-To count *with* a digit property, just thread the property along as extra state.
+To count _with_ a digit property, just thread the property along as extra state.
 
 ### State
 

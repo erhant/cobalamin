@@ -1,14 +1,10 @@
 # Summary
 
-# General
-
-- [PDF](./general/pdf.md)
-
-# Techniques
+# Data Structures & Algorithms
 
 - [Binary Search](./dsa/binary-search.md)
 - [Two Pointers](./dsa/two-pointers.md)
-- [Monotonic Stack](./dsa/monotonic-stack.md)
+- [Monotonic Stack & Queue](./dsa/monotonic-stack-queue.md)
 - [Prefix Sums & Difference Arrays](./dsa/prefix-diff.md)
 - [Backtracking](./dsa/backtracking.md)
 - [Dynamic Programming](./dsa/dp.md)
@@ -20,7 +16,7 @@
 - [Sqrt Decomposition](./dsa/sqrt-decomposition.md)
 - [Bit Manipulation](./dsa/bits.md)
 
-# Math
+# Mathematics
 
 - [Arithmetic](./math/arithmetic.md)
 - [Primes](./math/primes.md)
@@ -35,10 +31,16 @@
 - [Discrete Logarithm](./cryptography/discrete-log.md)
 - [Digital Signatures](./cryptography/signatures.md)
 
-# Rust
+# Rust Programming
 
 - [Associated Types vs. Generics](./rust/associated-types-vs-generics.md)
 - [`Copy` vs. `Clone`](./rust/copy-vs-clone.md)
 - [Lifetimes](./rust/lifetimes.md)
 - [`impl Trait` vs. `dyn Trait`](./rust/impl-trait-vs-dyn-trait.md)
 - [Interior Mutability](./rust/interior-mutability.md)
+- [Ordering Threads](./rust/ordering-threads.md)
+
+# Miscellaneous
+
+- [PDF](./miscellaneous/pdf.md)
+- [Git](./miscellaneous/git.md)

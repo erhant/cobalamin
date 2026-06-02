@@ -49,6 +49,9 @@ $O(n \cdot \tau(n))$ where $\tau(n)$ is the number of divisors.
 
 **Pitfall.** A common bug is iterating `k` (the repetition count) only up to `√n`. That misses periods smaller than `√n`. E.g. `s = "abc".repeat(5)` (`n = 15`, period `3`) needs `k = 5`, but `5 * 5 > 15`. Either iterate all `k ∈ [2, n]`, or iterate substring lengths `d ∈ [1, n/2]` — don't skip half the divisor pair.
 
+> [!TIP]
+> [459 Repeated Substring Pattern](https://leetcode.com/problems/repeated-substring-pattern/) · [796 Rotate String](https://leetcode.com/problems/rotate-string/)
+
 ## Palindromes
 
 ### Expand-Around-Center
@@ -106,6 +109,9 @@ function manacher(s: string): number[] {
 ```
 
 The trick: inside the current `(center, right)` window, the mirror position `2*center - i` already has its answer, and reflection gives a free lower bound for `p[i]`. Then we only extend past what we know. The `right` pointer only moves forward — that's what makes it linear.
+
+> [!TIP]
+> [5 Longest Palindromic Substring](https://leetcode.com/problems/longest-palindromic-substring/) · [647 Palindromic Substrings](https://leetcode.com/problems/palindromic-substrings/) · [516 Longest Palindromic Subsequence](https://leetcode.com/problems/longest-palindromic-subsequence/) (DP, see [DP § 2D DP](./dp.md#2d-dp)) · [1763 Longest Nice Substring](https://leetcode.com/problems/longest-nice-substring/) (divide-and-conquer)
 
 ## Pattern Matching
 
@@ -218,6 +224,9 @@ Average $O(n + m)$, worst case $O(nm)$ on adversarial hash collisions. A large p
 
 The reason to reach for it: multiple patterns, 2D matching, comparing arbitrary substrings in $O(1)$ after $O(n)$ preprocessing.
 
+> [!TIP]
+> [28 Find the Index of the First Occurrence](https://leetcode.com/problems/find-the-index-of-the-first-occurrence-in-a-string/) · [438 Find All Anagrams in a String](https://leetcode.com/problems/find-all-anagrams-in-a-string/) · [187 Repeated DNA Sequences](https://leetcode.com/problems/repeated-dna-sequences/) · [49 Group Anagrams](https://leetcode.com/problems/group-anagrams/) · [387 First Unique Character in a String](https://leetcode.com/problems/first-unique-character-in-a-string/)
+
 ## Trie (Prefix Tree)
 
 One node per character along a path; words end at a node marked terminal. Good for prefix queries and multi-pattern work.
@@ -261,6 +270,9 @@ class Trie {
 Insert / search / prefix-check are all $O(L)$ where `L` is the word length, independent of the dictionary size.
 
 Extends to **Aho-Corasick** (KMP over a trie) for matching many patterns at once in $O(n + m + z)$ where `z` is the number of matches.
+
+> [!TIP]
+> [208 Implement Trie](https://leetcode.com/problems/implement-trie-prefix-tree/) · [211 Design Add and Search Words Data Structure](https://leetcode.com/problems/design-add-and-search-words-data-structure/) · [212 Word Search II](https://leetcode.com/problems/word-search-ii/) · [648 Replace Words](https://leetcode.com/problems/replace-words/)
 
 ## Cheat Sheet
 

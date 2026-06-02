@@ -23,7 +23,7 @@ When to reach for them:
 - **$O(1)$ range updates + $O(n)$ finalize**, when all updates arrive before any query.
 - **Counting subarrays with an additive property** (sums to $k$, divisible by $k$, ...) by pairing prefix sums against a hash map — the running sum lets any subarray sum be read as a difference of two values you've already seen.
 - **2D versions** via inclusion-exclusion, with a specialized row-sweep form when every query shares a fixed corner.
-- **Dynamic case** — if the array itself keeps changing between queries, plain prefix sums are wrong on the very next update; switch to a Fenwick or segment tree.
+- **Dynamic case** — if the array itself keeps changing between queries, plain prefix sums are wrong on the very next update; switch to a [Fenwick Tree](./fenwick-tree.md) or [Segment Tree](./segment-tree.md).
 
 ## Basics
 
@@ -55,6 +55,9 @@ for (let i = 1; i < n; i++) d[i] += d[i - 1];
 ```
 
 The `+v` at `l` "turns on" the increment; the `-v` at `r + 1` "turns it off"; the prefix-sum sweep applies each increment to exactly the positions it should cover. This same cancellation idea — place an effect and place its inverse one step past the range — generalizes to the multiplicative and strided variants later in this chapter.
+
+> [!TIP]
+> [1674 Minimum Moves to Make Array Complementary](https://leetcode.com/problems/minimum-moves-to-make-array-complementary/) · [2615 Sum of Distances](https://leetcode.com/problems/sum-of-distances/) · [3356 Zero Array Transformation II](https://leetcode.com/problems/zero-array-transformation-ii/) · [1109 Corporate Flight Bookings](https://leetcode.com/problems/corporate-flight-bookings/)
 
 ## Prefix Sum + Hash Map for Subarray Queries
 
@@ -102,6 +105,9 @@ for (const n of nums) {
 **Why not $k - \text{rem}$?** That would find pairs where remainders _add_ to $k$, which is a different condition. Divisibility requires $\text{sum}_r \bmod k = \text{sum}_l \bmod k$, not $\text{sum}_r \bmod k + \text{sum}_l \bmod k = k$.
 
 **Why `((sum % k) + k) % k`?** JS gives negative remainders for negative numbers (`-3 % 5 === -3`). The `+ k) % k` normalizes to $[0, k)$.
+
+> [!TIP]
+> [560 Subarray Sum Equals K](https://leetcode.com/problems/subarray-sum-equals-k/) · [974 Subarray Sums Divisible by K](https://leetcode.com/problems/subarray-sums-divisible-by-k/) · [525 Contiguous Array](https://leetcode.com/problems/contiguous-array/)
 
 ## Counting Triplets with Prefix Factoring
 
@@ -213,31 +219,6 @@ OR is idempotent, so double-counting the overlap doesn't hurt — no subtract te
 
 The pattern applies when **every query rectangle shares a fixed corner** (here, $(0, 0)$). If you need arbitrary sub-rectangles $(r_1, c_1) \to (r_2, c_2)$, you need the full 2D prefix grid — the row-sweep version can't answer those in $O(1)$.
 
-## Fenwick Tree (Binary Indexed Tree)
+## Mutable Variant
 
-$O(\log n)$ point update + prefix sum queries:
-
-```typescript
-class FenwickTree {
-  tree: number[];
-  constructor(n: number) {
-    this.tree = new Array(n + 1).fill(0);
-  }
-
-  update(i: number, delta: number) {
-    for (; i < this.tree.length; i += i & -i) this.tree[i] += delta;
-  }
-
-  prefix(i: number): number {
-    let sum = 0;
-    for (; i > 0; i -= i & -i) sum += this.tree[i];
-    return sum;
-  }
-
-  query(l: number, r: number): number {
-    return this.prefix(r) - this.prefix(l - 1);
-  }
-}
-```
-
-Each index is responsible for a range determined by its **lowest set bit** ($i \,\&\, (-i)$).
+Once updates and queries interleave, prefix sums are stale the moment you write. The drop-in replacement is a [Fenwick Tree](./fenwick-tree.md) — $O(\log n)$ point update and prefix query, ~10 lines of code. Reach for a [Segment Tree](./segment-tree.md) instead when the aggregate isn't invertible (min, max, gcd) or when you also need range updates.

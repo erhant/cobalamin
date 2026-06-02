@@ -30,6 +30,9 @@ for (let c_i = nums.length - 1; c_i >= 2; c_i--) {
 
 The converging pattern counts **many valid pairs in one step** (`ans += b_i - a_i`) rather than iterating through them.
 
+> [!TIP]
+> [11 Container With Most Water](https://leetcode.com/problems/container-with-most-water/) · [42 Trapping Rain Water](https://leetcode.com/problems/trapping-rain-water/) · [977 Squares of a Sorted Array](https://leetcode.com/problems/squares-of-a-sorted-array/) · [611 Valid Triangle Number](https://leetcode.com/problems/valid-triangle-number/)
+
 ### Three Sum
 
 Same idea, but skip duplicates at three points:
@@ -83,3 +86,10 @@ for (let i = 0; i < arr.length; i++) {
 ```
 
 Track active sources in a window; multiply when you hit a target. $O(n)$ single pass.
+
+> [!TIP]
+> [3 Longest Substring Without Repeating Characters](https://leetcode.com/problems/longest-substring-without-repeating-characters/) · [438 Find All Anagrams in a String](https://leetcode.com/problems/find-all-anagrams-in-a-string/) · [2461 Maximum Sum of Distinct Subarrays With Length K](https://leetcode.com/problems/maximum-sum-of-distinct-subarrays-with-length-k/) · [76 Minimum Window Substring](https://leetcode.com/problems/minimum-window-substring/)
+
+## Linked-List Two Pointers
+
+Floyd's cycle algorithm, fast/slow for the middle, and the gap-of-$k$ runner are all linked-list applications of the same idea. See [Linked Lists § Fast/Slow Pointers](./linked-lists.md#fastslow-pointers).

@@ -110,6 +110,9 @@ Two subtleties:
 
 Complexity is $O(N \log \log N)$ — the harmonic-ish sum $\sum_{p \le N} N / p$ over primes.
 
+> [!TIP]
+> [204 Count Primes](https://leetcode.com/problems/count-primes/) · [2523 Closest Prime Numbers in Range](https://leetcode.com/problems/closest-prime-numbers-in-range/) · [952 Largest Component Size by Common Factor](https://leetcode.com/problems/largest-component-size-by-common-factor/) (SPF + DSU)
+
 ### Variant: smallest prime factor (SPF)
 
 The **smallest prime factor** of $n$, written $\operatorname{spf}(n)$, is the smallest prime dividing $n$ — for primes themselves $\operatorname{spf}(p) = p$. E.g. $\operatorname{spf}(12) = 2$, $\operatorname{spf}(35) = 5$, $\operatorname{spf}(7) = 7$.

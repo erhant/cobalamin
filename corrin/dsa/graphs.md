@@ -72,6 +72,9 @@ $O(V + E)$. Using a `head` index instead of `Array.shift()` avoids the $O(n)$ re
 
 **0-1 BFS.** When edge weights are only $0$ or $1$, a plain `Deque` suffices: push `0`-weight edges to the front, `1`-weight to the back. Same $O(V + E)$ as BFS, no heap needed.
 
+> [!TIP]
+> [102 Binary Tree Level Order Traversal](https://leetcode.com/problems/binary-tree-level-order-traversal/) · [994 Rotting Oranges](https://leetcode.com/problems/rotting-oranges/) (multi-source) · [542 01 Matrix](https://leetcode.com/problems/01-matrix/) (multi-source) · [127 Word Ladder](https://leetcode.com/problems/word-ladder/)
+
 ## DFS
 
 Depth-first. Recursion is the cleanest form; switch to an explicit stack only when the call depth threatens overflow.
@@ -159,6 +162,9 @@ order.reverse();
 
 For cycle detection in this form, use the three-color variant above instead of the boolean `visited`.
 
+> [!TIP]
+> [207 Course Schedule](https://leetcode.com/problems/course-schedule/) · [210 Course Schedule II](https://leetcode.com/problems/course-schedule-ii/) · [269 Alien Dictionary](https://leetcode.com/problems/alien-dictionary/) · [802 Find Eventual Safe States](https://leetcode.com/problems/find-eventual-safe-states/)
+
 ## Dijkstra — Non-negative Weighted Shortest Paths
 
 BFS generalized to non-negative edge weights. Min-heap keyed on the best known distance so far:
@@ -215,6 +221,9 @@ for (const [dr, dc] of DIRS) {
 "Number of islands", "rotting oranges", "shortest path in a binary matrix", "flood fill", "word search" — all grid-as-graph. BFS when the question is "fewest steps"; DFS when it's "is it reachable" or "how big is this component".
 
 **Encoding cells as integers.** `id = r * cols + c` turns 2D coordinates into a 1D vertex ID — useful when you want to reuse generic graph code (DSU, adjacency lists) without nesting arrays.
+
+> [!TIP]
+> [200 Number of Islands](https://leetcode.com/problems/number-of-islands/) · [463 Island Perimeter](https://leetcode.com/problems/island-perimeter/) · [695 Max Area of Island](https://leetcode.com/problems/max-area-of-island/) · [1091 Shortest Path in Binary Matrix](https://leetcode.com/problems/shortest-path-in-binary-matrix/) · [79 Word Search](https://leetcode.com/problems/word-search/)
 
 ## Cheat Sheet
 

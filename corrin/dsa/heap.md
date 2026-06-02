@@ -146,6 +146,9 @@ function kthLargest(nums: number[], k: number): number {
 
 **Frequency-based selection.** Top-$k$ frequent elements: count first, then push `(count, value)` into a heap and pop $k$ times.
 
+> [!TIP]
+> [215 Kth Largest Element in an Array](https://leetcode.com/problems/kth-largest-element-in-an-array/) (also doable in average $O(n)$ via Quickselect) · [347 Top K Frequent Elements](https://leetcode.com/problems/top-k-frequent-elements/) · [295 Find Median from Data Stream](https://leetcode.com/problems/find-median-from-data-stream/) · [23 Merge k Sorted Lists](https://leetcode.com/problems/merge-k-sorted-lists/) · [253 Meeting Rooms II](https://leetcode.com/problems/meeting-rooms-ii/)
+
 ## Lazy Deletion
 
 The textbook decrease-key / arbitrary-remove is $O(n)$ to find the entry and $O(\log n)$ to fix the heap — usually not worth the bookkeeping. The standard workaround:

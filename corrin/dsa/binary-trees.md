@@ -20,6 +20,9 @@ Problem patterns to recognize:
 
 General graph algorithms (BFS/DFS, cycle detection, shortest paths, topological order) live in [Graphs](./graphs.md). The techniques below are specifically those that exploit the two-children-per-node structure.
 
+> [!TIP]
+> **Recursive primitives:** [226 Invert Binary Tree](https://leetcode.com/problems/invert-binary-tree/) · [101 Symmetric Tree](https://leetcode.com/problems/symmetric-tree/) · [104 Maximum Depth](https://leetcode.com/problems/maximum-depth-of-binary-tree/) · [543 Diameter of Binary Tree](https://leetcode.com/problems/diameter-of-binary-tree/) · [236 Lowest Common Ancestor](https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-tree/) · [124 Binary Tree Maximum Path Sum](https://leetcode.com/problems/binary-tree-maximum-path-sum/)
+
 ## Traversal Orders
 
 Given a tree:
@@ -126,6 +129,9 @@ This works because postorder (`left, right, cur`) is the reverse of a modified p
 | Inorder   | Drill left, pop → visit → go right              |
 | Postorder | Modified preorder (right before left) → reverse |
 
+> [!TIP]
+> **Traversals & BST inorder property:** [144 Binary Tree Preorder](https://leetcode.com/problems/binary-tree-preorder-traversal/) · [94 Binary Tree Inorder](https://leetcode.com/problems/binary-tree-inorder-traversal/) · [145 Binary Tree Postorder](https://leetcode.com/problems/binary-tree-postorder-traversal/) · [98 Validate Binary Search Tree](https://leetcode.com/problems/validate-binary-search-tree/) (inorder is sorted) · [501 Find Mode in BST](https://leetcode.com/problems/find-mode-in-binary-search-tree/) (inorder groups duplicates) · [230 Kth Smallest Element in BST](https://leetcode.com/problems/kth-smallest-element-in-a-bst/)
+
 ### Reverse Preorder (cur, right, left)
 
 Swapping the child visit order gives a **reverse preorder** (NRL). Useful when you need the rightmost node at each depth first — e.g. "right side view" of a tree:
@@ -143,6 +149,9 @@ while (stack.length) {
 ```
 
 Since right children are popped first, the first node seen at each depth is always the rightmost. The `depth === result.length` check ensures we only record it once per level.
+
+> [!TIP]
+> [199 Binary Tree Right Side View](https://leetcode.com/problems/binary-tree-right-side-view/) · [515 Find Largest Value in Each Tree Row](https://leetcode.com/problems/find-largest-value-in-each-tree-row/)
 
 ## Serialization (Subtree Hashing)
 
@@ -190,6 +199,9 @@ const key = `(${node.val},${left},${right})`; // uniform, safe
 ```
 
 The parens explicitly encode tree structure, making ordering irrelevant.
+
+> [!TIP]
+> [652 Find Duplicate Subtrees](https://leetcode.com/problems/find-duplicate-subtrees/) · [297 Serialize and Deserialize Binary Tree](https://leetcode.com/problems/serialize-and-deserialize-binary-tree/) · [572 Subtree of Another Tree](https://leetcode.com/problems/subtree-of-another-tree/)
 
 ## Max Width (Heap Indexing)
 

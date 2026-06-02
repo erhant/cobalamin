@@ -126,6 +126,9 @@ for (let i = 1; i < n; i++)
 return Math.max(...dp);
 ```
 
+> [!TIP]
+> [70 Climbing Stairs](https://leetcode.com/problems/climbing-stairs/) · [198 House Robber](https://leetcode.com/problems/house-robber/) · [300 Longest Increasing Subsequence](https://leetcode.com/problems/longest-increasing-subsequence/) · [1871 Jump Game VII](https://leetcode.com/problems/jump-game-vii/) (1D DP + sliding-window sum)
+
 ## 2D DP
 
 State indexed by two integers — typically two strings/arrays, or one array plus a numeric parameter.
@@ -167,6 +170,9 @@ for (let i = 1; i <= a.length; i++) {
 ```
 
 The same skeleton (LCS, palindrome partitioning, regex matching) recurs constantly — once you spot two indices over two sequences, write the recurrence over `(i, j)` and look at the three or four neighbors.
+
+> [!TIP]
+> [62 Unique Paths](https://leetcode.com/problems/unique-paths/) · [1143 Longest Common Subsequence](https://leetcode.com/problems/longest-common-subsequence/) · [516 Longest Palindromic Subsequence](https://leetcode.com/problems/longest-palindromic-subsequence/) · [5 Longest Palindromic Substring](https://leetcode.com/problems/longest-palindromic-substring/) (also see [Strings § Manacher's](./strings.md)) · [72 Edit Distance](https://leetcode.com/problems/edit-distance/)
 
 ## DP on Other Structures
 
@@ -350,6 +356,9 @@ function countWithDigitSum(N: number, s: number): number {
 ### Complexity
 
 $O(\text{len}(N) \cdot |\text{property-state}| \cdot 10)$ — for the digit-sum example, $O(\log_{10} N \cdot s \cdot 10)$. The factor $10$ is the per-position branching; the rest is state-space size.
+
+> [!TIP]
+> [233 Number of Digit One](https://leetcode.com/problems/number-of-digit-one/) · [902 Numbers At Most N Given Digit Set](https://leetcode.com/problems/numbers-at-most-n-given-digit-set/) · [600 Non-negative Integers without Consecutive Ones](https://leetcode.com/problems/non-negative-integers-without-consecutive-ones/) · [1012 Numbers With Repeated Digits](https://leetcode.com/problems/numbers-with-repeated-digits/)
 
 ## Common Pitfalls
 

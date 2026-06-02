@@ -39,6 +39,9 @@ function binarySearch(arr: number[], target: number): number {
 
 You can use this when you need to distinguish "found it" from "not found" at the element level, i.e. simply searching for an element.
 
+> [!TIP]
+> [704 Binary Search](https://leetcode.com/problems/binary-search/) · [153 Find Minimum in Rotated Sorted Array](https://leetcode.com/problems/find-minimum-in-rotated-sorted-array/) · [33 Search in Rotated Sorted Array](https://leetcode.com/problems/search-in-rotated-sorted-array/)
+
 ## Half-Open / Boundary Search (`partitionPoint`)
 
 Search interval is $[l, r)$, right end exclusive. Find the **first index where a predicate becomes true** — equivalently, the boundary between the `false` region and the `true` region.
@@ -173,6 +176,9 @@ return mid; // ← wrong
 
 This pattern generalizes: whenever you need the largest/smallest value where a monotonic condition flips (minimum capacity, smallest speed, largest dividend), binary-search over the answer space.
 
+> [!TIP]
+> [69 Sqrt(x)](https://leetcode.com/problems/sqrtx/) · [367 Valid Perfect Square](https://leetcode.com/problems/valid-perfect-square/)
+
 ## Max of Min / Min of Max
 
 A whole family of problems asks for the **largest minimum** or **smallest maximum** of some derived quantity: "place $k$ items so the smallest gap is as large as possible", "split an array into $m$ chunks so the heaviest chunk is as light as possible", "pick $k$ workers so the slowest finishes earliest". The configuration space is exponential, but the answer is one number — and feasibility in that number is monotone, so binary-search **the answer** itself.
@@ -230,3 +236,6 @@ function maxMinDistance(pos: number[], k: number): number {
 $O(n \log n)$ for the sort plus $O(n \log(\text{range}))$ for the search.
 
 Same shape covers "maximize the minimum Manhattan distance between $k$ points on a square's boundary" (unroll the perimeter to 1D, then it's aggressive cows on a circular track), "split array into $m$ subarrays minimizing the largest sum", "minimum eating speed to finish all bananas in $h$ hours", and most LeetCode "maximize the minimum ..." / "minimize the maximum ..." prompts. The hard part is usually writing `feasible` — once it's there, the binary search is mechanical.
+
+> [!TIP]
+> [2602 Minimum Operations to Make All Array Elements Equal](https://leetcode.com/problems/minimum-operations-to-make-all-array-elements-equal/) · [3356 Zero Array Transformation II](https://leetcode.com/problems/zero-array-transformation-ii/) · [875 Koko Eating Bananas](https://leetcode.com/problems/koko-eating-bananas/) · [1011 Capacity To Ship Packages](https://leetcode.com/problems/capacity-to-ship-packages-within-d-days/) · [410 Split Array Largest Sum](https://leetcode.com/problems/split-array-largest-sum/)

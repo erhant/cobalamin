@@ -9,17 +9,22 @@
 - [Backtracking](./dsa/backtracking.md)
 - [Dynamic Programming](./dsa/dp.md)
 - [Binary Trees](./dsa/binary-trees.md)
+- [Linked Lists](./dsa/linked-lists.md)
+- [In-place Array Tricks](./dsa/in-place-arrays.md)
 - [Heap](./dsa/heap.md)
 - [Graphs](./dsa/graphs.md)
 - [Union-Find](./dsa/union-find.md)
 - [Strings](./dsa/strings.md)
 - [Sqrt Decomposition](./dsa/sqrt-decomposition.md)
+- [Segment Tree](./dsa/segment-tree.md)
+  - [Fenwick Tree](./dsa/fenwick-tree.md)
 - [Bit Manipulation](./dsa/bits.md)
 
 # Mathematics
 
 - [Arithmetic](./math/arithmetic.md)
 - [Primes](./math/primes.md)
+- [Counting](./math/counting.md)
 - [Probability](./math/probability.md)
 
 # Cryptography

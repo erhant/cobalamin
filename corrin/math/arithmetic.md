@@ -91,6 +91,9 @@ function shamirStraus(
 
 > In additive group notation (e.g. elliptic curves), this computes $[a]B + [c]D$ — the same idea powers fast ECDSA signature verification.
 
+> [!TIP]
+> [50 Pow(x, n)](https://leetcode.com/problems/powx-n/) · [372 Super Pow](https://leetcode.com/problems/super-pow/) · [1922 Count Good Numbers](https://leetcode.com/problems/count-good-numbers/)
+
 ## GCD (Greatest Common Divisor)
 
 Euclidean algorithm — repeatedly replace the larger number with the remainder until one reaches zero. Runs in $O(\log \min(a, b))$.
@@ -105,6 +108,9 @@ function gcd(a: number, b: number): number {
 ```
 
 LCM follows directly: $\operatorname{lcm}(a, b) = \frac{a}{\gcd(a, b)} \cdot b$ (divide first to avoid overflow).
+
+> [!TIP]
+> [1979 Find Greatest Common Divisor of Array](https://leetcode.com/problems/find-greatest-common-divisor-of-array/) · [914 X of a Kind in a Deck of Cards](https://leetcode.com/problems/x-of-a-kind-in-a-deck-of-cards/) · [365 Water and Jug Problem](https://leetcode.com/problems/water-and-jug-problem/) (Bézout's identity)
 
 ## Extended GCD (XGCD)
 

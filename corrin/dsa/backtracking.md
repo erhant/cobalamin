@@ -118,6 +118,9 @@ function permute(nums: number[]): number[][] {
 
 Always **snapshot** (`[...current]`) when recording results, otherwise you push references to the same mutating array.
 
+> [!TIP]
+> [46 Permutations](https://leetcode.com/problems/permutations/) · [47 Permutations II](https://leetcode.com/problems/permutations-ii/) · [17 Letter Combinations of a Phone Number](https://leetcode.com/problems/letter-combinations-of-a-phone-number/) · [78 Subsets](https://leetcode.com/problems/subsets/) · [90 Subsets II](https://leetcode.com/problems/subsets-ii/)
+
 ## Combination Sum Variants
 
 ### Distinct candidates, reuse allowed (Combination Sum I)
@@ -231,3 +234,6 @@ function generateParenthesis(n: number): string[] {
 ```
 
 Counters travel as parameters (cheap, immutable copies); the prefix is a mutable list (mutate-recurse-undo, same as before). `cur.join("")` snapshots the string at record time — pushing `cur` itself would alias the live array. The "validity" predicate isn't checked after generating a candidate — it's baked into the two `if` guards, which is the cleanest form of pruning: invalid extensions are never tried in the first place.
+
+> [!TIP]
+> [22 Generate Parentheses](https://leetcode.com/problems/generate-parentheses/) · [51 N-Queens](https://leetcode.com/problems/n-queens/) · [79 Word Search](https://leetcode.com/problems/word-search/) · [37 Sudoku Solver](https://leetcode.com/problems/sudoku-solver/)

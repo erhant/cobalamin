@@ -22,6 +22,9 @@ for (let i = 0; i < nums.length; i++) {
 
 This skeleton — push index, pop while violation, record answer on pop — generalizes to **largest rectangle in histogram**, **daily temperatures**, **trapping rain water**, [**remove duplicate letters**](https://leetcode.com/problems/remove-duplicate-letters/), and the two problems below.
 
+> [!TIP]
+> [739 Daily Temperatures](https://leetcode.com/problems/daily-temperatures/) · [496 Next Greater Element I](https://leetcode.com/problems/next-greater-element-i/) · [503 Next Greater Element II](https://leetcode.com/problems/next-greater-element-ii/) · [84 Largest Rectangle in Histogram](https://leetcode.com/problems/largest-rectangle-in-histogram/) · [20 Valid Parentheses](https://leetcode.com/problems/valid-parentheses/) (plain stack)
+
 ### Remove Duplicate Letters (Lexicographic Ordering)
 
 Three mechanisms work together:
@@ -126,3 +129,6 @@ A stack only answers questions anchored at the current scan position (nearest-gr
 - **Shortest subarray with sum ≥ K** (with negatives) — monotonic deque over prefix-sum indices, increasing values, gives $O(n)$.
 - **Constrained 1D DP** — recurrences like $dp[i] = \min_{i-k \le j < i} dp[j] + c_i$ are sliding-window minima; a monotonic deque turns the inner $O(k)$ scan into $O(1)$ amortized.
 - **Jump Game VI** and similar — same DP-with-window-min pattern.
+
+> [!TIP]
+> [239 Sliding Window Maximum](https://leetcode.com/problems/sliding-window-maximum/) · [1696 Jump Game VI](https://leetcode.com/problems/jump-game-vi/) · [862 Shortest Subarray with Sum at Least K](https://leetcode.com/problems/shortest-subarray-with-sum-at-least-k/)

@@ -109,6 +109,9 @@ function popcount32(n: number): number {
 
 The magic constants pair up bits, then nibbles, then bytes; the final multiply broadcasts every byte's count into the top byte, and the shift extracts it.
 
+> [!TIP]
+> [191 Number of 1 Bits](https://leetcode.com/problems/number-of-1-bits/) · [338 Counting Bits](https://leetcode.com/problems/counting-bits/) · [231 Power of Two](https://leetcode.com/problems/power-of-two/)
+
 ## Iterating set bits
 
 ```typescript
@@ -185,6 +188,9 @@ The mask `0xaaaaaaaa` is `1010…1010` (every odd bit), `0x55555555` is `0101…
 
 Used in FFT (bit-reversal permutation of inputs), hash construction, and reversing arbitrary-width fields after shifting them to the top of the word.
 
+> [!TIP]
+> [190 Reverse Bits](https://leetcode.com/problems/reverse-bits/)
+
 ## XOR identities
 
 XOR is its own inverse: `a ^ a === 0` and `a ^ 0 === a`. That gives a handful of one-liners:
@@ -192,6 +198,9 @@ XOR is its own inverse: `a ^ a === 0` and `a ^ 0 === a`. That gives a handful of
 - **Find the single non-repeated element** in an array where every other element appears twice: XOR everything together; pairs cancel, the loner survives. $O(n)$ time, $O(1)$ space.
 - **Swap without a temp** — `a ^= b; b ^= a; a ^= b;`. Mostly a curiosity; the temp version is faster and clearer.
 - **Toggle on a flag** — `n ^ (1 << i)` toggles bit $i$ unconditionally, while `n ^ (flag << i)` toggles only when `flag` is 1. Branch-free.
+
+> [!TIP]
+> [136 Single Number](https://leetcode.com/problems/single-number/) · [137 Single Number II](https://leetcode.com/problems/single-number-ii/) · [260 Single Number III](https://leetcode.com/problems/single-number-iii/) · [268 Missing Number](https://leetcode.com/problems/missing-number/) (XOR variant)
 
 ## Gray code
 

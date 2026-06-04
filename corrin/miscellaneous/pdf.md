@@ -10,6 +10,6 @@
 ## Joining Photos of PDFs into a Single PDF
 
 - Open the PDF with 1 photo per page
-- Open print dialog (Cmd + P)
+- Open print dialog <kbd>CMD + P</kbd>
 - Select "pages per sheet" and set it to 2, 4, or 6 depending on how many photos you want per page; play around with scaling and orientation to get the best layout.
 - Save as PDF again.

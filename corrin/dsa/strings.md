@@ -111,7 +111,7 @@ function manacher(s: string): number[] {
 The trick: inside the current `(center, right)` window, the mirror position `2*center - i` already has its answer, and reflection gives a free lower bound for `p[i]`. Then we only extend past what we know. The `right` pointer only moves forward — that's what makes it linear.
 
 > [!TIP]
-> [5 Longest Palindromic Substring](https://leetcode.com/problems/longest-palindromic-substring/) · [647 Palindromic Substrings](https://leetcode.com/problems/palindromic-substrings/) · [516 Longest Palindromic Subsequence](https://leetcode.com/problems/longest-palindromic-subsequence/) (DP, see [DP § 2D DP](./dp.md#2d-dp)) · [1763 Longest Nice Substring](https://leetcode.com/problems/longest-nice-substring/) (divide-and-conquer)
+> [5 Longest Palindromic Substring](https://leetcode.com/problems/longest-palindromic-substring/) · [647 Palindromic Substrings](https://leetcode.com/problems/palindromic-substrings/) · [516 Longest Palindromic Subsequence](https://leetcode.com/problems/longest-palindromic-subsequence/) (DP, see [2D DP](./dp-2d.md)) · [1763 Longest Nice Substring](https://leetcode.com/problems/longest-nice-substring/) (divide-and-conquer)
 
 ## Pattern Matching
 

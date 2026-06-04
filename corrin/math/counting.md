@@ -128,4 +128,4 @@ When $m$ is too large for $2^m$ subsets, look for symmetry — often all $\binom
 | Count avoiding many events                            | Inclusion-exclusion                        | Alternating sum over subsets        |
 | "Must repeat by step $n$"                             | Pigeonhole                                 | $\le k$ states ⇒ cycle by step $k$ |
 | Lattice paths, balanced parens, BST shapes            | Catalan numbers                            | $C_n = \binom{2n}{n}/(n+1)$         |
-| Counting with a digit predicate                       | [Digit DP](../dsa/dp.md#digit-dp)          | Position × tight flag × state       |
+| Counting with a digit predicate                       | [Digit DP](../dsa/dp-digit.md)             | Position × tight flag × state       |

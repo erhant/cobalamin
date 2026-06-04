@@ -1,6 +1,6 @@
 # Bit Manipulation
 
-Working on integers one bit at a time — useful for compact set encodings (see [bitmask DP](./dp.md#bitmask-dp)), tight inner loops, hash mixing, low-level encoding, and the occasional one-liner that's clearer than its branchy equivalent.
+Working on integers one bit at a time — useful for compact set encodings (see [Bitmask DP](./dp-bitmask.md)), tight inner loops, hash mixing, low-level encoding, and the occasional one-liner that's clearer than its branchy equivalent.
 
 In JavaScript / TypeScript, bitwise operators coerce their operands to **32-bit signed** integers. Two consequences worth keeping in front of mind:
 

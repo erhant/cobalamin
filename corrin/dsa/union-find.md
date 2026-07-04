@@ -17,38 +17,68 @@ It's the right tool whenever you're building up an **equivalence relation increm
 
 ## Implementation
 
-Two optimizations, both essential:
-
-- **Path compression.** During `find`, rewire every node on the path to point directly at the root. The next `find` on any of them is $O(1)$.
-- **Union by rank.** `rank[x]` is an upper bound on the height of the tree rooted at `x`. Always hang the shorter tree under the taller one so the combined tree stays shallow.
+Start with the smallest thing that works: parent pointers plus **path compression**. Each node stores a pointer to its parent; roots point at themselves. During `find`, rewire every node on the path to point directly at the root, so the next `find` on any of them is $O(1)$.
 
 ```typescript
 class UnionFind {
-  // parent (FAther) pointers
-  // roots satisfy `fa[i] === i`
-  fa: number[];
+  // representative (parent) pointers
+  // roots satisfy `repr[i] === i`
+  repr: number[];
+
+  constructor(n: number) {
+    this.repr = new Array(n);
+    for (let i = 0; i < n; i++) this.repr[i] = i;
+  }
+
+  find(x: number): number {
+    if (this.repr[x] !== x) {
+      // path compression: point x straight at the root, and every node
+      // above it too, as the recursion unwinds
+      this.repr[x] = this.find(this.repr[x]);
+    }
+    return this.repr[x];
+  }
+
+  union(x: number, y: number): void {
+    x = this.find(x);
+    y = this.find(y);
+    // hang one root under the other — arbitrary, no balancing yet
+    if (x !== y) this.repr[x] = y;
+  }
+}
+```
+
+This is already enough for most problems: with path compression, each operation is $O(\log n)$ amortized — flat enough that you won't notice it for contest-sized `n`. The one weak spot is `union` hanging roots arbitrarily: an adversarial union order can grow a long chain before a `find` compresses it.
+
+**Union by rank** closes that gap. `rank[x]` is an upper bound on the height of the tree rooted at `x`; always hang the shorter tree under the taller one so the combined tree stays shallow. Only `union` changes — plus the new field and its init.
+
+```typescript
+class UnionFind {
+  repr: number[];
   // rank (upper bound on tree height) for union by rank
   rank: number[];
 
   constructor(n: number) {
-    this.fa = new Array(n);
+    this.repr = new Array(n);
     this.rank = new Array(n).fill(0);
-    for (let i = 0; i < n; i++) this.fa[i] = i;
+    for (let i = 0; i < n; i++) this.repr[i] = i;
   }
 
   find(x: number): number {
-    if (this.fa[x] !== x) {
-      this.fa[x] = this.find(this.fa[x]);
+    if (this.repr[x] !== x) {
+      this.repr[x] = this.find(this.repr[x]);
     }
-    return this.fa[x];
+    return this.repr[x];
   }
 
   union(x: number, y: number): void {
     x = this.find(x);
     y = this.find(y);
     if (x === y) return;
+    // attach the shorter tree under the taller root
     if (this.rank[x] < this.rank[y]) [x, y] = [y, x];
-    this.fa[y] = x;
+    this.repr[y] = x;
+    // ranks only tie-break upward when both trees were equally tall
     if (this.rank[x] === this.rank[y]) this.rank[x]++;
   }
 }
@@ -63,7 +93,7 @@ With both optimizations, each operation is $O(\alpha(n))$ amortized — inverse 
 The two-op skeleton above covers most problems unchanged. A handful of small variants show up often enough to recognize on sight — the problem hints which to reach for.
 
 - **Component size / count.** Replace `rank[]` with `size[]`: attach smaller under larger, sum sizes on merge. Same $\alpha(n)$ bound, and `size[find(x)]` answers component-size queries for free. Track a separate `components` counter (start at $n$, decrement on each successful union) for instant "how many groups?".
-- **Non-integer keys.** If nodes aren't $0 \ldots n - 1$ (strings, coordinates, pairs), either pre-map each distinct key to an index, or replace `fa: number[]` with `fa: Map<K, K>` and initialize entries lazily on first touch. The algorithm is unchanged; only the storage changes.
+- **Non-integer keys.** If nodes aren't $0 \ldots n - 1$ (strings, coordinates, pairs), either pre-map each distinct key to an index, or replace `repr: number[]` with `repr: Map<K, K>` and initialize entries lazily on first touch. The algorithm is unchanged; only the storage changes.
 - **Weighted (potential) DSU.** Alongside the parent pointer, store an offset `w[x]` meaning "distance from `x` to its parent" under some group operation (addition, XOR, ratio). Answers the _relation_ between `x` and `y`, not just whether they're related. Used for "given constraints $a_i - a_j = v_{ij}$, are they consistent?" or currency-conversion graphs. `find` must accumulate the offset along the path to the root as it compresses.
 - **Bipartite / 2-coloring DSU.** Potential DSU where the offset is a single parity bit. A new edge $(u, v)$ that would close an odd-length cycle means the graph isn't bipartite. Cleaner than online BFS 2-coloring when edges arrive one at a time.
 - **Rollback / offline DSU.** Drop path compression (you can't cheaply undo a flattened path) and keep union-by-rank. Push enough state (the two roots touched, their previous `rank` values) onto an undo stack to revert the last union. Operations become $O(\log n)$ instead of $O(\alpha(n))$. Needed when queries are processed offline in a sweep order that requires unwinding — small-to-large / DSU-on-tree, divide-and-conquer over edges, persistent connectivity queries.

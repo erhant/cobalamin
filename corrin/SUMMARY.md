@@ -17,6 +17,7 @@
 - [In-place Array Tricks](./dsa/in-place-arrays.md)
 - [Heap](./dsa/heap.md)
 - [Graphs](./dsa/graphs.md)
+- [Binary Lifting](./dsa/binary-lifting.md)
 - [Union-Find](./dsa/union-find.md)
 - [Strings](./dsa/strings.md)
 - [Sqrt Decomposition](./dsa/sqrt-decomposition.md)
@@ -39,6 +40,8 @@
 - [Factoring Assumption](./cryptography/factoring.md)
 - [Discrete Logarithm](./cryptography/discrete-log.md)
 - [Digital Signatures](./cryptography/signatures.md)
+- [Hashing](./cryptography/hashing.md)
+  - [Domain Separation](./cryptography/domain-separation.md)
 
 # Rust Programming
 

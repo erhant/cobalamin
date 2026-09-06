@@ -1,6 +1,0 @@
-.DS_Store
-
-# ignore code because this is just a playground
-ts/index.ts
-rs/src/main.rs
-py/main.py

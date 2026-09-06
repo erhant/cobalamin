@@ -1,8 +1,8 @@
 [book]
-title = "cobalamine"
+title = "cobalamin"
 authors = ["erhant"]
 language = "en"
-src = "corrin"
+src = "contents"
 
 # uses KaTeX instead of MathJax, much better interop
 [preprocessor.katex]
@@ -13,7 +13,8 @@ after = ["links"]
 command = "mdbook-mermaid"
 
 [output.html]
+site-url = "/cobalamin/"
 additional-css = ["./vendor/mermaid-center.css"]
 additional-js = ["./vendor/mermaid.min.js", "./vendor/mermaid-init.js"]
-git-repository-url = "https://github.com/erhant/cobalamine"
+git-repository-url = "https://github.com/erhant/cobalamin"
 default-theme = "light"

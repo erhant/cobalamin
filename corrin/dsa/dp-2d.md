@@ -94,6 +94,43 @@ The "contiguous vs subsequence" distinction often turns into "do mismatches rese
 > [!TIP]
 > [1143 Longest Common Subsequence](https://leetcode.com/problems/longest-common-subsequence/) · [583 Delete Operation for Two Strings](https://leetcode.com/problems/delete-operation-for-two-strings/) · [712 Minimum ASCII Delete Sum](https://leetcode.com/problems/minimum-ascii-delete-sum-for-two-strings/) · [1035 Uncrossed Lines](https://leetcode.com/problems/uncrossed-lines/) (LCS in disguise)
 
+## Distinct Subsequences
+
+Count how many distinct subsequences of `s` equal `t`. Pure [pick/leave](./dp.md#pick--leave): the pick branch is guarded by a character match, and the combinator is **sum** rather than `max`.
+
+State `dp[i][j]` = number of ways `s[0..i)` produces `t[0..j)`.
+
+```typescript
+function numDistinct(s: string, t: string): number {
+  const dp: number[][] = Array.from({ length: s.length + 1 }, () => new Array(t.length + 1).fill(0));
+  for (let i = 0; i <= s.length; i++) dp[i][0] = 1; // empty target: one way (use nothing)
+  for (let i = 1; i <= s.length; i++) {
+    for (let j = 1; j <= t.length; j++) {
+      dp[i][j] = dp[i - 1][j]                                    // leave s[i-1]
+        + (s[i - 1] === t[j - 1] ? dp[i - 1][j - 1] : 0);        // pick s[i-1] for t[j-1]
+    }
+  }
+  return dp[s.length][t.length];
+}
+```
+
+The asymmetry with LCS is the thing to notice: there both `dp[i-1][j]` and `dp[i][j-1]` are options because either string may skip a character. Here `t` must be consumed **entirely**, so only `s` gets to leave — and a match doesn't force a pick, it adds a second way, which is why the two branches are summed instead of maxed.
+
+Same rolling collapse as 0/1 knapsack, for the same reason — iterate `j` **descending** so `dp[j-1]` still holds row `i - 1`:
+
+```typescript
+const dp = new Array(t.length + 1).fill(0);
+dp[0] = 1;
+for (let i = 1; i <= s.length; i++)
+  for (let j = t.length; j >= 1; j--)
+    if (s[i - 1] === t[j - 1]) dp[j] += dp[j - 1];
+```
+
+$O(nm)$ time, $O(m)$ space. Counting DPs overflow fast — 115 promises the answer fits in 32 bits, but the intermediate `dp` values are not similarly bounded in the general version; use `BigInt` or a modulus if the problem doesn't guarantee it.
+
+> [!TIP]
+> [115 Distinct Subsequences](https://leetcode.com/problems/distinct-subsequences/) · [940 Distinct Subsequences II](https://leetcode.com/problems/distinct-subsequences-ii/) (one string, dedupe by last character) · [1638 Substrings That Differ by One Character](https://leetcode.com/problems/count-substrings-that-differ-by-one-character/)
+
 ## Edit Distance
 
 State `dp[i][j]` = edit distance between `a[0..i)` and `b[0..j)`. Three operations — insert, delete, replace — give three transitions:

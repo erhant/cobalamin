@@ -91,6 +91,27 @@ for (const s of statesInTopoOrder()) {
 }
 ```
 
+## Pick / Leave
+
+Most DPs on a sequence have the same transition shape: standing at element $i$, you either **pick** it or **leave** it.
+
+$$V(i, b) = \underbrace{V(i - 1,\, b)}_{\text{leave}} \;\oplus\; \underbrace{w_i \cdot V(i - 1,\, b')}_{\text{pick}}$$
+
+- **Leave** is unconditional and doesn't touch the secondary state $b$.
+- **Pick** is usually **guarded** (capacity left, characters match, no adjacent pick) and moves $b \to b'$.
+
+Change two knobs and you get most of the catalogue — what $\oplus$ is, and what "pick" costs:
+
+| Problem                                                    | $\oplus$ | Pick guard / cost                    |
+| ---------------------------------------------------------- | -------- | ------------------------------------ |
+| [Power set](./backtracking.md)                             | collect  | none — both branches always explored |
+| [House Robber](./dp-1d.md#house-robber)                    | `max`    | skips $i - 1$ as well                |
+| [0/1 Knapsack](./dp-2d.md#01-knapsack)                     | `max`    | $w_i \le$ capacity, debits capacity  |
+| [Subset sum](./dp-2d.md#subset-sum--partition)             | `or`     | same, boolean values                 |
+| [Distinct Subsequences](./dp-2d.md#distinct-subsequences)  | `sum`    | $s_i = t_j$, consumes $t_j$          |
+
+The two-branch skeleton is also why so many of these collapse to a rolling 1D array: the leave branch reads the same column of the previous row, so a single array plus the right loop direction encodes both branches.
+
 ## Recipe
 
 When a problem looks DP-shaped, work through it in this order:

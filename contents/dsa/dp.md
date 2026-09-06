@@ -148,12 +148,6 @@ return b;
 
 The direction-of-loop trick is the most useful instance of this: 0/1 knapsack iterates $w$ **descending** so `dp[w - weight[i]]` still holds the value from row $i - 1$ when read; unbounded knapsack iterates **ascending** so the same slot deliberately holds the freshly-updated row $i$. Same array, opposite direction, two different semantics.
 
-The general recipe:
-
-1. Look at the recurrence and list which prior cells it reads.
-2. Size the rolling buffer to cover them — $k$ scalars in 1D, $k$ rows in 2D.
-3. If you collapse to one row in 2D, pick the inner-loop direction so reads land on the value you intend (previous row vs. current row).
-
 See [1D § House Robber](./dp-1d.md#house-robber) and [2D § 0/1 Knapsack](./dp-2d.md#01-knapsack) for worked examples.
 
 ### Implicit state — when a dimension is redundant
@@ -187,3 +181,18 @@ The four sub-chapters cover linear (1D), Cartesian-product (2D), subset-lattice 
 - **Wrong order.** Bottom-up requires topological order on the state DAG. If $V(i)$ reads $V(i+1)$, iterate $i$ descending.
 - **Recomputing inside the recurrence.** The whole point is that each state is solved once — make sure the memo table is checked before doing any work.
 - **Counting double-counted paths.** For "number of ways", make sure the recurrence partitions the configurations (each is reached via exactly one transition path), or you'll overcount.
+
+## Cheat Sheet
+
+| The problem sounds like…                    | State                | Where                                           |
+| ------------------------------------------- | -------------------- | ----------------------------------------------- |
+| best / count over a sequence of steps       | `i`                  | [1D](./dp-1d.md)                                |
+| align, match or transform two sequences     | `(i, j)` prefixes    | [2D § LCS](./dp-2d.md#longest-common-subsequence-lcs) |
+| choose items under a capacity or target     | `(i, budget)`        | [2D § Knapsack](./dp-2d.md#01-knapsack)         |
+| split or merge a range optimally            | `(i, j)` interval    | [2D § Interval](./dp-2d.md#interval-dp)         |
+| move through a grid with restricted moves   | `(r, c)`             | [2D § Grid](./dp-2d.md#grid-dps)                |
+| _which_ elements are used, $n \le 20$       | `mask`               | [Bitmask](./dp-bitmask.md)                      |
+| count integers $\le N$ with a digit property | `(pos, tight, prop)` | [Digit](./dp-digit.md)                          |
+| best over a subtree                         | node                 | [Binary Trees](./binary-trees.md)               |
+
+If nothing fits, the state is wrong — back to step 1 of the recipe.

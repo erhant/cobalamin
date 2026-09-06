@@ -36,7 +36,8 @@ function kthPermutation(n: number, k: number): number[] {
   for (let i = 1; i <= n; i++) fact.push(fact[i - 1] * i);
   const remaining = Array.from({ length: n }, (_, i) => i + 1);
   const out: number[] = [];
-  k--;  // 1-indexed → 0-indexed rank
+  // 1-indexed → 0-indexed rank
+  k--;
   for (let i = n; i >= 1; i--) {
     const idx = Math.floor(k / fact[i - 1]);
     out.push(remaining[idx]);

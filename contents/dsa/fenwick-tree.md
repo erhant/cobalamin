@@ -153,3 +153,6 @@ This handles range-add + range-sum in $O(\log n)$ per operation with the same co
 - You need to query arbitrary monoid values at non-prefix positions (e.g. "min over $[l, r]$"). Segment tree.
 
 The rule of thumb: **prefix sums + mutability = Fenwick**. Anything fancier, segment tree.
+
+> [!TIP]
+> [307 Range Sum Query - Mutable](https://leetcode.com/problems/range-sum-query-mutable/) · [315 Count of Smaller Numbers After Self](https://leetcode.com/problems/count-of-smaller-numbers-after-self/) (BIT over compressed values, scanning right-to-left) · [493 Reverse Pairs](https://leetcode.com/problems/reverse-pairs/) · [2179 Count Good Triplets in an Array](https://leetcode.com/problems/count-good-triplets-in-an-array/) (prefix counts from both sides)

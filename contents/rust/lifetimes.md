@@ -35,8 +35,10 @@ You rarely write lifetimes. The compiler fills them in using three rules:
 So these compile without annotations:
 
 ```rust
-fn first(s: &str) -> &str { &s[..1] }        // rule 2
-fn field(&self) -> &Field { &self.field }    // rule 3
+// rule 2
+fn first(s: &str) -> &str { &s[..1] }
+// rule 3
+fn field(&self) -> &Field { &self.field }
 ```
 
 This doesn't — two inputs, no `self`, so rule 2 can't fire:
@@ -66,8 +68,10 @@ A struct with lifetime parameters can't be placed into a `static` or stored for 
 `'static` means "lives for the entire program." Two common sources:
 
 ```rust
-let s: &'static str = "hello";       // string literals are baked into the binary
-let b: &'static [u8] = &[1, 2, 3];    // likewise for const/static items
+// string literals are baked into the binary
+let s: &'static str = "hello";
+// likewise for const/static items
+let b: &'static [u8] = &[1, 2, 3];
 ```
 
 `T: 'static` as a bound means something subtly different: "the type `T` contains no references with a lifetime shorter than `'static`" — i.e., either owned data, or only `'static` references. Owned `String`, `Vec<u8>`, `i32` all satisfy `T: 'static` because they contain no borrowed data. `&'a str` does not (unless `'a = 'static`).
@@ -90,7 +94,8 @@ You can also constrain one lifetime to outlive another with `'a: 'b` ("`'a` outl
 
 ```rust
 fn choose<'a, 'b: 'a>(x: &'a i32, y: &'b i32) -> &'a i32 {
-    if *x > 0 { x } else { y }  // y: &'b can be shortened to &'a since 'b: 'a
+    // y: &'b can be shortened to &'a since 'b: 'a
+    if *x > 0 { x } else { y }
 }
 ```
 
@@ -107,7 +112,8 @@ Lifetimes are subtyped: if `'long: 'short`, then `&'long T` is usable where `&'s
 ```rust
 fn bad() -> &String {
     let s = String::from("oops");
-    &s  // error: `s` does not live long enough
+    // error: `s` does not live long enough
+    &s
 }
 ```
 

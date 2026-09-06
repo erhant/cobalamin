@@ -10,7 +10,8 @@ A stack that maintains a sorted invariant by popping elements that violate the o
 
 ```typescript
 const nextGreater = new Array<number>(nums.length).fill(-1);
-const stack: number[] = []; // indices, values decreasing
+// indices, values decreasing
+const stack: number[] = [];
 
 for (let i = 0; i < nums.length; i++) {
   while (stack.length && nums[stack[stack.length - 1]] < nums[i]) {
@@ -93,7 +94,8 @@ A deque that maintains a sorted invariant from both ends: pop from the **back** 
 For each window of size $k$, report the maximum. Naive scanning is $O(nk)$; a decreasing deque gives $O(n)$.
 
 ```typescript
-const dq: number[] = []; // indices, values decreasing
+// indices, values decreasing
+const dq: number[] = [];
 const ans: number[] = [];
 
 for (let i = 0; i < nums.length; i++) {

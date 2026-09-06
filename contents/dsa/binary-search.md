@@ -47,14 +47,16 @@ You can use this when you need to distinguish "found it" from "not found" at the
 Search interval is $[l, r)$, right end exclusive. Find the **first index where a predicate becomes true** — equivalently, the boundary between the `false` region and the `true` region.
 
 ```typescript
-let l = 0,
-  r = n; // r = n so "past the end" is a valid answer
+// r = n, so "past the end" stays a representable answer
+let l = 0;
+let r = n;
 while (l < r) {
   const mid = (l + r) >> 1;
   if (predicate(mid)) r = mid;
   else l = mid + 1;
 }
-return l; // first index where predicate holds; === n if none do
+// first index where predicate holds; === n if none do
+return l;
 ```
 
 Terminates with `l === r`, which is the answer. `mid` is never "checked off" as the answer — it only narrows the range, so don't put an `=== target` early-return inside this loop.
@@ -152,27 +154,14 @@ function mySqrt(x: number): number {
     if (mid * mid <= x) l = mid + 1;
     else r = mid - 1;
   }
-  return r; // largest m with m*m <= x
+  // largest m with m*m <= x
+  return r;
 }
 ```
 
 After the loop, `l === r + 1` and `r` holds the answer. Handles `x = 0` cleanly too.
 
-**Common trap.** Rewriting this with the boundary form and returning `mid`:
-
-```typescript
-// BROKEN
-while (l < r) {
-  const mid = (l + r) >>> 1;
-  const sq = mid * mid;
-  if (sq === x) return mid;
-  else if (sq < x) l = mid + 1;
-  else r = mid;
-}
-return mid; // ← wrong
-```
-
-`mid` is just the last midpoint examined, not the loop's final invariant. It can land on either side of the answer (`x = 3` returns `2`; `x = 8` returns `3`; `x = 0` returns `undefined`). If you want the boundary form, phrase it as "find the first `m` where `m * m > x`" and return `l - 1`.
+**Common trap.** Don't return `mid` from the boundary form. `mid` is the last midpoint probed, not the loop's invariant — it can land on either side of the answer. Return the invariant instead: `r` in the closed form above, or phrase it as "first `m` with `m * m > x`" and return `l - 1`.
 
 This pattern generalizes: whenever you need the largest/smallest value where a monotonic condition flips (minimum capacity, smallest speed, largest dividend), binary-search over the answer space.
 
@@ -193,7 +182,8 @@ Min-of-max is straight `partitionPoint`. Max-of-min is its mirror, with a midpoi
 let lo = lowestPossible,
   hi = highestPossible;
 while (lo < hi) {
-  const mid = lo + ((hi - lo + 1) >> 1); // bias up
+  // bias up
+  const mid = lo + ((hi - lo + 1) >> 1);
   if (feasible(mid)) lo = mid;
   else hi = mid - 1;
 }
@@ -235,7 +225,7 @@ function maxMinDistance(pos: number[], k: number): number {
 
 $O(n \log n)$ for the sort plus $O(n \log(\text{range}))$ for the search.
 
-Same shape covers "maximize the minimum Manhattan distance between $k$ points on a square's boundary" (unroll the perimeter to 1D, then it's aggressive cows on a circular track), "split array into $m$ subarrays minimizing the largest sum", "minimum eating speed to finish all bananas in $h$ hours", and most LeetCode "maximize the minimum ..." / "minimize the maximum ..." prompts. The hard part is usually writing `feasible` — once it's there, the binary search is mechanical.
+The hard part is always `feasible`; the search wrapped around it is mechanical. The same shape covers anything phrased as "maximize the minimum ..." or "minimize the maximum ...", including disguised ones — "maximize the minimum Manhattan distance between $k$ points on a square's boundary" is aggressive cows again once you unroll the perimeter into 1D.
 
 > [!TIP]
 > [2602 Minimum Operations to Make All Array Elements Equal](https://leetcode.com/problems/minimum-operations-to-make-all-array-elements-equal/) · [3356 Zero Array Transformation II](https://leetcode.com/problems/zero-array-transformation-ii/) · [875 Koko Eating Bananas](https://leetcode.com/problems/koko-eating-bananas/) · [1011 Capacity To Ship Packages](https://leetcode.com/problems/capacity-to-ship-packages-within-d-days/) · [410 Split Array Largest Sum](https://leetcode.com/problems/split-array-largest-sum/)

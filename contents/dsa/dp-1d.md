@@ -118,13 +118,14 @@ function lengthOfLIS(nums: number[]): number {
       const m = (l + r) >> 1;
       if (tails[m] < num) l = m + 1; else r = m;
     }
-    tails[l] = num; // replace or append
+    // replace or append
+    tails[l] = num;
   }
   return tails.length;
 }
 ```
 
-`tails` is **not** an actual LIS — just optimal tail values. The length is correct; reconstructing the sequence needs predecessor pointers stored alongside. See also [Binary Trees § LIS](./binary-trees.md#lis-patience-sorting) for the same algorithm with reconstruction.
+`tails` is **not** an actual LIS — just optimal tail values, and the array can hold a combination that never occurs in the input. The length is correct regardless. To recover the sequence itself, store, for each `num`, the index `l` it landed at plus the index of the element then sitting at `l - 1`, and walk those predecessors back from the final tail.
 
 > [!TIP]
 > [300 Longest Increasing Subsequence](https://leetcode.com/problems/longest-increasing-subsequence/) · [354 Russian Doll Envelopes](https://leetcode.com/problems/russian-doll-envelopes/) (LIS in 2D after sort) · [673 Number of Longest Increasing Subsequence](https://leetcode.com/problems/number-of-longest-increasing-subsequence/) · [1671 Minimum Number of Removals to Make Mountain Array](https://leetcode.com/problems/minimum-number-of-removals-to-make-mountain-array/)

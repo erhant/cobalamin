@@ -148,7 +148,8 @@ If $\gcd(a, m) = 1$ then XGCD gives $x, y$ with $a x + m y = 1$. Reducing mod $m
 // Returns x such that (a * x) % m === 1, assumes gcd(a, m) === 1
 function modinv(a: number, m: number): number {
   const [, x] = xgcd(a, m);
-  return ((x % m) + m) % m; // normalize to [0, m)
+  // normalize to [0, m)
+  return ((x % m) + m) % m;
 }
 ```
 

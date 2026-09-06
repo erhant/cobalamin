@@ -46,7 +46,8 @@ graph TD
 ```typescript
 function preorder(node: TreeNode | null, result: number[]) {
   if (!node) return;
-  result.push(node.val); // visit
+  // visit
+  result.push(node.val);
   preorder(node.left, result);
   preorder(node.right, result);
 }
@@ -67,9 +68,12 @@ function preorder(root: TreeNode): number[] {
 
   while (stack.length) {
     const node = stack.pop()!;
-    result.push(node.val); // visit immediately
-    if (node.right) stack.push(node.right); // right first
-    if (node.left) stack.push(node.left); // so left pops first
+    // visit immediately
+    result.push(node.val);
+    // right first
+    if (node.right) stack.push(node.right);
+    // so left pops first
+    if (node.left) stack.push(node.left);
   }
 
   return result;
@@ -110,12 +114,16 @@ function postorder(root: TreeNode): number[] {
 
   while (stack.length) {
     const node = stack.pop()!;
-    result.push(node.val); // cur
-    if (node.left) stack.push(node.left); // left first
-    if (node.right) stack.push(node.right); // so right pops first
+    // cur
+    result.push(node.val);
+    // left first
+    if (node.left) stack.push(node.left);
+    // so right pops first
+    if (node.right) stack.push(node.right);
   }
 
-  return result.reverse(); // reverse: cur,right,left → left,right,cur
+  // reverse: cur,right,left → left,right,cur
+  return result.reverse();
 }
 ```
 
@@ -137,14 +145,18 @@ This works because postorder (`left, right, cur`) is the reverse of a modified p
 Swapping the child visit order gives a **reverse preorder** (NRL). Useful when you need the rightmost node at each depth first — e.g. "right side view" of a tree:
 
 ```typescript
-const stack: [TreeNode, number][] = [[root, 0]]; // [node, depth]
+// [node, depth]
+const stack: [TreeNode, number][] = [[root, 0]];
 
 while (stack.length) {
   const [node, depth] = stack.pop()!;
-  if (depth === result.length) result.push(node.val); // first at this depth = rightmost
+  // first at this depth = rightmost
+  if (depth === result.length) result.push(node.val);
 
-  if (node.left) stack.push([node.left, depth + 1]); // left first
-  if (node.right) stack.push([node.right, depth + 1]); // so right pops first
+  // left first
+  if (node.left) stack.push([node.left, depth + 1]);
+  // so right pops first
+  if (node.right) stack.push([node.right, depth + 1]);
 }
 ```
 
@@ -194,8 +206,10 @@ Preorder, tree B:     "1_NULL_1_NULL_NULL"   (different — preorder disambiguat
 **With parentheses**, any order works:
 
 ```typescript
-const key = `(${left})${node.val}(${right})`; // inorder, safe
-const key = `(${node.val},${left},${right})`; // uniform, safe
+// inorder, safe
+const key = `(${left})${node.val}(${right})`;
+// uniform, safe
+const key = `(${node.val},${left},${right})`;
 ```
 
 The parens explicitly encode tree structure, making ordering irrelevant.
@@ -242,28 +256,3 @@ function dfs(node: TreeNode | null, depth: number, idx: bigint) {
 ```
 
 Use `BigInt` since indices double each level and can overflow.
-
-## LIS (Patience Sorting)
-
-Maintain a sorted `tails` array where $\text{tails}[k]$ = smallest tail of any increasing subsequence of length $k + 1$:
-
-```typescript
-const tails: number[] = [];
-
-for (const num of nums) {
-  let l = 0,
-    r = tails.length;
-  while (l < r) {
-    const mid = (l + r) >> 1;
-    if (tails[mid] < num) l = mid + 1;
-    else r = mid;
-  }
-  tails[l] = num; // replace or append
-}
-
-return tails.length;
-```
-
-`tails` is always sorted so binary search is valid. `tails[l] = num` handles both replace and append — assigning to `arr[arr.length]` extends the array in JS.
-
-Note: `tails` is **not** the actual LIS sequence, just the optimal tail values. To recover the actual sequence, store predecessor indices.

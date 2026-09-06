@@ -24,7 +24,8 @@ use std::cell::Cell;
 struct Counter { n: Cell<u32> }
 
 impl Counter {
-    fn bump(&self) {                    // note: &self, not &mut self
+    // note: &self, not &mut self
+    fn bump(&self) {
         self.n.set(self.n.get() + 1);
     }
 }
@@ -46,11 +47,14 @@ Use it for small `Copy` state — counters, flags, cached lookups — where you 
 use std::cell::RefCell;
 
 let cell = RefCell::new(vec![1, 2, 3]);
-let r1 = cell.borrow();                  // Ref<Vec<i32>>
-let r2 = cell.borrow();                  // ok: many readers
+// Ref<Vec<i32>>
+let r1 = cell.borrow();
+// ok: many readers
+let r2 = cell.borrow();
 // let w = cell.borrow_mut();            // panic: already borrowed
 drop((r1, r2));
-let mut w = cell.borrow_mut();           // ok now
+// ok now
+let mut w = cell.borrow_mut();
 w.push(4);
 ```
 

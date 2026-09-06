@@ -16,7 +16,8 @@ When `nums[i] ∈ [1, n]` (or any bijection between values and indices), **place
 ```typescript
 function cyclicSort(nums: number[]): void {
   for (let i = 0; i < nums.length; ) {
-    const target = nums[i] - 1;  // where nums[i] belongs
+    // where nums[i] belongs
+    const target = nums[i] - 1;
     if (nums[i] !== nums[target]) {
       [nums[i], nums[target]] = [nums[target], nums[i]];
     } else {

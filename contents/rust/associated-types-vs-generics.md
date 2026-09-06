@@ -41,7 +41,8 @@ Use an **associated type** when the related type is uniquely determined by `Self
 
 ```rust
 impl Iterator for Counter {
-    type Item = u64;           // a Counter yields u64 and only u64
+    // a Counter yields u64 and only u64
+    type Item = u64;
     fn next(&mut self) -> Option<u64> { /* ... */ }
 }
 ```
@@ -50,7 +51,8 @@ A single iterator yielding both `u64` and `String` doesn't make sense, so `Itera
 
 ```rust
 trait Add<Rhs = Self> {
-    type Output;              // fixed once you pick Self + Rhs
+    // fixed once you pick Self + Rhs
+    type Output;
     fn add(self, rhs: Rhs) -> Self::Output;
 }
 ```
@@ -62,7 +64,8 @@ You may want `Vec<T> + &[T]` and `Vec<T> + Vec<T>` — different `Rhs`, so it's 
 This is the ergonomic payoff. With a generic trait, the compiler often can't infer which impl you meant:
 
 ```rust
-let x = <i32 as Convert<_>>::convert(42);  // _ = ?
+// _ = ?
+let x = <i32 as Convert<_>>::convert(42);
 // error: type annotations needed
 ```
 
@@ -70,7 +73,8 @@ With an associated type, there's nothing to annotate — picking `Self` picks ev
 
 ```rust
 let mut c = Counter::new();
-let v = c.next();             // inferred as Option<u64>, no turbofish
+// inferred as Option<u64>, no turbofish
+let v = c.next();
 ```
 
 Rule of thumb: if you find yourself reaching for turbofish every time you call the trait method, the type should probably be associated.

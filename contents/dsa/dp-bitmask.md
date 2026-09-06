@@ -41,14 +41,17 @@ function tsp(d: number[][]): number {
   const n = d.length;
   const FULL = (1 << n) - 1;
   const dp = Array.from({ length: 1 << n }, () => new Array(n).fill(Infinity));
-  dp[1][0] = 0; // started at city 0, only city 0 visited
+  // started at city 0, only city 0 visited
+  dp[1][0] = 0;
 
   for (let mask = 1; mask <= FULL; mask++) {
-    if (!(mask & 1)) continue; // every reachable mask contains city 0
+    // every reachable mask contains city 0
+    if (!(mask & 1)) continue;
     for (let i = 0; i < n; i++) {
       if (!(mask & (1 << i)) || dp[mask][i] === Infinity) continue;
       for (let j = 0; j < n; j++) {
-        if (mask & (1 << j)) continue; // already visited
+        // already visited
+        if (mask & (1 << j)) continue;
         const next = mask | (1 << j);
         const cand = dp[mask][i] + d[i][j];
         if (cand < dp[next][j]) dp[next][j] = cand;
@@ -85,7 +88,8 @@ function assignmentCost(cost: number[][]): number {
   const dp = new Array(1 << n).fill(Infinity);
   dp[0] = 0;
   for (let mask = 0; mask < 1 << n; mask++) {
-    const w = popcount(mask); // worker index = how many jobs assigned so far
+    // worker index = how many jobs assigned so far
+    const w = popcount(mask);
     if (dp[mask] === Infinity || w === n) continue;
     for (let j = 0; j < n; j++) {
       if (mask & (1 << j)) continue;

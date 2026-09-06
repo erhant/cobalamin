@@ -121,7 +121,17 @@ For one-shot top-K queries with a fixed input, this matters; for streaming inser
 
 ## Where Heaps Are Used
 
-**Top-K elements.** To find the $k$-th largest in a stream, keep a **min-heap of size $k$**: push every element, and pop whenever the size exceeds $k$. The root is the running $k$-th largest. $O(n \log k)$ time, $O(k)$ space — strictly better than sorting when $k \ll n$.
+| Use                       | Shape                                                               | Cost                            |
+| ------------------------- | ------------------------------------------------------------------- | ------------------------------- |
+| **Top-K / $k$-th largest**  | min-heap capped at size $k$ — push everything, pop when size $> k$   | $O(n \log k)$, $O(k)$ space     |
+| **Running median**        | max-heap (low half) + min-heap (high half), sizes within one         | $O(\log n)$ insert, $O(1)$ read |
+| **Merge $k$ sorted lists** | heap of the $k$ heads; pop one, push that list's next element        | $O(N \log k)$                   |
+| **Dijkstra / Prim**       | heap of `(distance, vertex)` / `(edgeWeight, vertex)`                 | $O((V + E) \log V)$             |
+| **Event simulation**      | heap of `(time, action)`; pop the next event, push what it spawns     | $O(\log n)$ per event           |
+| **Scheduling**            | heap over the resource pool, keyed by "frees up at"                   | $O(\log n)$ per job             |
+| **Top-$k$ frequent**       | count first, then heap of `(count, value)`                           | $O(n + k \log n)$               |
+
+The capped-heap idiom is the one worth being able to write from memory — note it's a **min**-heap for the $k$ **largest**, so the thing you pop is the smallest candidate still in the running:
 
 ```typescript
 function kthLargest(nums: number[], k: number): number {
@@ -134,17 +144,7 @@ function kthLargest(nums: number[], k: number): number {
 }
 ```
 
-**Median of a stream.** Maintain two heaps: a max-heap for the lower half and a min-heap for the upper half. After each insert, rebalance so their sizes differ by at most one; the median is then a peek (or average of two peeks). $O(\log n)$ per insert, $O(1)$ per median query.
-
-**Merge K sorted lists.** Push each list's head into a min-heap keyed on value. Pop the smallest, append to output, and push the popped element's successor (if any). $O(N \log k)$ for $N$ total elements across $k$ lists — versus $O(Nk)$ for naive scanning.
-
-**Dijkstra and Prim.** Both extract-min repeatedly: Dijkstra over `(distance, vertex)`, Prim over `(edgeWeight, vertex)`. With a binary heap, both run in $O((V + E) \log V)$. See [Graphs](./graphs.md).
-
-**Event-driven simulation.** Events are tuples `(time, action)`; the simulator pops the next event by time, processes it, and possibly pushes new events. The heap is the engine of any discrete-event simulator (network simulators, game tick schedulers, OS task queues).
-
-**Scheduling problems.** "Assign jobs to machines minimizing makespan", "process tasks with cooldowns", "pick the room that frees first" — anything where the next decision depends on the smallest/largest current value of some pool of candidates.
-
-**Frequency-based selection.** Top-$k$ frequent elements: count first, then push `(count, value)` into a heap and pop $k$ times.
+The common thread: the next decision depends on the extremum of a pool that keeps changing. If the pool were static you'd sort once; if you needed rank queries or deletion by key, you'd need a balanced BST instead.
 
 > [!TIP]
 > [215 Kth Largest Element in an Array](https://leetcode.com/problems/kth-largest-element-in-an-array/) (also doable in average $O(n)$ via Quickselect) · [347 Top K Frequent Elements](https://leetcode.com/problems/top-k-frequent-elements/) · [295 Find Median from Data Stream](https://leetcode.com/problems/find-median-from-data-stream/) · [23 Merge k Sorted Lists](https://leetcode.com/problems/merge-k-sorted-lists/) · [253 Meeting Rooms II](https://leetcode.com/problems/meeting-rooms-ii/)

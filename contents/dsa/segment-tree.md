@@ -95,8 +95,10 @@ class SegmentTree {
   }
 
   private _query(node: number, l: number, r: number, ql: number, qr: number): number {
-    if (qr < l || r < ql) return 0;              // disjoint → identity
-    if (ql <= l && r <= qr) return this.tree[node]; // fully covered → cached value
+    // disjoint → identity
+    if (qr < l || r < ql) return 0;
+    // fully covered → cached value
+    if (ql <= l && r <= qr) return this.tree[node];
     const m = (l + r) >> 1;
     return this._query(2 * node, l, m, ql, qr)
          + this._query(2 * node + 1, m + 1, r, ql, qr);
@@ -271,3 +273,6 @@ This form **doesn't admit lazy propagation cleanly** — you need the recursive 
 | Constant factor                | smaller                       | larger                          |
 
 The rule of thumb: **reach for Fenwick first**; upgrade to segment tree the moment you need range updates with non-trivial composition, or an operation without an inverse.
+
+> [!TIP]
+> [307 Range Sum Query - Mutable](https://leetcode.com/problems/range-sum-query-mutable/) (the canonical point-update / range-query) · [2407 Longest Increasing Subsequence II](https://leetcode.com/problems/longest-increasing-subsequence-ii/) (range-max over values — LIS with a constraint) · [699 Falling Squares](https://leetcode.com/problems/falling-squares/) (range-assign + range-max, lazy) · [732 My Calendar III](https://leetcode.com/problems/my-calendar-iii/) (range-add + range-max) · [715 Range Module](https://leetcode.com/problems/range-module/) (range-assign, coordinate-compressed)

@@ -47,7 +47,8 @@ const d = new Array(n + 1).fill(0);
 
 function rangeAdd(l: number, r: number, v: number) {
   d[l] += v;
-  d[r + 1] -= v; // cancellation one past the end
+  // cancellation one past the end
+  d[r + 1] -= v;
 }
 
 // after all updates, reconstruct the final array:
@@ -75,11 +76,13 @@ Track prefix sum frequencies. At each position, ask "how many previous prefix su
 
 ```typescript
 let sum = 0;
-const seen = new Map<number, number>([[0, 1]]); // empty prefix
+// empty prefix
+const seen = new Map<number, number>([[0, 1]]);
 
 for (const n of nums) {
   sum += n;
-  ans += seen.get(sum - k) ?? 0; // look up sum - k
+  // look up sum - k
+  ans += seen.get(sum - k) ?? 0;
   seen.set(sum, (seen.get(sum) ?? 0) + 1);
 }
 ```
@@ -96,8 +99,10 @@ const seen = new Map<number, number>([[0, 1]]);
 
 for (const n of nums) {
   sum += n;
-  const rem = ((sum % k) + k) % k; // handle negative numbers
-  ans += seen.get(rem) ?? 0; // same remainder = divisible
+  // handle negative numbers
+  const rem = ((sum % k) + k) % k;
+  // same remainder = divisible
+  ans += seen.get(rem) ?? 0;
   seen.set(rem, (seen.get(rem) ?? 0) + 1);
 }
 ```
@@ -136,37 +141,21 @@ Each nesting level becomes one accumulator, turning $O(d^3)$ into $O(d)$.
 
 This works because $i < j < k$ gives a **triangular** summation region that can be peeled one variable at a time.
 
-## Multiplicative Difference Array with Stride
+## Multiplicative and Strided Variants
 
-For range updates $[l, r]$ with stride $k$, multiplying by $v$:
+Two independent generalizations of the same "place an effect, place its inverse past the range" move:
 
-- Place $v$ at index $l$ (effect)
-- Place $v^{-1}$ at the first stride position past $r$ (cancellation)
-- Propagate: $\text{dif}[i] \mathrel{*}= \text{dif}[i - k]$
+- **Multiplicative** — place $v$ and $v^{-1}$ instead of $+v$ and $-v$, and propagate with `*=`. Needs an invertible operation: mod a prime $p$, Fermat gives $v^{p-1} \equiv 1$, hence $v^{-1} = v^{p-2}$, computed by square-and-multiply in $O(\log p)$.
+- **Strided** — when an update touches only every $k$-th index, the cancellation goes one **stride** past the last affected index, not $r + 1$, and propagation steps by $k$: $\text{dif}[i] \mathrel{*}= \text{dif}[i - k]$.
 
 ```
 k=3, l=1, r=7
 
 Affected:     1    4    7
 Cancel at:                  10  (= 7 + k)
-
-Propagation carries v forward through the stride.
-The inverse at 10 cancels it: v * v^{-1} = 1.
 ```
 
-The cancellation is one **stride** past the last affected index (not $r + 1$) because propagation steps by $k$.
-
-Different queries with the same $k$ but different $l$ values form independent "lanes" — the propagation $\text{dif}[i] \mathrel{*}= \text{dif}[i - k]$ with sequential `i++` handles all lanes in one pass.
-
-### Modular Inverse via Fermat's Little Theorem
-
-When working mod a prime $p$:
-
-$$
-v^{p - 1} \equiv 1 \pmod{p} \;\implies\; v^{p - 2} \equiv v^{-1} \pmod{p}
-$$
-
-Computed via fast exponentiation (square-and-multiply) in $O(\log p)$.
+Queries sharing a stride but starting at different $l$ form independent lanes, and one sequential `i++` pass resolves all of them at once — each lane only ever reads its own predecessor. Batching many such queries by their stride is [Sqrt Decomposition § Heavy / Light](./sqrt-decomposition.md#heavy--light-threshold).
 
 ## Space Optimization: 2D → 1D by Row Sweep
 
@@ -194,8 +183,10 @@ for (let r = 0; r < rows; r++) {
   let rowSum = 0;
   for (let c = 0; c < cols; c++) {
     rowSum += grid[r][c];
-    pfx[c] += rowSum; // pfx[r-1][c] + rowSum(r, c) = pfx[r][c]
-    if (pfx[c] <= k) ans++; // or whatever the per-rectangle predicate is
+    // pfx[r-1][c] + rowSum(r, c) = pfx[r][c]
+    pfx[c] += rowSum;
+    // or whatever the per-rectangle predicate is
+    if (pfx[c] <= k) ans++;
   }
 }
 ```

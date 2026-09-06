@@ -51,7 +51,8 @@ To check whether $n$ is prime, try to divide by every candidate factor. Two obse
 ```typescript
 function isPrime(n: number): boolean {
   if (n < 2) return false;
-  if (n < 4) return true; // 2 and 3
+  // 2 and 3
+  if (n < 4) return true;
   if (n % 2 === 0) return false;
   for (let p = 3; p * p <= n; p += 2) {
     if (n % p === 0) return false;
@@ -183,7 +184,8 @@ For $N$ beyond what fits in memory (say $N \sim 10^{12}$, or you only want prime
 ```typescript
 function segmentedSieve(L: number, R: number): boolean[] {
   const limit = Math.floor(Math.sqrt(R));
-  const small = sieve(limit); // classical sieve, from above
+  // classical sieve, from above
+  const small = sieve(limit);
   const isPrime = new Array(R - L + 1).fill(true);
 
   for (let p = 2; p <= limit; p++) {
@@ -273,10 +275,12 @@ function totient(n: number): number {
   for (let p = 2; p * p <= n; p++) {
     if (n % p === 0) {
       while (n % p === 0) n = Math.floor(n / p);
-      result -= Math.floor(result / p); // result *= (1 - 1/p)
+      // result *= (1 - 1/p)
+      result -= Math.floor(result / p);
     }
   }
-  if (n > 1) result -= Math.floor(result / n); // leftover prime factor
+  // leftover prime factor
+  if (n > 1) result -= Math.floor(result / n);
   return result;
 }
 ```

@@ -35,6 +35,7 @@ This applies even to small edits: if you rename a page, fix the `SUMMARY.md` lin
 ## Conventions
 
 - Code examples are written in **TypeScript**, even for algorithm/crypto content.
+- **Comments go on their own line above the code they describe, never trailing it.** Write `// explain\nconst x = f();`, not `const x = f(); // explain`. Applies to every language in the book.
 - Math uses KaTeX inline (`$...$`) and display (`$$...$$`) syntax — not MathJax.
 - Diagrams use mermaid fenced blocks (` ```mermaid `).
 - The tone is terse/operational (see existing pages): lead with the idea, then a minimal working snippet, then edge cases or complexity notes. Avoid tutorial-style padding.

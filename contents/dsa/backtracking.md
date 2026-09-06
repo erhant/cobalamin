@@ -20,9 +20,9 @@ Three things determine efficiency, in order of importance:
 
 ```ts
 function backtrack(state: State): void {
+    // full solution
     if (isComplete(state)) {
-      // full solution — copy, don't alias
-      // e.g. [...arr] in JS, list.copy() in Python
+      // record a copy of `state`, not the live one!
       record(snapshot of state);
       return;
     }
@@ -52,9 +52,9 @@ Five slots to fill for any problem:
 - **`IS_VALID`** — the **pruning** predicate. The sooner this rejects a candidate, the more of the search tree you skip. Anything you can check before applying belongs here.
 - **`APPLY` / `UNDO`** — symmetric mutations. Whatever `APPLY` changes (push to list, mark used, add to sum, flip a board cell), `UNDO` must exactly reverse **after** the recursive call returns. Miss one and later calls see corrupted state — these bugs are brutal to track down.
 
-**Record = snapshot.** When you record a complete solution, always copy the state (`[...current]`). The live array keeps mutating; aliasing it means every recorded solution ends up pointing at the final (usually empty) state.
+**Record = snapshot.** Always copy the state when recording it (`[...current]`, `cur.join("")`). The live one keeps mutating — alias it and every recorded solution ends up pointing at the same final, usually empty, state.
 
-**Why undo instead of passing immutable state?** A fresh copy per call turns an $O(\text{nodes})$ algorithm into $O(\text{nodes} \cdot \text{depth})$ in both time and space. Mutate-recurse-undo is the standard for a reason.
+**Why undo rather than pass copies down?** A fresh copy per call turns $O(\text{nodes})$ into $O(\text{nodes} \cdot \text{depth})$ in time _and_ space.
 
 ## Permutation vs Subset vs Combination
 
@@ -94,19 +94,23 @@ function permute(nums: number[]): number[][] {
 
   function backtrack() {
     if (current.length === nums.length) {
-      result.push([...current]); // snapshot!
+      // snapshot!
+      result.push([...current]);
       return;
     }
 
     for (let i = 0; i < nums.length; i++) {
       if (used[i]) continue;
 
-      current.push(nums[i]); // choose
+      // choose
+      current.push(nums[i]);
       used[i] = true;
 
-      backtrack(); // explore
+      // explore
+      backtrack();
 
-      current.pop(); // un-choose
+      // un-choose
+      current.pop();
       used[i] = false;
     }
   }
@@ -115,8 +119,6 @@ function permute(nums: number[]): number[][] {
   return result;
 }
 ```
-
-Always **snapshot** (`[...current]`) when recording results, otherwise you push references to the same mutating array.
 
 > [!TIP]
 > [46 Permutations](https://leetcode.com/problems/permutations/) · [47 Permutations II](https://leetcode.com/problems/permutations-ii/) · [17 Letter Combinations of a Phone Number](https://leetcode.com/problems/letter-combinations-of-a-phone-number/) · [78 Subsets](https://leetcode.com/problems/subsets/) · [90 Subsets II](https://leetcode.com/problems/subsets-ii/)
@@ -139,7 +141,8 @@ function backtrack(start: number) {
 
     comb.push(candidates[i]);
     sum += candidates[i];
-    backtrack(i); // reuse allowed
+    // reuse allowed
+    backtrack(i);
     comb.pop();
     sum -= candidates[i];
   }
@@ -162,12 +165,14 @@ function backtrack(start: number) {
   }
 
   for (let i = start; i < candidates.length; i++) {
-    if (i > start && candidates[i] === candidates[i - 1]) continue; // skip dup
+    // skip dup
+    if (i > start && candidates[i] === candidates[i - 1]) continue;
     if (sum + candidates[i] > target) continue;
 
     comb.push(candidates[i]);
     sum += candidates[i];
-    backtrack(i + 1); // no reuse
+    // no reuse
+    backtrack(i + 1);
     comb.pop();
     sum -= candidates[i];
   }
@@ -182,10 +187,12 @@ Record at every recursion level (not just at a base case). The `start` index ens
 
 ```typescript
 function backtrack(start: number) {
-  ans.push([...cur]); // record at EVERY level, not just a base case
+  // record at EVERY level, not just a base case
+  ans.push([...cur]);
   for (let i = start; i < nums.length; i++) {
     cur.push(nums[i]);
-    backtrack(i + 1); // move past i, not past start
+    // move past i, not past start
+    backtrack(i + 1);
     cur.pop();
   }
 }
@@ -233,7 +240,21 @@ function generateParenthesis(n: number): string[] {
 }
 ```
 
-Counters travel as parameters (cheap, immutable copies); the prefix is a mutable list (mutate-recurse-undo, same as before). `cur.join("")` snapshots the string at record time — pushing `cur` itself would alias the live array. The "validity" predicate isn't checked after generating a candidate — it's baked into the two `if` guards, which is the cleanest form of pruning: invalid extensions are never tried in the first place.
+Counters travel as parameters (cheap, immutable copies); the prefix stays a mutable list. Note that there's no `IS_VALID` check here at all — validity is baked into the two `if` guards, which is the cleanest form of pruning: invalid extensions are never generated in the first place, rather than generated and rejected.
 
 > [!TIP]
 > [22 Generate Parentheses](https://leetcode.com/problems/generate-parentheses/) · [51 N-Queens](https://leetcode.com/problems/n-queens/) · [79 Word Search](https://leetcode.com/problems/word-search/) · [37 Sudoku Solver](https://leetcode.com/problems/sudoku-solver/)
+
+## Cheat Sheet
+
+| The problem asks for…                       | Pattern            | The detail that matters                                    |
+| ------------------------------------------- | ------------------ | ---------------------------------------------------------- |
+| every ordering                              | permutation        | `used[]`; record at `cur.length === n`                     |
+| every subset                                | subset             | `start` index; record at **every** level                   |
+| every size-$k$ choice                       | combination        | `start` index; record at `cur.length === k`                |
+| subsets hitting a target, elements reusable | combination sum I  | recurse `backtrack(i)` — same index                        |
+| ... with duplicate inputs, no reuse         | combination sum II | sort, skip `i > start && a[i] === a[i-1]`, recurse `i + 1` |
+| well-formed strings / board placements      | constraint-driven  | guard the recursive call; never generate-then-filter       |
+| one solution in a huge space                | DFS + hard pruning | order choices most-constrained first                       |
+
+If the recursion is correct but slow, the fix is almost always a better prune — not a faster loop body.

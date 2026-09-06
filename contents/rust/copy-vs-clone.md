@@ -22,7 +22,8 @@ For `Copy` types, the compiler quietly duplicates instead:
 ```rust
 let x: i32 = 5;
 let y = x;
-println!("{x}");     // fine — x was copied, not moved
+// fine — x was copied, not moved
+println!("{x}");
 ```
 
 There is no `.copy()` call. `Copy` changes what `let y = x;` _means_ at the language level.

@@ -27,7 +27,8 @@ Problems worth recognizing on sight:
 const adj: number[][] = Array.from({ length: n }, () => []);
 for (const [u, v] of edges) {
   adj[u].push(v);
-  adj[v].push(u); // drop this line for directed graphs
+  // drop this line for directed graphs
+  adj[v].push(u);
 }
 
 // weighted:
@@ -173,12 +174,14 @@ BFS generalized to non-negative edge weights. Min-heap keyed on the best known d
 function dijkstra(start: number, adj: [number, number][][]): number[] {
   const dist = new Array(adj.length).fill(Infinity);
   dist[start] = 0;
-  const pq = new MinHeap<[number, number]>((a, b) => a[0] - b[0]); // [dist, node]
+  // [dist, node]
+  const pq = new MinHeap<[number, number]>((a, b) => a[0] - b[0]);
   pq.push([0, start]);
 
   while (pq.size) {
     const [d, u] = pq.pop();
-    if (d > dist[u]) continue; // stale entry — newer path already processed
+    // stale entry — newer path already processed
+    if (d > dist[u]) continue;
     for (const [v, w] of adj[u]) {
       const nd = d + w;
       if (nd < dist[v]) {

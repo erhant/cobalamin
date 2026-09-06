@@ -62,7 +62,8 @@ For `BigInt` or any width: `n.toString(2).length`.
 ## Parity
 
 ```typescript
-const isOdd = n & 1; // 1 if odd, 0 if even
+// 1 if odd, 0 if even
+const isOdd = n & 1;
 ```
 
 The generalization is more interesting: `n & ((1 << k) - 1)` is `n mod 2^k` for $n \ge 0$, since the mask keeps only the low $k$ bits. Useful for hashing into power-of-two-sized tables — replaces a `%` with an AND.
@@ -117,10 +118,13 @@ The magic constants pair up bits, then nibbles, then bytes; the final multiply b
 ```typescript
 let m = mask;
 while (m) {
-  const lsb = m & -m; // isolate
-  const i = 31 - Math.clz32(lsb); // index
+  // isolate
+  const lsb = m & -m;
+  // index
+  const i = 31 - Math.clz32(lsb);
   // ... use i ...
-  m ^= lsb; // clear (equivalently m &= m - 1)
+  // clear (equivalently m &= m - 1)
+  m ^= lsb;
 }
 ```
 
@@ -131,12 +135,13 @@ while (m) {
 "Smear" the highest set bit downward so every position from it to bit 0 becomes 1. The trick: double the run length each step.
 
 ```typescript
+// each step doubles the run length below every set bit: 2, 4, 8, 16, 32
 let x = n;
-x |= x >>> 1; // every set bit now has a 1 immediately below it (run length 2)
-x |= x >>> 2; // runs of length 4
-x |= x >>> 4; // 8
-x |= x >>> 8; // 16
-x |= x >>> 16; // 32
+x |= x >>> 1;
+x |= x >>> 2;
+x |= x >>> 4;
+x |= x >>> 8;
+x |= x >>> 16;
 ```
 
 After the cascade, every bit from the top of $n$ down to bit 0 is 1 — i.e. `x = 2^{⌊log₂ n⌋ + 1} - 1`, one less than the next power of two $\ge n$. For 64-bit values add `x |= x >>> 32` (in `BigInt`).
@@ -164,7 +169,8 @@ function nextPow2(n: number): number {
 
 ```typescript
 function prevPow2(n: number): number {
-  return 1 << (31 - Math.clz32(n)); // requires n > 0
+  // requires n > 0
+  return 1 << (31 - Math.clz32(n));
 }
 ```
 

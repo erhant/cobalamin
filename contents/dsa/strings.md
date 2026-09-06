@@ -1,5 +1,17 @@
 # Strings
 
+Nearly every algorithm here is one of two ideas. **Double the string** so that rotations become plain substrings (`s + s`), or **reuse comparisons you already made** so the scan never backtracks — KMP, the Z-function and Manacher's are the same window-reuse skeleton wearing different hats. What's left is the trie.
+
+Shapes worth recognizing on sight:
+
+- **Rotation / periodicity** — doubling tricks on `s + s`.
+- **Find a pattern in a text** — KMP or Z-function; rolling hash when you need many patterns or $O(1)$ substring equality.
+- **Palindromes** — expand-around-center by default, Manacher's when $O(n)$ actually matters.
+- **Prefix queries / many patterns at once** — trie, then Aho-Corasick.
+
+> [!CAUTION]
+> JS strings are immutable and every `slice` / `+` allocates. A `s.slice(...)` inside a loop quietly turns a linear algorithm quadratic — index into the original string, or work over `charCodeAt` values, in hot loops.
+
 ## Is `a` a Rotation of `b`?
 
 Every rotation of `a` is a length-`n` window of `a + a`. So:
@@ -22,19 +34,9 @@ function repeatedSubstringPattern(s: string): boolean {
 }
 ```
 
-**Why it works.** Let `n = |s|`. `s` always appears in `s + s` at offsets `0` and `n` — these are trivial. `.slice(1, -1)` destroys the first and last character, which kills exactly those two edge occurrences while leaving every interior occurrence intact.
+**Why it works.** `s` always occurs in `s + s` at offsets `0` and `n`. Slicing off the first and last character destroys exactly those two occurrences and no others, so the test is really "does `s` occur at some **interior** offset `p ∈ [1, n)`?"
 
-If `s` appears at an interior offset `p ∈ [1, n−1]`, then for all `i`:
-
-$$
-s[i] = (s + s)[p + i] = s[(p + i) \bmod n]
-$$
-
-So rotating `s` by `p` fixes it. If rotation by `p` fixes `s`, so does rotation by `g = \gcd(p, n)`. Since `p < n` we have `g < n`, so `s` is made of `n/g ≥ 2` copies of its first `g` characters.
-
-Conversely, if `s = t^k` with `k ≥ 2`, then `s = t^k` reappears in `s + s = t^{2k}` at offset `|t| ∈ [1, n−1]`.
-
-Picture: write `s` on a circular tape. A repeated pattern means the tape reads the same after some non-trivial rotation, and the rotations of `s` are exactly the length-`n` windows of `s + s`.
+An interior occurrence means `s[i] = s[(p + i) \bmod n]` for all `i` — rotating `s` by `p` leaves it unchanged. Rotation invariance is closed under gcd, so `s` is also fixed by a rotation of $g = \gcd(p, n) < n$, which makes it $n/g \ge 2$ copies of its first $g$ characters. Conversely, `t^k` reappears in `t^{2k}` at offset `|t| ∈ [1, n)`. Picture `s` written on a circular tape: being periodic is exactly "some non-trivial rotation maps the tape to itself."
 
 **Divisor-iteration alternative.** Try every proper divisor `d` of `n` as a candidate substring length:
 
@@ -73,8 +75,10 @@ function longestPalindrome(s: string): string {
     }
   };
   for (let i = 0; i < s.length; i++) {
-    expand(i, i); // odd
-    expand(i, i + 1); // even
+    // odd
+    expand(i, i);
+    // even
+    expand(i, i + 1);
   }
   return s.slice(start, end);
 }
@@ -104,7 +108,8 @@ function manacher(s: string): number[] {
       right = i + p[i];
     }
   }
-  return p; // p[i] = palindrome radius in original string at position i in t
+  // p[i] = palindrome radius in original string at position i in t
+  return p;
 }
 ```
 

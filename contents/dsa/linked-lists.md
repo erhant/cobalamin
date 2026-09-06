@@ -51,10 +51,14 @@ function reverse(head: ListNode | null): ListNode | null {
   let prev: ListNode | null = null;
   let curr = head;
   while (curr) {
-    const next = curr.next;  // remember where we were going
-    curr.next = prev;         // flip the pointer
-    prev = curr;              // advance prev
-    curr = next;              // advance curr
+    // remember where we were going
+    const next = curr.next;
+    // flip the pointer
+    curr.next = prev;
+    // advance prev
+    prev = curr;
+    // advance curr
+    curr = next;
   }
   return prev;
 }
@@ -68,7 +72,8 @@ The loop invariant: everything strictly before `curr` is already reversed; `prev
 function reverseRec(head: ListNode | null): ListNode | null {
   if (!head || !head.next) return head;
   const newHead = reverseRec(head.next);
-  head.next.next = head;  // the next node now points back at us
+  // the next node now points back at us
+  head.next.next = head;
   head.next = null;
   return newHead;
 }
@@ -204,8 +209,10 @@ class LRUNode {
 class LRUCache {
   private cap: number;
   private map = new Map<number, LRUNode>();
-  private head = new LRUNode(0, 0); // sentinel
-  private tail = new LRUNode(0, 0); // sentinel
+  // sentinel
+  private head = new LRUNode(0, 0);
+  // sentinel
+  private tail = new LRUNode(0, 0);
 
   constructor(capacity: number) {
     this.cap = capacity;

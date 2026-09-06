@@ -25,7 +25,8 @@ Key properties:
 - One type per call site. You cannot write:
   ```rust
   fn choose(b: bool) -> impl Iterator<Item = u32> {
-      if b { 0..10 } else { (0..10).filter(|_| true) }  // error: mismatched types
+      // error: mismatched types
+      if b { 0..10 } else { (0..10).filter(|_| true) }
   }
   ```
   Both branches must produce the _same_ concrete type.

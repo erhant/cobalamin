@@ -50,6 +50,7 @@
 - [Lifetimes](./rust/lifetimes.md)
 - [`impl Trait` vs. `dyn Trait`](./rust/impl-trait-vs-dyn-trait.md)
 - [Interior Mutability](./rust/interior-mutability.md)
+- [Global State](./rust/global-state.md)
 - [Ordering Threads](./rust/ordering-threads.md)
 
 # Miscellaneous

@@ -22,7 +22,8 @@ Row $0$ is the parent array; fill upward with the doubling recurrence. Use a sen
 const LOG = Math.ceil(Math.log2(n)) + 1;
 const up: number[][] = Array.from({ length: LOG }, () => new Array(n).fill(-1));
 
-up[0] = parent; // parent[root] = -1
+// parent[root] = -1
+up[0] = parent;
 for (let j = 1; j < LOG; j++) {
   for (let v = 0; v < n; v++) {
     const mid = up[j - 1][v];
@@ -54,7 +55,8 @@ Compute depths with one DFS/BFS, then:
 ```typescript
 function lca(u: number, v: number): number {
   if (depth[u] < depth[v]) [u, v] = [v, u];
-  u = kthAncestor(u, depth[u] - depth[v]); // equalize depths
+  // equalize depths
+  u = kthAncestor(u, depth[u] - depth[v]);
 
   if (u === v) return u;
 
@@ -65,7 +67,8 @@ function lca(u: number, v: number): number {
       v = up[j][v];
     }
   }
-  return up[0][u]; // one step above the meeting frontier
+  // one step above the meeting frontier
+  return up[0][u];
 }
 ```
 
@@ -105,7 +108,8 @@ Combined with LCA, this answers "min/max/sum edge weight on the path $u \rightsq
 Nothing above requires a tree — only that each node has exactly one outgoing pointer. For a `next` array (possibly with cycles), the same table answers "where am I after $k$ steps" for astronomically large $k$, since $k$ only costs $\log k$ rows:
 
 ```typescript
-const LOG = 64; // k up to 2^64 — bigint bits
+// k up to 2^64 — bigint bits
+const LOG = 64;
 // up[0] = next; same doubling build, no -1 cases since every node has a successor
 ```
 

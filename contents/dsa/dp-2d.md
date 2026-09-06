@@ -20,7 +20,8 @@ function knapsack01(weight: number[], value: number[], W: number): number {
   const dp: number[][] = Array.from({ length: n + 1 }, () => new Array(W + 1).fill(0));
   for (let i = 1; i <= n; i++) {
     for (let w = 0; w <= W; w++) {
-      dp[i][w] = dp[i - 1][w]; // skip item i-1
+      // skip item i-1
+      dp[i][w] = dp[i - 1][w];
       if (weight[i - 1] <= w)
         dp[i][w] = Math.max(dp[i][w], dp[i - 1][w - weight[i - 1]] + value[i - 1]);
     }
@@ -103,11 +104,14 @@ State `dp[i][j]` = number of ways `s[0..i)` produces `t[0..j)`.
 ```typescript
 function numDistinct(s: string, t: string): number {
   const dp: number[][] = Array.from({ length: s.length + 1 }, () => new Array(t.length + 1).fill(0));
-  for (let i = 0; i <= s.length; i++) dp[i][0] = 1; // empty target: one way (use nothing)
+  // empty target: one way (use nothing)
+  for (let i = 0; i <= s.length; i++) dp[i][0] = 1;
   for (let i = 1; i <= s.length; i++) {
     for (let j = 1; j <= t.length; j++) {
-      dp[i][j] = dp[i - 1][j]                                    // leave s[i-1]
-        + (s[i - 1] === t[j - 1] ? dp[i - 1][j - 1] : 0);        // pick s[i-1] for t[j-1]
+      // leave s[i-1] unused
+      dp[i][j] = dp[i - 1][j];
+      // or spend it on t[j-1] — only when they match
+      if (s[i - 1] === t[j - 1]) dp[i][j] += dp[i - 1][j - 1];
     }
   }
   return dp[s.length][t.length];
@@ -296,7 +300,8 @@ function minCut(s: string): number {
       pal[i][j] = s[i] === s[j] && (j - i < 2 || pal[i + 1][j - 1]);
 
   const cuts = new Array(n + 1).fill(Infinity);
-  cuts[0] = -1; // empty prefix needs -1 cuts (cancels the +1 below)
+  // empty prefix needs -1 cuts (cancels the +1 below)
+  cuts[0] = -1;
   for (let i = 1; i <= n; i++)
     for (let j = 0; j < i; j++)
       if (pal[j][i - 1]) cuts[i] = Math.min(cuts[i], cuts[j] + 1);

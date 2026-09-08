@@ -1,5 +1,7 @@
 # Summary
 
+[Introduction](./intro.md)
+
 # Data Structures & Algorithms
 
 - [Binary Search](./dsa/binary-search.md)

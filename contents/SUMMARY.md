@@ -26,11 +26,14 @@
 - [Segment Tree](./dsa/segment-tree.md)
   - [Fenwick Tree](./dsa/fenwick-tree.md)
 - [Bit Manipulation](./dsa/bits.md)
+- [Geometry](./dsa/geometry.md)
+  - [Line Sweep](./dsa/line-sweep.md)
 
 # Mathematics
 
 - [Arithmetic](./math/arithmetic.md)
 - [Primes](./math/primes.md)
+- [Divisors](./math/divisors.md)
 - [Counting](./math/counting.md)
 - [Probability](./math/probability.md)
 

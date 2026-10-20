@@ -152,3 +152,11 @@ git worktree prune
 ```
 
 Worktrees pair well with rebasing a PR branch: keep your main work in the primary checkout and do the integration/conflict resolution in a throwaway worktree, so a botched rebase never touches your main directory.
+
+## Re-run Failed Jobs
+
+Working with flaky CI/CD? Have to monitor jobs & re-run failed ones from time to time? Just do:
+
+```sh
+gh run rerun {action_number} --failed
+```

@@ -147,7 +147,7 @@ function factor(n: number, spf: number[]): number[] {
 }
 ```
 
-Same $O(N \log \log N)$ build cost as the boolean sieve. The same template — store something more informative than a bit per slot — gives sieves for the Möbius function $\mu(n)$, the divisor count $\tau(n)$, the divisor sum $\sigma(n)$, and any multiplicative function with a clean formula on prime powers (totient is the worked example below).
+Same $O(N \log \log N)$ build cost as the boolean sieve. The same template — store something more informative than a bit per slot — gives sieves for the Möbius function $\mu(n)$, the divisor count $\tau(n)$ and divisor sum $\sigma(n)$ (see [Divisors](./divisors.md)), and any multiplicative function with a clean formula on prime powers (totient is the worked example below).
 
 ### Variant: linear sieve
 

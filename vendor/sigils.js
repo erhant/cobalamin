@@ -574,6 +574,45 @@ const SIGILS = {
 ##.....`,
 };
 
+// difficulty marker for DSA pages: 1 = beginner, 2 = intermediate, 3 = advanced
+const LEVELS = {
+  "dsa/sorting": 1,
+  "dsa/binary-search": 1,
+  "dsa/two-pointers": 1,
+  "dsa/prefix-diff": 1,
+  "dsa/monotonic-stack-queue": 2,
+  "dsa/in-place-arrays": 2,
+  "dsa/backtracking": 2,
+  "dsa/dp": 1,
+  "dsa/dp-1d": 1,
+  "dsa/dp-2d": 2,
+  "dsa/dp-interval": 3,
+  "dsa/dp-bitmask": 3,
+  "dsa/dp-digit": 3,
+  "dsa/linked-lists": 1,
+  "dsa/heap": 1,
+  "dsa/union-find": 2,
+  "dsa/segment-tree": 3,
+  "dsa/fenwick-tree": 2,
+  "dsa/sparse-table": 3,
+  "dsa/sqrt-decomposition": 3,
+  "dsa/binary-trees": 1,
+  "dsa/graphs": 1,
+  "dsa/graph-representations": 1,
+  "dsa/shortest-paths": 2,
+  "dsa/mst": 2,
+  "dsa/binary-lifting": 3,
+  "dsa/tree-flattening": 3,
+  "dsa/heavy-light-decomposition": 3,
+  "dsa/strings": 2,
+  "dsa/trie": 2,
+  "dsa/geometry": 2,
+  "dsa/line-sweep": 2,
+  "dsa/bits": 1,
+};
+const LEVEL_NAMES = ["Beginner", "Intermediate", "Advanced"];
+const LEVEL_COLORS = ["#2f9e44", "#f08c00", "#e03131"];
+
 // one color per sidebar group; a group starts at every part title and `---` spacer in SUMMARY.md
 const PALETTE = [
   "#3b5bdb",
@@ -637,4 +676,39 @@ for (const [key, grid] of Object.entries(SIGILS)) {
     `html:has(mdbook-sidebar-scrollbox :is(${link}).active) main h1:first-of-type::before { content: ""; background-image: ${url}; width: ${w * TITLE_SCALE}px; height: ${h * TITLE_SCALE}px; }`,
   );
 }
+// 3 boxes, the first `level` filled, the rest dim outlines
+const BOX = 6;
+const GAP = 2;
+const MARKER_W = 3 * BOX + 2 * GAP;
+const markerUrl = (level) => {
+  const color = LEVEL_COLORS[level - 1];
+  const boxes = [0, 1, 2].map((i) =>
+    i < level
+      ? `<rect x='${i * (BOX + GAP)}' y='0' width='${BOX}' height='${BOX}' fill='${color}'/>`
+      : `<rect x='${i * (BOX + GAP) + 0.5}' y='0.5' width='${BOX - 1}' height='${BOX - 1}' fill='none' stroke='${color}' stroke-opacity='.45'/>`,
+  );
+  const svg = `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 ${MARKER_W} ${BOX}' shape-rendering='crispEdges'>${boxes.join("")}</svg>`;
+  return `url("data:image/svg+xml,${svg.replace(/[#<>%"]/g, encodeURIComponent)}")`;
+};
+for (const level of [1, 2, 3]) vars.push(`--level-${level}: ${markerUrl(level)};`);
+css.push(
+  // the link wrapper is a flex row, so an auto margin pushes the marker to the right edge
+  `mdbook-sidebar-scrollbox .chapter-link-wrapper::after { flex: none; align-self: center; width: ${MARKER_W}px; height: ${BOX}px; margin-left: auto; padding-left: 0.5em; background: no-repeat right center; box-sizing: content-box; }`,
+  `main h1:first-of-type::after { display: block; margin-top: 0.4em; padding-left: ${MARKER_W * 2 + 10}px; background: no-repeat left center / ${MARKER_W * 2}px ${BOX * 2}px; font-size: 0.4em; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; line-height: ${BOX * 2}px; }`,
+);
+for (const [key, level] of Object.entries(LEVELS)) {
+  if (!colors[key]) throw new Error(`level for page not in SUMMARY.md: ${key}`);
+  const link = `a[href="${key}.html"], a[href$="/${key}.html"]`;
+  css.push(
+    `mdbook-sidebar-scrollbox .chapter-link-wrapper:has(> :is(${link}))::after { content: ""; background-image: var(--level-${level}); }`,
+    `html:has(mdbook-sidebar-scrollbox :is(${link}).active) main h1:first-of-type::after { content: "${LEVEL_NAMES[level - 1]}"; background-image: var(--level-${level}); color: ${LEVEL_COLORS[level - 1]}; }`,
+  );
+}
+
+// hanging indent so wrapped titles line up with the text, not under the icon
+const sigilLinks = Object.keys(SIGILS).map((key) => `a[href="${key}.html"], a[href$="/${key}.html"]`);
+css.push(
+  `mdbook-sidebar-scrollbox :is(${sigilLinks.join(", ")}) { padding-left: calc(${SIDEBAR_BOX}px + 0.5em); text-indent: calc(-${SIDEBAR_BOX}px - 0.5em); }`,
+);
+
 fs.writeFileSync(path.join(__dirname, "sigils.css"), `:root {\n  ${vars.join("\n  ")}\n}\n${css.join("\n")}\n`);

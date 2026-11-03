@@ -66,7 +66,6 @@
 - [Discrete Logarithm](./cryptography/discrete-log.md)
 - [Digital Signatures](./cryptography/signatures.md)
 - [Hashing](./cryptography/hashing.md)
-  - [Domain Separation](./cryptography/domain-separation.md)
 
 # Rust Programming
 

@@ -1,6 +1,6 @@
 # Bitmask DP
 
-When a state needs "which subset of $n$ elements has been used / visited / chosen", encode the subset as an integer `mask ∈ [0, 2^n)` — bit $i$ is $1$ iff element $i$ is in the set. The whole subset lattice indexes a single flat array, and transitions become bit operations. The trade-off is that $n$ must be small: $2^n$ is the table size, so $n \le 20$ or so is the practical ceiling ($2^{20} \approx 10^6$).
+When a state needs "which subset of $n$ elements has been used / visited / chosen", encode the subset as an integer $\text{mask} \in [0, 2^n)$ — bit $i$ is $1$ iff element $i$ is in the set. The whole subset lattice indexes a single flat array, and transitions become bit operations. The trade-off is that $n$ must be small: $2^n$ is the table size, so $n \le 20$ or so is the practical ceiling ($2^{20} \approx 10^6$).
 
 Use bitmask DP when the state has to remember the **identity** of the set, not just its size — two configurations covering different elements are not interchangeable even at the same count. Classic shapes: traveling salesman, assignment, set cover, Hamiltonian-path counting, partition into groups.
 
@@ -32,7 +32,7 @@ Add a position dimension only when transitions actually depend on it. Every extr
 
 Given $n$ cities and a distance matrix $d[i][j]$, find the shortest tour starting at city $0$, visiting every city once, and returning. State `(mask, i)` = "shortest path that has visited exactly the cities in `mask`, currently at city $i$" (with $i \in \text{mask}$). Transition from `(mask, i)`: pick any unvisited $j$, pay $d[i][j]$, land at `(mask | (1 << j), j)`.
 
-Tracing $n = 3$ with $d[0][1] = 1$, $d[0][2] = 2$, $d[1][2] = 3$ (symmetric): the base is `dp[001][0] = 0`. From there `dp[011][1] = 1` and `dp[101][2] = 2`. Then `dp[111][2] = dp[011][1] + d[1][2] = 4` and `dp[111][1] = dp[101][2] + d[2][1] = 5`. Answer is $\min(\, dp[111][1] + d[1][0], \, dp[111][2] + d[2][0]\,) = \min(6, 6) = 6$.
+Tracing $n = 3$ with $d[0][1] = 1$, $d[0][2] = 2$, $d[1][2] = 3$ (symmetric): the base is $\text{dp}[001][0] = 0$. From there $\text{dp}[011][1] = 1$ and $\text{dp}[101][2] = 2$. Then $\text{dp}[111][2] = \text{dp}[011][1] + d[1][2] = 4$ and $\text{dp}[111][1] = \text{dp}[101][2] + d[2][1] = 5$. Answer is $\min(\, \text{dp}[111][1] + d[1][0], \, \text{dp}[111][2] + d[2][0]\,) = \min(6, 6) = 6$.
 
 ### Skeleton
 

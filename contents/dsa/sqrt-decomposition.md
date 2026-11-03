@@ -59,7 +59,7 @@ For sum this loses to a [Fenwick tree](./fenwick-tree.md) on every axis. It earn
 
 For **offline** range queries where the answer for $[l, r]$ can be updated in $O(1)$ when either endpoint moves by one. Sort the queries so those endpoint moves total $O((n + q)\sqrt n)$ instead of $O(nq)$:
 
-- primary key: block of `l` (i.e. `l / b | 0`)
+- primary key: block of `l` (i.e. $\lfloor l / b \rfloor$)
 - secondary key: `r` (ascending; alternate direction per block to shave a constant)
 
 ```typescript

@@ -36,7 +36,7 @@ The **dot product** $a_x b_x + a_y b_y = |\vec{a}||\vec{b}|\cos\theta$ is its pa
 > [!TIP]
 > [1232 Check If It Is a Straight Line](https://leetcode.com/problems/check-if-it-is-a-straight-line/) · [1037 Valid Boomerang](https://leetcode.com/problems/valid-boomerang/) · [149 Max Points on a Line](https://leetcode.com/problems/max-points-on-a-line/)
 
-For "max points on a line", don't hash slopes as floats. Hash the reduced direction `(dx / g, dy / g)` with $g = \gcd(dx, dy)$, and fix the sign so that $(1, -2)$ and $(-1, 2)$ map to the same key.
+For "max points on a line", don't hash slopes as floats. Hash the reduced direction $(dx / g, dy / g)$ with $g = \gcd(dx, dy)$, and fix the sign so that $(1, -2)$ and $(-1, 2)$ map to the same key.
 
 ## Segment Intersection
 

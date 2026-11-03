@@ -74,9 +74,9 @@ function countWithDigitSum(N: number, s: number): number {
 ## Variants
 
 - **Range $[L, R]$.** The DP handles only a one-sided upper bound; for an interval compute $f(R) - f(L - 1)$.
-- **Summing values, not counting.** Return a pair `(count, sum)`. Each placed digit $d$ contributes its place value once per matching completion: `(child.count, child.sum + d · 10^(n - pos - 1) · child.count)`.
+- **Summing values, not counting.** Return a pair `(count, sum)`. Each placed digit $d$ contributes its place value once per matching completion: $(\text{child.count},\ \text{child.sum} + d \cdot 10^{n - \text{pos} - 1} \cdot \text{child.count})$.
 - **Leading-zero subtlety.** For properties about digit identity ("no two adjacent equal digits", "exactly two 7s"), thread `leadingZero` through the state and only update the property once it flips off.
-- **Other bases.** Same machinery — `len = log_b(N)`, digit limit is $b - 1$. Binary digit DPs come up in XOR problems and combinatorial-game counting.
+- **Other bases.** Same machinery — $\text{len} = \log_b N$, digit limit is $b - 1$. Binary digit DPs come up in XOR problems and combinatorial-game counting.
 
 ## Complexity
 

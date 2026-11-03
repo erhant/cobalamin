@@ -43,7 +43,7 @@ This is the [difference array](./prefix-diff.md) idea over sparse coordinates: s
 
 Buildings are `[l, r, h]`. Output the points where the outline's height changes. The sweep moves along $x$, and the active set is a **max-heap of heights**. At each event coordinate, apply every event there, then compare the current max to the last emitted height.
 
-Removing an arbitrary height from a heap is awkward, so use **lazy deletion**: store `[h, r]` and pop the top only while its `r <= x`, meaning that building has already ended.
+Removing an arbitrary height from a heap is awkward, so use **lazy deletion**: store `[h, r]` and pop the top only while its $r \le x$, meaning that building has already ended.
 
 ```typescript
 function skyline(buildings: [number, number, number][]): [number, number][] {

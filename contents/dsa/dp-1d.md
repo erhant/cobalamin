@@ -132,7 +132,7 @@ function lengthOfLIS(nums: number[]): number {
 
 ## Coin Change
 
-Minimum number of coins to make `amount`. State `dp[a]` = fewest coins summing to `a`, with `dp[0] = 0` and `dp[a] = ∞` if unreachable. Each coin gives a transition $a \to a - c$.
+Minimum number of coins to make `amount`. State `dp[a]` = fewest coins summing to `a`, with $\text{dp}[0] = 0$ and $\text{dp}[a] = \infty$ if unreachable. Each coin gives a transition $a \to a - c$.
 
 ```typescript
 function coinChange(coins: number[], amount: number): number {
@@ -196,7 +196,7 @@ function wordBreak(s: string, wordDict: string[]): boolean {
 }
 ```
 
-$O(n^2 L)$ where $L$ is the max word length (the `slice` and `has`). Capping the inner range to `j >= i - maxWordLen` shaves it to $O(n \cdot L^2)$, useful when the dictionary has bounded-length words.
+$O(n^2 L)$ where $L$ is the max word length (the `slice` and `has`). Capping the inner range to $j \ge i - L$ shaves it to $O(n \cdot L^2)$, useful when the dictionary has bounded-length words.
 
 > [!TIP]
 > [139 Word Break](https://leetcode.com/problems/word-break/) · [140 Word Break II](https://leetcode.com/problems/word-break-ii/) (enumerate all segmentations — needs reconstruction via memoized recursion or a back-edge graph)

@@ -36,7 +36,7 @@ for (let i = 0; i < nums.length; i++) {
 }
 ```
 
-Sum of `nums[l..r]` (inclusive) is `pfx[r + 1] - pfx[l]`. The leading `0` lets `l = 0` work without a special case — the "empty prefix" is a real, addressable state.
+Sum of $\text{nums}[l..r]$ (inclusive) is $\text{pfx}[r + 1] - \text{pfx}[l]$. The leading `0` lets `l = 0` work without a special case — the "empty prefix" is a real, addressable state.
 
 ### Difference Array
 
@@ -87,7 +87,7 @@ for (const n of nums) {
 }
 ```
 
-Each match is a left endpoint forming a valid subarray ending here. O(n) time.
+Each match is a left endpoint forming a valid subarray ending here. $O(n)$ time.
 
 ### Count subarrays divisible by $k$
 
@@ -191,7 +191,7 @@ for (let r = 0; r < rows; r++) {
 }
 ```
 
-**O(C) space, O(R·C) time** — time is optimal (every cell must be read). The row-sweep form also collapses the usual three special cases (first row, first column, interior) into a single uniform update: `pfx.fill(0)` correctly represents the empty "row −1" strip.
+**$O(C)$ space, $O(R \cdot C)$ time** — time is optimal (every cell must be read). The row-sweep form also collapses the usual three special cases (first row, first column, interior) into a single uniform update: `pfx.fill(0)` correctly represents the empty "row −1" strip.
 
 ### Parallel Monotone State
 

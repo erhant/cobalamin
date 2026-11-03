@@ -83,7 +83,7 @@ for (const num of nums) {
 }
 ```
 
-Each element's removal step = `max(steps of popped elements) + 1`. If nothing larger is to the left, it's never removed (step = 0).
+Each element's removal step = $\max(\text{steps of popped elements}) + 1$. If nothing larger is to the left, it's never removed ($\text{step} = 0$).
 
 ## Monotonic Queue
 
@@ -128,7 +128,7 @@ A stack only answers questions anchored at the current scan position (nearest-gr
 
 ### Other Uses
 
-- **Shortest subarray with sum ≥ K** (with negatives) — monotonic deque over prefix-sum indices, increasing values, gives $O(n)$.
+- **Shortest subarray with sum $\ge K$** (with negatives) — monotonic deque over prefix-sum indices, increasing values, gives $O(n)$.
 - **Constrained 1D DP** — recurrences like $dp[i] = \min_{i-k \le j < i} dp[j] + c_i$ are sliding-window minima; a monotonic deque turns the inner $O(k)$ scan into $O(1)$ amortized.
 - **Jump Game VI** and similar — same DP-with-window-min pattern.
 

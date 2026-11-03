@@ -5,13 +5,13 @@ A family of techniques that reuse the input array's own storage as scratch space
 When this comes up:
 
 - Interview prompts that explicitly say "$O(1)$ extra space".
-- Problems where the value range matches the index range (`nums[i] ∈ [1, n]`), unlocking cyclic-sort / index-as-bucket.
+- Problems where the value range matches the index range ($\text{nums}[i] \in [1, n]$), unlocking cyclic-sort / index-as-bucket.
 - Matrix transformations where allocating a copy is wasteful.
 - Constant-space bridges between arrays and graph algorithms (Floyd's-on-indices).
 
 ## Cyclic Sort
 
-When `nums[i] ∈ [1, n]` (or any bijection between values and indices), **place each value at the index it owns**. After one pass, the array is sorted; mismatched slots reveal duplicates and missing values.
+When $\text{nums}[i] \in [1, n]$ (or any bijection between values and indices), **place each value at the index it owns**. After one pass, the array is sorted; mismatched slots reveal duplicates and missing values.
 
 ```typescript
 function cyclicSort(nums: number[]): void {
@@ -115,7 +115,7 @@ For non-square or arbitrary-angle rotations, you need a fresh buffer.
 
 ## Floyd's on Indices
 
-When `nums[i] ∈ [1, n]` and there's exactly one duplicate, treat the array as a function $f(i) = \text{nums}[i]$ — i.e. a linked list where node $i$ points to node $\text{nums}[i]$. The duplicate creates a cycle, and the cycle's entrance is the duplicate value.
+When $\text{nums}[i] \in [1, n]$ and there's exactly one duplicate, treat the array as a function $f(i) = \text{nums}[i]$ — i.e. a linked list where node $i$ points to node $\text{nums}[i]$. The duplicate creates a cycle, and the cycle's entrance is the duplicate value.
 
 Apply [Floyd's tortoise-and-hare](./linked-lists.md#cycle-detection-floyds-tortoise-and-hare) to find the cycle's start without modifying the array:
 
@@ -141,5 +141,5 @@ $O(n)$ time, $O(1)$ space, **non-destructive** — sign-marking modifies the arr
 
 - **Cyclic sort with duplicates** — guard with `nums[i] !== nums[target]`, not `nums[i] !== i + 1`, or you'll spin forever swapping two equal values.
 - **Sign marking with zero** — `-0 === 0` in JS; if zero is a legal value, shift up or pick a different marker.
-- **Modular encoding overflow** — `old + k * new` must fit in `Number`. For 32-bit ints with large $k$, this is fine; for already-large values, you may need BigInt or a fresh array.
+- **Modular encoding overflow** — $\text{old} + k \cdot \text{new}$ must fit in `Number`. For 32-bit ints with large $k$, this is fine; for already-large values, you may need BigInt or a fresh array.
 - **Forgetting to restore** — if the caller doesn't expect the array to be mutated, document the side effect or use Floyd's-on-indices instead.

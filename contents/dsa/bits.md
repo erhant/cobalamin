@@ -66,7 +66,7 @@ For `BigInt` or any width: `n.toString(2).length`.
 const isOdd = n & 1;
 ```
 
-The generalization is more interesting: `n & ((1 << k) - 1)` is `n mod 2^k` for $n \ge 0$, since the mask keeps only the low $k$ bits. Useful for hashing into power-of-two-sized tables — replaces a `%` with an AND.
+The generalization is more interesting: `n & ((1 << k) - 1)` is $n \bmod 2^k$ for $n \ge 0$, since the mask keeps only the low $k$ bits. Useful for hashing into power-of-two-sized tables — replaces a `%` with an AND.
 
 ## Check if power of two
 
@@ -144,7 +144,7 @@ x |= x >>> 8;
 x |= x >>> 16;
 ```
 
-After the cascade, every bit from the top of $n$ down to bit 0 is 1 — i.e. `x = 2^{⌊log₂ n⌋ + 1} - 1`, one less than the next power of two $\ge n$. For 64-bit values add `x |= x >>> 32` (in `BigInt`).
+After the cascade, every bit from the top of $n$ down to bit 0 is 1 — i.e. $x = 2^{\lfloor \log_2 n \rfloor + 1} - 1$, one less than the next power of two $\ge n$. For 64-bit values add `x |= x >>> 32` (in `BigInt`).
 
 Bit smearing is the engine behind round-up-to-power-of-two, "highest set bit" without `Math.clz32`, and constructing low-bit masks of arbitrary width.
 

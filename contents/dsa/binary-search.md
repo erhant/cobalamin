@@ -122,7 +122,7 @@ Nothing requires the values to live in an array. Any monotonic function over an 
 
 ### Perfect Square Check
 
-$f(x) = x^2$ is monotonically increasing. Search for an `x` with `x * x === n`:
+$f(x) = x^2$ is monotonically increasing. Search for an $x$ with $x^2 = n$:
 
 ```typescript
 function isPerfectSquare(n: number): boolean {
@@ -141,9 +141,9 @@ function isPerfectSquare(n: number): boolean {
 
 $O(\log n)$ — avoids floating-point issues with `Math.sqrt`. For $n > 2^{53}$, use `BigInt`.
 
-### Integer Square Root (`floor(sqrt(x))`)
+### Integer Square Root ($\lfloor \sqrt{x} \rfloor$)
 
-No exact hit in general — we want the largest `m` with `m * m <= x`. Natural fit for closed-interval search: the loop's final `r` is exactly the answer.
+No exact hit in general — we want the largest $m$ with $m^2 \le x$. Natural fit for closed-interval search: the loop's final `r` is exactly the answer.
 
 ```typescript
 function mySqrt(x: number): number {
@@ -161,7 +161,7 @@ function mySqrt(x: number): number {
 
 After the loop, `l === r + 1` and `r` holds the answer. Handles `x = 0` cleanly too.
 
-**Common trap.** Don't return `mid` from the boundary form. `mid` is the last midpoint probed, not the loop's invariant — it can land on either side of the answer. Return the invariant instead: `r` in the closed form above, or phrase it as "first `m` with `m * m > x`" and return `l - 1`.
+**Common trap.** Don't return `mid` from the boundary form. `mid` is the last midpoint probed, not the loop's invariant — it can land on either side of the answer. Return the invariant instead: `r` in the closed form above, or phrase it as "first $m$ with $m^2 > x$" and return `l - 1`.
 
 This pattern generalizes: whenever you need the largest/smallest value where a monotonic condition flips (minimum capacity, smallest speed, largest dividend), binary-search over the answer space.
 

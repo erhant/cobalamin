@@ -14,7 +14,7 @@ command = "mdbook-mermaid"
 
 [output.html]
 site-url = "/cobalamin/"
-additional-css = ["./vendor/mermaid-center.css"]
+additional-css = ["./vendor/mermaid-center.css", "./vendor/sigils.css"]
 additional-js = ["./vendor/mermaid.min.js", "./vendor/mermaid-init.js"]
 git-repository-url = "https://github.com/erhant/cobalamin"
 default-theme = "light"

@@ -32,6 +32,8 @@ If `mdbook serve` fails, first check that both preprocessors are installed (`car
 
 This applies even to small edits: if you rename a page, fix the `SUMMARY.md` link; if you delete one, remove the line.
 
+Each page also has a pixel-art sigil (sidebar + title icon). The grids live in `vendor/sigils.js`, keyed by page path (`dsa/heap`); after adding/renaming/removing a page, update its grid there and regenerate the committed CSS with `node vendor/sigils.js` (writes `vendor/sigils.css`; it throws if a sigil's page is missing from `SUMMARY.md`). Colors come from the page's group in `SUMMARY.md` (each `#` part and `---` spacer starts a new one).
+
 ## Conventions
 
 - Code examples are written in **TypeScript**, even for algorithm/crypto content.

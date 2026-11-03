@@ -21,9 +21,9 @@ graph TD
 
 For a node at index `i`:
 
-- `left = 2*i + 1`
-- `right = 2*i + 2`
-- `parent = (i - 1) >> 1`
+- $\text{left} = 2i + 1$
+- $\text{right} = 2i + 2$
+- $\text{parent} = \lfloor (i - 1) / 2 \rfloor$
 
 Operations and complexity:
 
@@ -32,7 +32,7 @@ Operations and complexity:
 | `peek`                          | $O(1)$                          | return `a[0]`                                         |
 | `push(v)`                       | $O(\log n)$                     | append, then sift up                                  |
 | `pop`                           | $O(\log n)$                     | swap root with last, pop last, sift down the new root |
-| `heapify(arr)`                  | $O(n)$                          | sift-down from `n/2 - 1` down to `0`                  |
+| `heapify(arr)`                  | $O(n)$                          | sift-down from $\lfloor n/2 \rfloor - 1$ down to $0$     |
 | arbitrary remove / decrease-key | $O(n)$ search + $O(\log n)$ fix | usually replaced with **lazy deletion**               |
 
 `heapify` being $O(n)$ — not $O(n \log n)$ — is a tight analysis: most nodes are near the bottom and sift down only a constant number of levels.
@@ -147,7 +147,7 @@ function kthLargest(nums: number[], k: number): number {
 The common thread: the next decision depends on the extremum of a pool that keeps changing. If the pool were static you'd sort once; if you needed rank queries or deletion by key, you'd need a balanced BST instead.
 
 > [!TIP]
-> [215 Kth Largest Element in an Array](https://leetcode.com/problems/kth-largest-element-in-an-array/) (also doable in average $O(n)$ via Quickselect) · [347 Top K Frequent Elements](https://leetcode.com/problems/top-k-frequent-elements/) · [295 Find Median from Data Stream](https://leetcode.com/problems/find-median-from-data-stream/) · [23 Merge k Sorted Lists](https://leetcode.com/problems/merge-k-sorted-lists/) · [253 Meeting Rooms II](https://leetcode.com/problems/meeting-rooms-ii/)
+> [215 Kth Largest Element in an Array](https://leetcode.com/problems/kth-largest-element-in-an-array/) (also doable in average $O(n)$ via [Quickselect](./sorting.md#quickselect)) · [347 Top K Frequent Elements](https://leetcode.com/problems/top-k-frequent-elements/) · [295 Find Median from Data Stream](https://leetcode.com/problems/find-median-from-data-stream/) · [23 Merge k Sorted Lists](https://leetcode.com/problems/merge-k-sorted-lists/) · [253 Meeting Rooms II](https://leetcode.com/problems/meeting-rooms-ii/)
 
 ## Lazy Deletion
 

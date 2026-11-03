@@ -7,7 +7,7 @@ It's the heavyweight cousin of the [Fenwick Tree](./fenwick-tree.md): more code 
 When to reach for one:
 
 - **Mutable array + range queries** where updates and queries interleave (Fenwick is enough if the monoid is a group — sum, XOR — and you only need point updates).
-- **Range min / max / gcd / OR** — non-invertible operations that rule Fenwick out.
+- **Range min / max / gcd / OR** — non-invertible operations that rule Fenwick out. If the array never changes, a [Sparse Table](./sparse-table.md) answers these in $O(1)$.
 - **Range updates** ("add $v$ to every element in $[l, r]$" mixed with range queries) — requires lazy propagation.
 - **Anything with a custom merge** that's associative — segment indices, longest-increasing-prefix, polynomial-hash concatenation, etc.
 
@@ -44,7 +44,7 @@ graph TD
 Like a heap, the tree lives in a flat array indexed from `1`:
 
 - root is `1`
-- children of `i` are `2*i` and `2*i + 1`
+- children of $i$ are $2i$ and $2i + 1$
 - parent of `i` is `i >> 1`
 
 **Sizing.** A safe upper bound is $4n$. The tight bound is $2 \cdot 2^{\lceil \log_2 n \rceil}$, but $4n$ avoids the bit twiddling and the wasted slots are cheap. The reason it's not just $2n$: when $n$ isn't a power of two, the bottom layer is jagged, and the array indexing assumes a complete binary tree.
@@ -204,7 +204,7 @@ Two invariants keep the bookkeeping straight:
 1. `tree[node]` is always **correct for its range** — the aggregate reflects every update that has ever touched this node, including ones that haven't been pushed down yet.
 2. `lazy[node]` is what the **children still owe**. After `push`, the parent's lazy is cleared because the children now know.
 
-`apply` multiplies `val` by the range length `r - l + 1` because each of the elements in the range gets `+val` — the **sum** gains `(r - l + 1) * val`. For range min/max with range-add, no length factor: every element increases by `val`, so the min increases by `val`.
+`apply` multiplies `val` by the range length $r - l + 1$ because each of the elements in the range gets `+val` — the **sum** gains $(r - l + 1) \cdot \text{val}$. For range min/max with range-add, no length factor: every element increases by `val`, so the min increases by `val`.
 
 ### Composing lazy values
 
@@ -216,7 +216,7 @@ The recursive `build` shown above already runs in $O(n)$ — there's one constan
 
 ## Iterative ("Bottom-Up") Form
 
-For point-update / range-query without lazy, there's a tight iterative form that's roughly 2× faster in practice and easier to get right. Store the tree of size $2n$, with leaves at indices `[n, 2n)`:
+For point-update / range-query without lazy, there's a tight iterative form that's roughly 2× faster in practice and easier to get right. Store the tree of size $2n$, with leaves at indices $[n, 2n)$:
 
 ```typescript
 class IterativeSegTree {

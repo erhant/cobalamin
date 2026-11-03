@@ -12,38 +12,18 @@ Main axes to classify a graph:
 Problems worth recognizing on sight:
 
 - **Reachability / connected components** — any traversal.
-- **Shortest path** — BFS if unweighted, Dijkstra for non-negative weights, Bellman-Ford if negatives, Floyd-Warshall for all pairs.
+- **Shortest path** — BFS if unweighted, Dijkstra for non-negative weights, Bellman-Ford if negatives, Floyd-Warshall for all pairs. See [Shortest Paths](./shortest-paths.md).
 - **Ordering with dependencies** — topological sort on a DAG.
 - **Cycle detection** — DFS colors (directed) or [Union-Find](./union-find.md) (undirected).
 - **Bipartite check** — 2-coloring via BFS.
-- **Minimum spanning tree** — Kruskal (DSU) or Prim (heap).
+- **Minimum spanning tree** — Kruskal (DSU) or Prim (heap). See [Minimum Spanning Tree](./mst.md).
+- **Use every edge once** — Eulerian path via Hierholzer.
+- **Subtree / ancestor queries on a tree** — Euler tour flattening into ranges ([Tree Flattening](./tree-flattening.md)), or jump pointers ([Binary Lifting](./binary-lifting.md)).
 - **Strong connectivity** — Tarjan / Kosaraju SCC.
 
 ## Representations
 
-**Adjacency list** — the default for sparse graphs. `adj[u]` lists the neighbors of `u`:
-
-```typescript
-const adj: number[][] = Array.from({ length: n }, () => []);
-for (const [u, v] of edges) {
-  adj[u].push(v);
-  // drop this line for directed graphs
-  adj[v].push(u);
-}
-
-// weighted:
-const wadj: [number, number][][] = Array.from({ length: n }, () => []);
-for (const [u, v, w] of edges) {
-  wadj[u].push([v, w]);
-  wadj[v].push([u, w]);
-}
-```
-
-$O(V + E)$ space. Iterating a vertex's neighbors is $O(\deg(u))$.
-
-**Adjacency matrix** — `M[u][v]` is the weight or $\infty$. $O(V^2)$ space, $O(1)$ edge lookup. Use when $|E| \approx |V|^2$ or when the algorithm (Floyd-Warshall) wants matrix form.
-
-**Edge list** — just `[u, v, w][]`. Natural for Kruskal's MST and Bellman-Ford; everywhere else, build an adjacency list first.
+The snippets in this chapter take an **adjacency list**: `adj[u]` lists the neighbors of `u`, and in weighted graphs it holds `[v, w]` pairs. Matrices, edge lists, edge IDs, flat arrays, and graphs that are never built at all (grids, state spaces) are covered in [Graph Representations](./graph-representations.md).
 
 ## BFS — Unweighted Shortest Paths
 
@@ -71,7 +51,7 @@ $O(V + E)$. Using a `head` index instead of `Array.shift()` avoids the $O(n)$ re
 
 **Multi-source BFS.** Seed the queue with every source at distance $0$, then run the same loop. Produces "distance to nearest source" for every cell in one sweep — the standard trick for "rotting oranges", "walls and gates", "distance from each zero to the nearest one", etc.
 
-**0-1 BFS.** When edge weights are only $0$ or $1$, a plain `Deque` suffices: push `0`-weight edges to the front, `1`-weight to the back. Same $O(V + E)$ as BFS, no heap needed.
+For weighted edges, see [Shortest Paths](./shortest-paths.md), which starts with 0-1 BFS, the in-between case of weights in $\{0, 1\}$.
 
 > [!TIP]
 > [102 Binary Tree Level Order Traversal](https://leetcode.com/problems/binary-tree-level-order-traversal/) · [994 Rotting Oranges](https://leetcode.com/problems/rotting-oranges/) (multi-source) · [542 01 Matrix](https://leetcode.com/problems/01-matrix/) (multi-source) · [127 Word Ladder](https://leetcode.com/problems/word-ladder/)
@@ -166,165 +146,47 @@ For cycle detection in this form, use the three-color variant above instead of t
 > [!TIP]
 > [207 Course Schedule](https://leetcode.com/problems/course-schedule/) · [210 Course Schedule II](https://leetcode.com/problems/course-schedule-ii/) · [269 Alien Dictionary](https://leetcode.com/problems/alien-dictionary/) · [802 Find Eventual Safe States](https://leetcode.com/problems/find-eventual-safe-states/)
 
-## Dijkstra — Non-negative Weighted Shortest Paths
+## Eulerian Path & Circuit
 
-BFS generalized to non-negative edge weights. Min-heap keyed on the best known distance so far:
+An **Eulerian path** uses every **edge** exactly once. An **Eulerian circuit** is one that also ends where it started. The vertex version of the question, visiting every vertex exactly once (a Hamiltonian path), is NP-hard. The edge version is linear.
+
+Existence depends only on degrees, assuming all edges are in one connected component:
+
+| Graph      | Circuit                   | Path                                                                                     |
+| ---------- | ------------------------- | ---------------------------------------------------------------------------------------- |
+| Undirected | every degree even         | exactly $0$ or $2$ odd-degree vertices; start at an odd one                               |
+| Directed   | $\text{in} = \text{out}$ everywhere | at most one vertex with $\text{out} - \text{in} = 1$ (the start) and one with $\text{in} - \text{out} = 1$ (the end) |
+
+**Hierholzer's algorithm.** Walk unused edges from the start until you get stuck. You can only get stuck at the end of the path. Then backtrack, and splice in a detour from any vertex that still has unused edges. Written with an explicit stack, each vertex goes onto the output **when it has no edges left**, so the output comes out in reverse:
 
 ```typescript
-function dijkstra(start: number, adj: [number, number][][]): number[] {
-  const dist = new Array(adj.length).fill(Infinity);
-  dist[start] = 0;
-  // [dist, node]
-  const pq = new MinHeap<[number, number]>((a, b) => a[0] < b[0]);
-  pq.push([0, start]);
-
-  while (pq.size()) {
-    const [d, u] = pq.pop()!;
-    // stale entry — newer path already processed
-    if (d > dist[u]) continue;
-    for (const [v, w] of adj[u]) {
-      const nd = d + w;
-      if (nd < dist[v]) {
-        dist[v] = nd;
-        pq.push([nd, v]);
-      }
+// adj: directed adjacency list; returns vertices in path order
+function eulerPath(adj: number[][], start: number): number[] {
+  // ptr[u]: next unused edge of u, so each edge is walked once
+  const ptr = new Array(adj.length).fill(0);
+  const stack = [start];
+  const path: number[] = [];
+  while (stack.length) {
+    const u = stack[stack.length - 1];
+    if (ptr[u] < adj[u].length) {
+      stack.push(adj[u][ptr[u]++]);
+    } else {
+      // u is exhausted: it is final at this position
+      path.push(stack.pop()!);
     }
   }
-  return dist;
+  return path.reverse();
 }
 ```
 
-$O((V + E) \log V)$ with a binary heap. JS has no built-in priority queue — bring your own (an array-backed binary heap is ~30 lines).
+This runs in $O(V + E)$. Pick the start from the table: the vertex with $\text{out} - \text{in} = 1$ if there is one, otherwise any vertex with an edge. If `path.length !== E + 1`, the edges weren't connected and no Eulerian path exists.
 
-**"Stale entry" trick.** Instead of implementing decrease-key, push a fresh `(nd, v)` whenever we improve `dist[v]`, and on pop skip entries whose `d` is worse than the current `dist[u]`. Simpler code, same asymptotics.
-
-**Negative weights break Dijkstra.** The greedy "once you're popped, you're final" argument relies on all future paths only getting longer. With a negative edge, a later detour could undercut. Use **Bellman-Ford** ($O(VE)$) when negatives are possible, or **SPFA** as a faster-in-practice variant. **Floyd-Warshall** ($O(V^3)$) gives all-pairs shortest paths and handles negatives (but not negative cycles).
-
-## Minimum Spanning Tree
-
-A **spanning tree** of a connected, undirected, weighted graph connects all $V$ vertices using exactly $V - 1$ edges. A **minimum spanning tree (MST)** is one with the smallest total weight.
-
-Both classic algorithms are greedy and rest on the **cut property**: for any split of the vertices into two sides, the lightest edge crossing the split belongs to some MST. Kruskal and Prim differ only in which cut they look at.
-
-### Kruskal (Sort Edges + DSU)
-
-Sort the edges by weight and take each one unless it would close a cycle. "Would close a cycle" means both endpoints are already in the same component, which is exactly what [Union-Find](./union-find.md) answers.
-
-```typescript
-// edges: [u, v, w][]; returns the MST weight, or -1 if the graph is disconnected
-function kruskal(n: number, edges: [number, number, number][]): number {
-  const uf = new UnionFind(n);
-  let total = 0;
-  let used = 0;
-  for (const [u, v, w] of [...edges].sort((a, b) => a[2] - b[2])) {
-    // same component already: this edge would close a cycle
-    if (uf.find(u) === uf.find(v)) continue;
-    uf.union(u, v);
-    total += w;
-    // a tree has n - 1 edges, so stop early
-    if (++used === n - 1) break;
-  }
-  return used === n - 1 ? total : -1;
-}
-```
-
-The cost is $O(E \log E)$, dominated by the sort. The DSU work is $O(E \cdot \alpha(V))$. Kruskal takes the edge list directly, so it's the natural pick when the input arrives that way.
-
-### Prim (Grow From a Vertex + Heap)
-
-Start from any vertex and grow a single tree. At each step, add the lightest edge leaving the tree. The heap holds candidate edges as `[w, v]`, and it uses the same **stale entry** skip as Dijkstra: a vertex that is already in the tree is ignored when it's popped again.
-
-```typescript
-// adj: weighted adjacency list; returns the MST weight, or -1 if the graph is disconnected
-function prim(adj: [number, number][][]): number {
-  const inTree = new Array(adj.length).fill(false);
-  // [weight, node]
-  const pq = new MinHeap<[number, number]>((a, b) => a[0] < b[0]);
-  pq.push([0, 0]);
-  let total = 0;
-  let count = 0;
-  while (pq.size()) {
-    const [w, u] = pq.pop()!;
-    // stale entry: u was already reached by a lighter edge
-    if (inTree[u]) continue;
-    inTree[u] = true;
-    total += w;
-    count++;
-    for (const [v, wv] of adj[u]) {
-      if (!inTree[v]) pq.push([wv, v]);
-    }
-  }
-  return count === adj.length ? total : -1;
-}
-```
-
-This is $O(E \log V)$. The heap holds up to $E$ entries, and $\log E \le 2 \log V$, so the two bounds match.
-
-It looks almost identical to Dijkstra. The only difference is the heap key: Prim uses the **edge weight** `wv`, while Dijkstra uses the **path length** `d + w`.
-
-**Dense graphs: Prim without a heap.** When the graph is complete (for example, every pair of points connected), $E \approx V^2$. Building the edge list or the heap then costs $O(V^2 \log V)$. Instead, keep `best[v]`, the cheapest edge from the tree to each vertex outside it. Each step takes the outside vertex with the smallest `best` by a linear scan, then relaxes all others. This runs in $O(V^2)$ and never stores an edge:
-
-```typescript
-// cost(u, v): weight of edge u–v, computed on demand
-function primDense(n: number, cost: (u: number, v: number) => number): number {
-  const best = new Array(n).fill(Infinity);
-  const inTree = new Array(n).fill(false);
-  best[0] = 0;
-  let total = 0;
-  for (let step = 0; step < n; step++) {
-    // pick the outside vertex closest to the tree
-    let u = -1;
-    for (let v = 0; v < n; v++) {
-      if (!inTree[v] && (u === -1 || best[v] < best[u])) u = v;
-    }
-    inTree[u] = true;
-    total += best[u];
-    for (let v = 0; v < n; v++) {
-      if (!inTree[v]) best[v] = Math.min(best[v], cost(u, v));
-    }
-  }
-  return total;
-}
-```
-
-Notes:
-
-- **Disconnected graphs** have no spanning tree. Kruskal then produces a minimum spanning **forest**, and the `-1` checks above catch it.
-- **Maximum spanning tree**: sort descending, or negate the weights. The same greedy argument applies.
-- **Equal weights** can make the MST non-unique, but the total weight is always the same.
-- **Minimax paths**: in an MST, the path between $u$ and $v$ minimizes the largest edge on it. That's why "minimize the maximum effort" problems can be solved Kruskal-style: add edges in weight order until $u$ and $v$ connect.
-- **Virtual node trick**: when each vertex can also "pay to be self-sufficient" (like building a well instead of a pipe), add a node $0$ with an edge of that cost to every vertex, then run a plain MST.
+- **Lexicographically smallest path**: sort each `adj[u]` ascending first. The greedy walk then always tries the smallest neighbor, and the splicing keeps the result valid. This is exactly LC 332.
+- **Undirected graphs**: each edge appears in both endpoints' lists, so store `[v, edgeId]` and keep a `used[edgeId]` array. Skip used edges when advancing `ptr[u]`.
+- **De Bruijn sequences** are Eulerian circuits in disguise. The vertices are the $(n-1)$-length strings, and each edge appends one symbol. That's LC 753.
 
 > [!TIP]
-> [1584 Min Cost to Connect All Points](https://leetcode.com/problems/min-cost-to-connect-all-points/) (dense Prim) · [1135 Connecting Cities With Minimum Cost](https://leetcode.com/problems/connecting-cities-with-minimum-cost/) · [1168 Optimize Water Distribution in a Village](https://leetcode.com/problems/optimize-water-distribution-in-a-village/) (virtual node) · [1489 Find Critical and Pseudo-Critical Edges in MST](https://leetcode.com/problems/find-critical-and-pseudo-critical-edges-in-minimum-spanning-tree/) · [1631 Path With Minimum Effort](https://leetcode.com/problems/path-with-minimum-effort/) (minimax)
-
-## Grid as Graph
-
-A grid is a graph in disguise: every cell is a vertex, adjacencies are the 4 (sometimes 8) neighbors. No explicit adjacency list needed — generate neighbors on the fly:
-
-```typescript
-const DIRS: [number, number][] = [
-  [-1, 0],
-  [1, 0],
-  [0, -1],
-  [0, 1],
-];
-
-for (const [dr, dc] of DIRS) {
-  const nr = r + dr,
-    nc = c + dc;
-  if (nr < 0 || nr >= rows || nc < 0 || nc >= cols) continue;
-  if (grid[nr][nc] === BLOCKED) continue;
-  // visit (nr, nc)
-}
-```
-
-"Number of islands", "rotting oranges", "shortest path in a binary matrix", "flood fill", "word search" — all grid-as-graph. BFS when the question is "fewest steps"; DFS when it's "is it reachable" or "how big is this component".
-
-**Encoding cells as integers.** `id = r * cols + c` turns 2D coordinates into a 1D vertex ID — useful when you want to reuse generic graph code (DSU, adjacency lists) without nesting arrays.
-
-> [!TIP]
-> [200 Number of Islands](https://leetcode.com/problems/number-of-islands/) · [463 Island Perimeter](https://leetcode.com/problems/island-perimeter/) · [695 Max Area of Island](https://leetcode.com/problems/max-area-of-island/) · [1091 Shortest Path in Binary Matrix](https://leetcode.com/problems/shortest-path-in-binary-matrix/) · [79 Word Search](https://leetcode.com/problems/word-search/)
+> [332 Reconstruct Itinerary](https://leetcode.com/problems/reconstruct-itinerary/) · [2097 Valid Arrangement of Pairs](https://leetcode.com/problems/valid-arrangement-of-pairs/) · [753 Cracking the Safe](https://leetcode.com/problems/cracking-the-safe/)
 
 ## Cheat Sheet
 
@@ -332,13 +194,17 @@ for (const [dr, dc] of DIRS) {
 | ------------------------------------ | ---------------------------- | ---------------------------- |
 | Reachability / connected components  | DFS or BFS                   | $O(V + E)$                   |
 | Shortest path, unweighted            | BFS                          | $O(V + E)$                   |
-| Shortest path, weights in $\{0, 1\}$ | 0-1 BFS (deque)              | $O(V + E)$                   |
-| Shortest path, non-negative weights  | Dijkstra                     | $O((V + E) \log V)$          |
-| Shortest path, negative weights      | Bellman-Ford                 | $O(VE)$                      |
-| All-pairs shortest paths             | Floyd-Warshall               | $O(V^3)$                     |
+| Shortest path, weights in $\{0, 1\}$ | [0-1 BFS](./shortest-paths.md#0-1-bfs) | $O(V + E)$                   |
+| Shortest path, non-negative weights  | [Dijkstra](./shortest-paths.md#dijkstra) | $O((V + E) \log V)$          |
+| Shortest path, negative weights      | [Bellman-Ford](./shortest-paths.md#bellman-ford) | $O(VE)$                      |
+| All-pairs shortest paths             | [Floyd-Warshall](./shortest-paths.md#floyd-warshall) | $O(V^3)$                     |
 | Topological order (DAG)              | Kahn's or DFS post-order     | $O(V + E)$                   |
 | Cycle in directed graph              | DFS three-coloring           | $O(V + E)$                   |
 | Cycle in undirected graph            | DSU or DFS-with-parent       | $O((V + E) \cdot \alpha(V))$ |
-| Minimum spanning tree                | Kruskal (DSU) or Prim (heap) | $O(E \log E)$, dense $O(V^2)$ |
+| Minimum spanning tree                | [Kruskal or Prim](./mst.md) | $O(E \log E)$, dense $O(V^2)$ |
+| Eulerian path / circuit              | Hierholzer                   | $O(V + E)$                   |
+| Subtree queries / ancestor test      | [Euler tour (tin / tout)](./tree-flattening.md) | $O(n)$ + range structure     |
+| LCA, $O(1)$ per query                | [Euler tour + sparse table](./tree-flattening.md#lca-via-euler-tour) | $O(n \log n)$ build          |
+| LCA + k-th ancestor, $O(\log n)$     | [Binary Lifting](./binary-lifting.md) | $O(n \log n)$ build          |
 | Strongly connected components        | Tarjan / Kosaraju            | $O(V + E)$                   |
 | Bipartite check / 2-coloring         | BFS                          | $O(V + E)$                   |

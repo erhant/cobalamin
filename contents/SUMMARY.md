@@ -4,30 +4,50 @@
 
 # Data Structures & Algorithms
 
+- [Sorting](./dsa/sorting.md)
 - [Binary Search](./dsa/binary-search.md)
 - [Two Pointers](./dsa/two-pointers.md)
-- [Monotonic Stack & Queue](./dsa/monotonic-stack-queue.md)
 - [Prefix Sums & Difference Arrays](./dsa/prefix-diff.md)
+- [Monotonic Stack & Queue](./dsa/monotonic-stack-queue.md)
+- [In-place Array Tricks](./dsa/in-place-arrays.md)
 - [Backtracking](./dsa/backtracking.md)
+
+---
+
 - [Dynamic Programming](./dsa/dp.md)
   - [1D DP](./dsa/dp-1d.md)
   - [2D DP](./dsa/dp-2d.md)
+  - [Interval DP](./dsa/dp-interval.md)
   - [Bitmask DP](./dsa/dp-bitmask.md)
   - [Digit DP](./dsa/dp-digit.md)
-- [Binary Trees](./dsa/binary-trees.md)
+
+---
+
 - [Linked Lists](./dsa/linked-lists.md)
-- [In-place Array Tricks](./dsa/in-place-arrays.md)
 - [Heap](./dsa/heap.md)
-- [Graphs](./dsa/graphs.md)
-- [Binary Lifting](./dsa/binary-lifting.md)
 - [Union-Find](./dsa/union-find.md)
-- [Strings](./dsa/strings.md)
-- [Sqrt Decomposition](./dsa/sqrt-decomposition.md)
 - [Segment Tree](./dsa/segment-tree.md)
   - [Fenwick Tree](./dsa/fenwick-tree.md)
-- [Bit Manipulation](./dsa/bits.md)
+  - [Sparse Table](./dsa/sparse-table.md)
+- [Sqrt Decomposition](./dsa/sqrt-decomposition.md)
+
+---
+
+- [Binary Trees](./dsa/binary-trees.md)
+- [Graphs](./dsa/graphs.md)
+  - [Graph Representations](./dsa/graph-representations.md)
+  - [Shortest Paths](./dsa/shortest-paths.md)
+  - [Minimum Spanning Tree](./dsa/mst.md)
+  - [Binary Lifting](./dsa/binary-lifting.md)
+  - [Tree Flattening](./dsa/tree-flattening.md)
+
+---
+
+- [Strings](./dsa/strings.md)
+  - [Trie](./dsa/trie.md)
 - [Geometry](./dsa/geometry.md)
   - [Line Sweep](./dsa/line-sweep.md)
+- [Bit Manipulation](./dsa/bits.md)
 
 # Mathematics
 

@@ -10,7 +10,8 @@ If a problem has only the first, you don't need DP. If it has both, DP turns exp
 The chapter is split by the **shape of the state space**:
 
 - [**1D DP**](./dp-1d.md) — state indexed by one integer (a position in a sequence). Climbing stairs, house robber, Kadane's, LIS, coin change, jump game.
-- [**2D DP**](./dp-2d.md) — two indices: two sequences (LCS, edit distance), one sequence + a budget (knapsack), or two endpoints of an interval (palindromic subseq, burst balloons, matrix chain).
+- [**2D DP**](./dp-2d.md) — two indices: two sequences (LCS, edit distance), one sequence + a budget (knapsack), or a grid.
+- [**Interval DP**](./dp-interval.md) — two endpoints of a range of one sequence, combined at a split point. Burst balloons, palindrome partitioning, matrix chain.
 - [**Bitmask DP**](./dp-bitmask.md) — state remembers a subset, encoded as an integer. TSP, assignment, SOS DP.
 - [**Digit DP**](./dp-digit.md) — counting integers $\le N$ with a digit-level property. Build numbers digit by digit, with a "tight vs free" flag.
 
@@ -189,7 +190,7 @@ The four sub-chapters cover linear (1D), Cartesian-product (2D), subset-lattice 
 | best / count over a sequence of steps       | `i`                  | [1D](./dp-1d.md)                                |
 | align, match or transform two sequences     | `(i, j)` prefixes    | [2D § LCS](./dp-2d.md#longest-common-subsequence-lcs) |
 | choose items under a capacity or target     | `(i, budget)`        | [2D § Knapsack](./dp-2d.md#01-knapsack)         |
-| split or merge a range optimally            | `(i, j)` interval    | [2D § Interval](./dp-2d.md#interval-dp)         |
+| split or merge a range optimally            | `(i, j)` interval    | [Interval DP](./dp-interval.md)         |
 | move through a grid with restricted moves   | `(r, c)`             | [2D § Grid](./dp-2d.md#grid-dps)                |
 | _which_ elements are used, $n \le 20$       | `mask`               | [Bitmask](./dp-bitmask.md)                      |
 | count integers $\le N$ with a digit property | `(pos, tight, prop)` | [Digit](./dp-digit.md)                          |

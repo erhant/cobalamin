@@ -4,7 +4,7 @@ State indexed by two integers. Almost always one of three shapes:
 
 1. **Two pointers over two sequences** — `(i, j)` reading prefixes / suffixes of two strings or arrays. LCS, edit distance, regex match.
 2. **One sequence + a numeric budget** — `(i, w)` with `i` an item index and `w` a capacity / time / amount. Knapsack, subset sum, partition equal subset.
-3. **Two indices over one sequence** — `(i, j)` indexing **substring or subarray** boundaries. Palindromic subsequence, palindrome partitioning, burst balloons, matrix chain. These are the **interval DPs** — see [Interval DP](#interval-dp) below.
+3. **Two indices over one sequence** — `(i, j)` indexing **substring or subarray** boundaries. Palindromic subsequence, palindrome partitioning, burst balloons, matrix chain. These are the **interval DPs**, which have their own chapter: [Interval DP](./dp-interval.md).
 
 The unifying skill is reading the recurrence off the neighbors of `(i, j)` in the table — three or four cells, almost always at the same offsets across problems of the same shape.
 
@@ -155,7 +155,7 @@ function editDistance(a: string, b: string): number {
 }
 ```
 
-Base cases `dp[i][0] = i` and `dp[0][j] = j` are "delete everything" / "insert everything." When the characters match, the diagonal value is used **without** the `+ 1` — the match is free, edits are only for mismatches.
+Base cases $\text{dp}[i][0] = i$ and $\text{dp}[0][j] = j$ are "delete everything" / "insert everything." When the characters match, the diagonal value is used **without** the `+ 1` — the match is free, edits are only for mismatches.
 
 The cost model can be parameterized: weighted insertion / deletion / substitution (Needleman-Wunsch in bioinformatics), or set substitution cost to $\infty$ to forbid it (turning edit distance into "delete and insert only", which is LCS in disguise).
 
@@ -219,7 +219,7 @@ for (let r = 1; r < m; r++)
 return dp[n - 1];
 ```
 
-Rolling 1D: `dp[c] += dp[c - 1]` is exactly the 2D recurrence `dp[r][c] = dp[r-1][c] + dp[r][c-1]` with `dp[c]` holding the previous row before the write, then the current row after.
+Rolling 1D: `dp[c] += dp[c - 1]` is exactly the 2D recurrence $\text{dp}[r][c] = \text{dp}[r-1][c] + \text{dp}[r][c-1]$ with `dp[c]` holding the previous row before the write, then the current row after.
 
 Closed-form alternative: the answer is $\binom{m + n - 2}{m - 1}$ — counting paths is counting sequences of $m - 1$ "downs" and $n - 1$ "rights." See [Counting § Combinations](../math/counting.md#factorials-permutations-combinations).
 
@@ -247,77 +247,3 @@ Both come out as a few-line recurrence once you correctly tabulate base cases fo
 
 > [!TIP]
 > [44 Wildcard Matching](https://leetcode.com/problems/wildcard-matching/) · [10 Regular Expression Matching](https://leetcode.com/problems/regular-expression-matching/)
-
-## Interval DP
-
-Subproblem indexed by an interval `[i, j]` of a single sequence. The recurrence usually picks a **split point** `k ∈ [i, j]` and combines the two halves:
-
-$$
-\text{dp}[i][j] = \min_{i \le k < j} \big( \text{dp}[i][k] + \text{dp}[k + 1][j] + \text{merge cost} \big)
-$$
-
-Or, for "pick a last/first element from `[i, j]`":
-
-$$
-\text{dp}[i][j] = \text{best}_{k \in [i, j]} \big( \text{cost}(k, i, j) + \text{dp}[i][k - 1] + \text{dp}[k + 1][j] \big)
-$$
-
-Iterate by interval **length** so smaller intervals are filled first.
-
-### Burst Balloons
-
-Burst balloons one at a time; bursting the $k$-th in interval `[i, j]` yields `nums[i-1] * nums[k] * nums[j+1]` (using sentinels for the edges). The trick is to fix `k` as the **last** balloon burst in `(i, j)`, so the two halves are independent.
-
-```typescript
-function maxCoins(nums: number[]): number {
-  const a = [1, ...nums, 1];
-  const n = a.length;
-  const dp: number[][] = Array.from({ length: n }, () => new Array(n).fill(0));
-  for (let len = 2; len < n; len++) {
-    for (let i = 0; i + len < n; i++) {
-      const j = i + len;
-      for (let k = i + 1; k < j; k++) {
-        dp[i][j] = Math.max(dp[i][j], dp[i][k] + dp[k][j] + a[i] * a[k] * a[j]);
-      }
-    }
-  }
-  return dp[0][n - 1];
-}
-```
-
-**Why "last burst" works.** If you fix the **first** burst, the two halves still see each other through the gap. Fixing the **last** burst makes both halves independently-burstable subproblems — the trick reorders the operation sequence so the recurrence is clean. $O(n^3)$.
-
-### Palindrome Partitioning II
-
-Min cuts to partition `s` into palindromes. Two DPs in tandem: an `isPal[i][j]` table (from longest palindromic substring above), then a 1D `cuts[i]` = min cuts for `s[0..i)`:
-
-```typescript
-function minCut(s: string): number {
-  const n = s.length;
-  const pal: boolean[][] = Array.from({ length: n }, () => new Array(n).fill(false));
-  for (let i = n - 1; i >= 0; i--)
-    for (let j = i; j < n; j++)
-      pal[i][j] = s[i] === s[j] && (j - i < 2 || pal[i + 1][j - 1]);
-
-  const cuts = new Array(n + 1).fill(Infinity);
-  // empty prefix needs -1 cuts (cancels the +1 below)
-  cuts[0] = -1;
-  for (let i = 1; i <= n; i++)
-    for (let j = 0; j < i; j++)
-      if (pal[j][i - 1]) cuts[i] = Math.min(cuts[i], cuts[j] + 1);
-  return cuts[n];
-}
-```
-
-### Matrix Chain Multiplication
-
-Given dimensions `p[0], p[1], ..., p[n]`, find the optimal parenthesization of $A_1 \cdot A_2 \cdots A_n$ minimizing scalar multiplications. State `dp[i][j]` = min cost to multiply the chain $A_i \cdots A_j$.
-
-$$
-\text{dp}[i][j] = \min_{i \le k < j} \big( \text{dp}[i][k] + \text{dp}[k + 1][j] + p[i - 1] \cdot p[k] \cdot p[j] \big)
-$$
-
-Same "split point" interval DP — the cost of merging `[i, k]` with `[k+1, j]` is the product of the bordering dimensions.
-
-> [!TIP]
-> [312 Burst Balloons](https://leetcode.com/problems/burst-balloons/) · [132 Palindrome Partitioning II](https://leetcode.com/problems/palindrome-partitioning-ii/) · [1547 Minimum Cost to Cut a Stick](https://leetcode.com/problems/minimum-cost-to-cut-a-stick/) · [1039 Minimum Score Triangulation of Polygon](https://leetcode.com/problems/minimum-score-triangulation-of-polygon/) · [664 Strange Printer](https://leetcode.com/problems/strange-printer/)

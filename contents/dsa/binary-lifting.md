@@ -120,5 +120,5 @@ const LOG = 64;
 
 - **Complexity**: $O(n \log n)$ build, $O(\log n)$ or $O(\log k)$ per query, $O(n \log n)$ space.
 - **Offline alternative**: if all LCA queries are known upfront, Tarjan's offline LCA ([Union-Find](./union-find.md)) answers them in near-linear total time. Binary lifting wins when queries arrive online.
-- **Euler tour + sparse table** gives $O(1)$ LCA queries after $O(n \log n)$ preprocessing, but binary lifting is simpler and additionally gives k-th ancestor and path aggregates, which that method doesn't.
-- The same doubling idea powers **sparse tables** on arrays and **matrix exponentiation** — "precompute powers of two, decompose $k$ by its bits."
+- **[Euler tour + sparse table](./tree-flattening.md#lca-via-euler-tour)** gives $O(1)$ LCA queries after $O(n \log n)$ preprocessing, but binary lifting is simpler and additionally gives k-th ancestor and path aggregates, which that method doesn't.
+- The same doubling idea powers **[sparse tables](./sparse-table.md)** on arrays and **matrix exponentiation** — "precompute powers of two, decompose $k$ by its bits."

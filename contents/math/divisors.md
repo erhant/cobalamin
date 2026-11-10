@@ -117,7 +117,7 @@ $$
 \sum_{k=1}^{n} \tau(k) = \sum_{d=1}^{n} \left\lfloor \frac{n}{d} \right\rfloor
 $$
 
-The right side has only $O(\sqrt{n})$ **distinct** values of $\lfloor n/d \rfloor$, so jump straight to the last $d$ that shares the current quotient:
+The right side has only $O(\sqrt{n})$ **distinct** values of $\lfloor n/d \rfloor$ (at most $\sqrt{n}$ choices of $d \le \sqrt{n}$, and for $d > \sqrt{n}$ the quotient itself is below $\sqrt{n}$), so jump straight to the last $d$ that shares the current quotient:
 
 ```typescript
 function sumTau(n: number): number {
@@ -133,4 +133,4 @@ function sumTau(n: number): number {
 }
 ```
 
-This is $O(\sqrt{n})$, so it works even for $n \approx 10^{12}$ where no sieve fits. Replace `q * count` with `q * (sum of d over the block)` to get $\sum_{k \le n} \sigma(k)$.
+This is $O(\sqrt{n})$, so it works even for $n \approx 10^{12}$ where no sieve fits. Replace the block size `last - d + 1` with the block sum $d + (d + 1) + \dots + \text{last}$ to get $\sum_{k \le n} \sigma(k)$.

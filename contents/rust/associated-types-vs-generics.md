@@ -64,7 +64,7 @@ You may want `Vec<T> + &[T]` and `Vec<T> + Vec<T>` — different `Rhs`, so it's 
 This is the ergonomic payoff. With a generic trait, the compiler often can't infer which impl you meant:
 
 ```rust
-// _ = ?
+// which Convert<_> impl? the compiler can't pick one
 let x = <i32 as Convert<_>>::convert(42);
 // error: type annotations needed
 ```
@@ -108,8 +108,9 @@ The caller's `I` pins `Item` for us; the generic bound propagates it.
 Both kinds of trait can be made into `dyn Trait`, but with associated types you must pin every one:
 
 ```rust
-fn boxed() -> Box<dyn Iterator<Item = u64>> { /* ok */ }
-fn boxed() -> Box<dyn Iterator>             { /* error: Item unspecified */ }
+fn boxed() -> Box<dyn Iterator<Item = u64>> { /* ... */ }
+// error: Item unspecified
+fn boxed() -> Box<dyn Iterator> { /* ... */ }
 ```
 
 Generic methods on a trait (not the trait itself being generic — that's fine) break object safety entirely, because the vtable would need one slot per monomorphization. Associated types don't have this problem since each `dyn Trait<Item = T>` is already a concrete type.

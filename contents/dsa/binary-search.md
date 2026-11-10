@@ -77,9 +77,9 @@ Once you see the "first true" framing, **every `lowerBound` / `upperBound` / "mi
 
 > [!CAUTION]
 >
-> The `(r + l) >>> 1` pattern is a common shorthand for `Math.floor((l + r) / 2)`, but it uses bitwise ops which may default to 32-bits in Node etc.
+> The `(r + l) >>> 1` pattern is a common shorthand for `Math.floor((l + r) / 2)`, but bitwise ops coerce to 32-bit integers: `>>>` breaks once `l + r` reaches $2^{32}$, and `>> 1` already at $2^{31}$. That's fine for array indices, but not for search-on-the-answer ranges like $[0, 10^{12}]$; use `Math.floor` there.
 >
-> Furthermore, `l + r` can overflow for large indices. To be safe, prefer `l + ((r - l) >>> 1)` or it's equivalent `l + Math.floor((r - l) / 2)`.
+> In fixed-width languages (C++, Java), `l + r` itself can overflow. JS numbers are exact up to $2^{53}$, but the portable form is `l + Math.floor((r - l) / 2)`.
 
 ## `lowerBound` and `upperBound`
 
@@ -129,7 +129,7 @@ function isPerfectSquare(n: number): boolean {
   let l = 0,
     r = n;
   while (l <= r) {
-    const mid = (l + r) >>> 1;
+    const mid = Math.floor((l + r) / 2);
     const sq = mid * mid;
     if (sq === n) return true;
     else if (sq < n) l = mid + 1;
@@ -150,7 +150,7 @@ function mySqrt(x: number): number {
   let l = 0,
     r = x;
   while (l <= r) {
-    const mid = (l + r) >>> 1;
+    const mid = Math.floor((l + r) / 2);
     if (mid * mid <= x) l = mid + 1;
     else r = mid - 1;
   }
@@ -159,7 +159,7 @@ function mySqrt(x: number): number {
 }
 ```
 
-After the loop, `l === r + 1` and `r` holds the answer. Handles `x = 0` cleanly too.
+Why `r`: every $m < l$ has $m^2 \le x$ and every $m > r$ has $m^2 > x$. The loop exits with `l === r + 1`, so `r` is the last value that fits. Handles `x = 0` cleanly too.
 
 **Common trap.** Don't return `mid` from the boundary form. `mid` is the last midpoint probed, not the loop's invariant — it can land on either side of the answer. Return the invariant instead: `r` in the closed form above, or phrase it as "first $m$ with $m^2 > x$" and return `l - 1`.
 

@@ -39,6 +39,7 @@ function kthPermutation(n: number, k: number): number[] {
   // 1-indexed → 0-indexed rank
   k--;
   for (let i = n; i >= 1; i--) {
+    // each choice of the next element covers a block of (i - 1)! ranks
     const idx = Math.floor(k / fact[i - 1]);
     out.push(remaining[idx]);
     remaining.splice(idx, 1);
@@ -61,7 +62,7 @@ If $n + 1$ objects go into $n$ boxes, some box gets $\ge 2$. Trivial to state, s
 
 If you iterate any deterministic function on $\mathbb{Z}/k\mathbb{Z}$, after at most $k$ steps you've seen a repeat — so the process is eventually periodic with period $\le k$. This bounds the answer to "smallest $n$ such that $f^n(\text{start})$ has property P, when the state lives mod $k$."
 
-Concrete example: the smallest positive integer whose decimal representation consists only of `1`s and is divisible by $k$ exists iff $\gcd(k, 10) = 1$, and has length $\le k$. The proof: track $r_i = \underbrace{11\dots1}_{i} \bmod k$; among $r_1, \dots, r_k, r_{k+1}$ two coincide, and their difference (which is $\underbrace{11\dots1}_{j - i} \cdot 10^i$) is divisible by $k$.
+Concrete example: the smallest positive integer whose decimal representation consists only of `1`s and is divisible by $k$ exists iff $\gcd(k, 10) = 1$, and has length $\le k$. The proof: track $r_i = \underbrace{11\dots1}_{i} \bmod k$; among $r_1, \dots, r_k, r_{k+1}$ two coincide, and their difference (which is $\underbrace{11\dots1}_{j - i} \cdot 10^i$) is divisible by $k$. Since $\gcd(k, 10) = 1$, the factor $10^i$ can be dropped, so $k$ divides the repunit of length $j - i \le k$.
 
 ```typescript
 function smallestRepunitDivisibleByK(k: number): number {
@@ -87,9 +88,9 @@ $$
 \binom{n + k - 1}{k - 1}
 $$
 
-The bijection: place $n$ "stars" in a row, choose $k - 1$ of the $n + k - 1$ gap positions to insert "bars", and read off the partition by counting stars between bars.
+The bijection: line up $n$ "stars" and $k - 1$ "bars" in $n + k - 1$ slots. Choosing which $k - 1$ slots hold bars fixes the arrangement, and the star counts between consecutive bars are the parts.
 
-For **positive** parts (each $\ge 1$), substitute $x_i' = x_i - 1$:
+For **positive** parts (each $\ge 1$), substitute $x_i' = x_i - 1$, which leaves $k$ non-negative parts summing to $n - k$:
 
 $$
 \binom{n - 1}{k - 1}
@@ -113,7 +114,7 @@ The signed-sum form lets you replace a tough "complement-of-union" count with $2
 Common derivative formulas:
 
 - **Derangements** $D_n$: permutations with no fixed point. $D_n = n! \sum_{k=0}^{n} (-1)^k / k!$.
-- **Coprime count** up to $n$: $\sum_d \mu(d) \lfloor n/d \rfloor$ — see [Primes § Möbius / totient](./primes.md).
+- **Coprime count** up to $n$: $\sum_{d \mid n} \mu(d) \lfloor n/d \rfloor = \varphi(n)$, where the Möbius function $\mu(d)$ is $(-1)^k$ if $d$ is a product of $k$ distinct primes and $0$ otherwise — see [Primes § Euler's Totient](./primes.md#eulers-totient-function).
 - **Surjections** from $[n]$ onto $[k]$: $k! \cdot S(n, k)$ where $S$ is the Stirling number of the second kind, computable via inclusion-exclusion over "image misses element $i$".
 
 When $m$ is too large for $2^m$ subsets, look for symmetry — often all $\binom{m}{j}$ subsets of a given size contribute equally, collapsing the sum to $m + 1$ terms.
@@ -127,6 +128,6 @@ When $m$ is too large for $2^m$ subsets, look for symmetry — often all $\binom
 | Distribute indistinguishable into distinguishable     | Stars and bars                             | $\binom{n + k - 1}{k - 1}$          |
 | $k$-th permutation by rank                            | Lehmer code                                | Factorial base decomposition        |
 | Count avoiding many events                            | Inclusion-exclusion                        | Alternating sum over subsets        |
-| "Must repeat by step $n$"                             | Pigeonhole                                 | $\le k$ states ⇒ cycle by step $k$ |
+| "Must repeat by step $k$"                             | Pigeonhole                                 | $\le k$ states ⇒ cycle by step $k$ |
 | Lattice paths, balanced parens, BST shapes            | Catalan numbers                            | $C_n = \binom{2n}{n}/(n+1)$         |
 | Counting with a digit predicate                       | [Digit DP](../dsa/dp-digit.md)             | Position × tight flag × state       |

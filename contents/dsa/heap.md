@@ -25,7 +25,7 @@ For a node at index `i`:
 - $\text{right} = 2i + 2$
 - $\text{parent} = \lfloor (i - 1) / 2 \rfloor$
 
-Operations and complexity:
+Operations and complexity. To _sift_ is to pass something through a sieve, shaking it until each grain settles where it fits. Here an element sifts up or down level by level, swapping with a parent or child, until order is restored:
 
 | Operation                       | Cost                            | How                                                   |
 | ------------------------------- | ------------------------------- | ----------------------------------------------------- |
@@ -61,6 +61,7 @@ class MinHeap<T> {
     if (!this.a.length) return undefined;
     const top = this.a[0];
     const last = this.a.pop()!;
+    // move the last leaf into the root's slot, then restore order
     if (this.a.length) {
       this.a[0] = last;
       this.siftDown(0);
@@ -82,6 +83,7 @@ class MinHeap<T> {
     while (true) {
       const l = 2 * i + 1,
         r = 2 * i + 2;
+      // swap with the smaller child; stop once neither child beats us
       let best = i;
       if (l < n && this.less(this.a[l], this.a[best])) best = l;
       if (r < n && this.less(this.a[r], this.a[best])) best = r;
@@ -112,7 +114,23 @@ JavaScript has no built-in heap. For comparison: C++ `std::priority_queue` (max-
 If you already have all $n$ elements up front, build in $O(n)$ instead of $n$ pushes:
 
 ```typescript
+// same as the class method, over a plain array
+function siftDown<T>(a: T[], i: number, less: (x: T, y: T) => boolean): void {
+  const n = a.length;
+  while (true) {
+    const l = 2 * i + 1,
+      r = 2 * i + 2;
+    let best = i;
+    if (l < n && less(a[l], a[best])) best = l;
+    if (r < n && less(a[r], a[best])) best = r;
+    if (best === i) return;
+    [a[i], a[best]] = [a[best], a[i]];
+    i = best;
+  }
+}
+
 function heapify<T>(a: T[], less: (x: T, y: T) => boolean): void {
+  // indices >= n/2 are leaves (already valid heaps), so start at the last parent
   for (let i = (a.length >> 1) - 1; i >= 0; i--) siftDown(a, i, less);
 }
 ```

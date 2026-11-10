@@ -38,6 +38,7 @@ function firstMissingPositive(nums: number[]): number {
   const n = nums.length;
   for (let i = 0; i < n; ) {
     const v = nums[i];
+    // v is in range and its home slot v - 1 doesn't hold it yet
     if (v >= 1 && v <= n && nums[v - 1] !== v) {
       [nums[i], nums[v - 1]] = [nums[v - 1], nums[i]];
     } else {
@@ -62,6 +63,7 @@ When values fit in $[1, n]$ and you don't actually need them after the scan, **n
 function findDuplicates(nums: number[]): number[] {
   const out: number[] = [];
   for (const x of nums) {
+    // x may itself have been negated by an earlier mark
     const i = Math.abs(x) - 1;
     if (nums[i] < 0) out.push(Math.abs(x));
     else nums[i] = -nums[i];
@@ -115,17 +117,19 @@ For non-square or arbitrary-angle rotations, you need a fresh buffer.
 
 ## Floyd's on Indices
 
-When $\text{nums}[i] \in [1, n]$ and there's exactly one duplicate, treat the array as a function $f(i) = \text{nums}[i]$ — i.e. a linked list where node $i$ points to node $\text{nums}[i]$. The duplicate creates a cycle, and the cycle's entrance is the duplicate value.
+When the array has length $n + 1$, $\text{nums}[i] \in [1, n]$, and there's exactly one duplicate, treat the array as a function $f(i) = \text{nums}[i]$ — i.e. a linked list where node $i$ points to node $\text{nums}[i]$. No value is $0$, so index $0$ has no incoming edge and starts a tail leading into a cycle. The duplicate value is the one node with two incoming edges, which is exactly the cycle's entrance.
 
 Apply [Floyd's tortoise-and-hare](./linked-lists.md#cycle-detection-floyds-tortoise-and-hare) to find the cycle's start without modifying the array:
 
 ```typescript
 function findDuplicate(nums: number[]): number {
   let slow = nums[0], fast = nums[0];
+  // phase 1: fast gains one step per move, so they meet inside the cycle
   do {
     slow = nums[slow];
     fast = nums[nums[fast]];
   } while (slow !== fast);
+  // phase 2: same speed from the start and the meeting point; they meet at the entrance
   slow = nums[0];
   while (slow !== fast) {
     slow = nums[slow];

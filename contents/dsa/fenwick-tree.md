@@ -12,7 +12,7 @@ $$
 \text{lowbit}(i) = i \,\&\, (-i)
 $$
 
-In two's complement, `-i` flips all bits then adds one, so the only bit that lines up with `i` is the rightmost one. So `i & -i` isolates that bit, and its numeric value is the length of the range `tree[i]` covers — namely $[i - \text{lowbit}(i) + 1,\; i]$.
+In two's complement, `-i` flips all bits then adds one. The flip turns the trailing zeros into ones and the lowest set bit into a zero; the $+1$ carries through those ones and lands back on that bit, while every bit above stays flipped. So `i & -i` isolates the lowest set bit, and its numeric value is the length of the range `tree[i]` covers — namely $[i - \text{lowbit}(i) + 1,\; i]$.
 
 | `i` (binary) | `lowbit(i)` | range covered |
 | ------------ | ----------- | ------------- |
@@ -43,7 +43,7 @@ Two loops fall out:
 - **`update(i, delta)`** — climb to every ancestor that includes `i` by adding the lowbit: `i += i & -i`.
 - **`prefix(i)`** — descend by repeatedly subtracting the lowbit, accumulating non-overlapping ranges that tile $[1, i]$: `i -= i & -i`.
 
-Both traverse at most $\lceil \log_2 n \rceil$ positions because each step strips one bit.
+Both take $O(\log n)$ steps: `prefix` clears the lowest set bit each step, and `update` pushes the lowest set bit at least one position higher.
 
 ## Implementation
 
@@ -55,12 +55,14 @@ class FenwickTree {
     this.tree = new Array(n + 1).fill(0);
   }
 
+  // i += lowbit(i): the next index whose range also covers i
   update(i: number, delta: number): void {
     for (; i < this.tree.length; i += i & -i) this.tree[i] += delta;
   }
 
   prefix(i: number): number {
     let sum = 0;
+    // i -= lowbit(i): jump to the range ending just before tree[i]'s
     for (; i > 0; i -= i & -i) sum += this.tree[i];
     return sum;
   }
@@ -82,6 +84,7 @@ The naïve build is $n$ updates at $O(\log n)$ each — $O(n \log n)$. There's a
 constructor(arr: number[]) {
   this.tree = new Array(arr.length + 1).fill(0);
   for (let i = 0; i < arr.length; i++) this.tree[i + 1] = arr[i];
+  // ascending, so tree[i] already holds all its children when it is pushed up
   for (let i = 1; i < this.tree.length; i++) {
     const parent = i + (i & -i);
     if (parent < this.tree.length) this.tree[parent] += this.tree[i];
@@ -107,10 +110,10 @@ Then `bit.prefix(i)` returns the **current value of `a[i]`** — the running sum
 Two Fenwick trees in tandem extend this further. The math: if $d$ is the difference array of $a$, then
 
 $$
-\sum_{k=1}^{i} a[k] = \sum_{k=1}^{i} \sum_{j=1}^{k} d[j] = \sum_{j=1}^{i} d[j] \cdot (i - j + 1) = (i + 1)\sum_{j=1}^{i} d[j] - \sum_{j=1}^{i} j \cdot d[j]
+\sum_{k=1}^{i} a[k] = \sum_{k=1}^{i} \sum_{j=1}^{k} d[j] = \sum_{j=1}^{i} d[j] \cdot (i - j + 1) = i\sum_{j=1}^{i} d[j] - \sum_{j=1}^{i} (j - 1) \cdot d[j]
 $$
 
-So maintain one BIT over $d[j]$ and a second over $j \cdot d[j]$:
+So maintain one BIT over $d[j]$ and a second over $(j - 1) \cdot d[j]$:
 
 ```typescript
 class RangeBIT {
@@ -138,7 +141,7 @@ class RangeBIT {
 }
 ```
 
-This handles range-add + range-sum in $O(\log n)$ per operation with the same code complexity as a lazy segment tree, but ~2× tighter constants. The catch is it only works for **invertible** operations — there's no two-BIT trick for range-min.
+This handles range-add + range-sum in $O(\log n)$ per operation with far less code than a lazy segment tree and ~2× tighter constants. The catch is it only works for **invertible** operations — there's no two-BIT trick for range-min.
 
 ## Variants
 

@@ -144,10 +144,11 @@ Edge cases:
 ```typescript
 function inside(poly: P[], [x, y]: P): boolean {
   let res = false;
+  // j trails i, so (j, i) visits every edge, including the closing one
   for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
     const [xi, yi] = poly[i];
     const [xj, yj] = poly[j];
-    // edge spans the ray's y, and the crossing is to the right of x
+    // edge spans the ray's y (so yi !== yj), and the crossing is to the right of x
     if ((yi > y) !== (yj > y) && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi) {
       res = !res;
     }

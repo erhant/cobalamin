@@ -87,6 +87,7 @@ class SegmentTree {
     const m = (l + r) >> 1;
     if (i <= m) this._update(2 * node, l, m, i, val);
     else this._update(2 * node + 1, m + 1, r, i, val);
+    // recompute ancestors on the way back up
     this.tree[node] = this.tree[2 * node] + this.tree[2 * node + 1];
   }
 
@@ -161,6 +162,7 @@ class LazySegTree {
     return this._rangeSum(1, 0, this.n - 1, ql, qr);
   }
 
+  // hand this node's pending add to both children
   private push(node: number, l: number, r: number): void {
     if (this.lazy[node] === 0) return;
     const m = (l + r) >> 1;
@@ -201,7 +203,7 @@ class LazySegTree {
 
 Two invariants keep the bookkeeping straight:
 
-1. `tree[node]` is always **correct for its range** — the aggregate reflects every update that has ever touched this node, including ones that haven't been pushed down yet.
+1. `tree[node]` is always **correct for its range** with respect to every update that has reached it, including its own pending `lazy` that the children haven't seen yet. Lazies still sitting on ancestors are not included, which is why queries `push` on the way down.
 2. `lazy[node]` is what the **children still owe**. After `push`, the parent's lazy is cleared because the children now know.
 
 `apply` multiplies `val` by the range length $r - l + 1$ because each of the elements in the range gets `+val` — the **sum** gains $(r - l + 1) \cdot \text{val}$. For range min/max with range-add, no length factor: every element increases by `val`, so the min increases by `val`.
@@ -227,12 +229,14 @@ class IterativeSegTree {
     this.n = arr.length;
     this.tree = new Array(2 * this.n).fill(0);
     for (let i = 0; i < this.n; i++) this.tree[this.n + i] = arr[i];
+    // descending, so both children 2i and 2i+1 are built before i
     for (let i = this.n - 1; i > 0; i--) {
       this.tree[i] = this.tree[2 * i] + this.tree[2 * i + 1];
     }
   }
 
   update(i: number, val: number): void {
+    // set the leaf, then walk up; i ^ 1 is i's sibling
     for (this.tree[i += this.n] = val; i > 1; i >>= 1) {
       this.tree[i >> 1] = this.tree[i] + this.tree[i ^ 1];
     }
@@ -241,6 +245,7 @@ class IterativeSegTree {
   // sum of [l, r]
   query(l: number, r: number): number {
     let res = 0;
+    // switch to leaf indices and a half-open [l, r)
     for (l += this.n, r += this.n + 1; l < r; l >>= 1, r >>= 1) {
       if (l & 1) res += this.tree[l++];
       if (r & 1) res += this.tree[--r];
@@ -250,7 +255,9 @@ class IterativeSegTree {
 }
 ```
 
-The trick: `l` and `r` walk up the tree. Whenever `l` is a **right child** (odd), it can't ride up with its parent — collect it and slide right. Symmetrically for `r` as a left child. This generalizes the four-boundary-node argument from the recursive version into pure index math.
+The trick: `l` and `r` walk up the tree. Whenever `l` is a **right child** (odd), it can't ride up with its parent — collect it and slide right. Symmetrically, `r` is exclusive, so when `r` is odd the node just left of it (`r - 1`, a left child) is collected. This generalizes the four-boundary-node argument from the recursive version into pure index math.
+
+`res` collects nodes out of left-to-right order, so the operation must be **commutative** (sum, min, max, gcd, xor). For order-sensitive ones (matrix product, string hashing), keep two accumulators, `resL = op(resL, tree[l++])` and `resR = op(tree[--r], resR)`, and return `op(resL, resR)`.
 
 This form **doesn't admit lazy propagation cleanly** — you need the recursive structure to push down on the way in. For lazy, stay with the recursive version.
 

@@ -44,7 +44,7 @@ decompose(0, 0);
 
 ## Path Queries
 
-Store node $u$'s value at index `pos[u]` of an [`IterativeSegTree`](./segment-tree.md#iterative-bottom-up-form). To query the path $u \leadsto v$, repeatedly take the endpoint whose chain head is deeper, consume its chain segment, and jump above the head. Once both are on the same chain, one final range finishes it:
+Store node $u$'s value at index `pos[u]` of an [`IterativeSegTree`](./segment-tree.md#iterative-bottom-up-form). To query the path $u \leadsto v$, repeatedly take the endpoint whose chain head is deeper, consume its chain segment, and jump above the head. While the heads differ, the deeper head is strictly below the LCA, so the jump never overshoots. Once both are on the same chain, one final range finishes it:
 
 ```typescript
 const base = new Array(n);
@@ -55,6 +55,7 @@ function pathSum(u: number, v: number): number {
   let res = 0;
   while (head[u] !== head[v]) {
     if (depth[head[u]] < depth[head[v]]) [u, v] = [v, u];
+    // head[u]..u is one contiguous block, thanks to the heavy-first DFS
     res += seg.query(pos[head[u]], pos[u]);
     u = parent[head[u]];
   }

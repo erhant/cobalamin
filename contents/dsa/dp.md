@@ -140,6 +140,7 @@ If $V(s)$ depends on at most a constant-depth window of prior states, store only
 
 ```typescript
 // Fibonacci-shape: V(i) = V(i-1) + V(i-2)
+// a = V(i-2), b = V(i-1)
 let a = 1, b = 1;
 for (let i = 2; i <= n; i++) [a, b] = [b, a + b];
 return b;
@@ -170,7 +171,7 @@ The rule of thumb: **compress when the problem asks for a number, keep the table
 
 ## DP on Other Structures
 
-The four sub-chapters cover linear (1D), Cartesian-product (2D), subset-lattice (Bitmask), and digit-position (Digit) state spaces — most "interview-flavored" DPs fall into one of these. A few other state-space shapes worth recognizing:
+The five sub-chapters cover linear (1D), Cartesian-product (2D), range (Interval), subset-lattice (Bitmask), and digit-position (Digit) state spaces — most "interview-flavored" DPs fall into one of these. A few other state-space shapes worth recognizing:
 
 - **DP on trees** — state per subtree, recurrence at each node combines children's values. Examples: max independent set on a tree, tree diameter, rerooting. Lives in postorder DFS; see [Binary Trees](./binary-trees.md).
 - **DP on DAGs** — directly the picture above; topological order is the iteration order. Shortest path on a DAG is a DP.

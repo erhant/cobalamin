@@ -40,7 +40,7 @@ class Trie {
 
 Insert / search / prefix-check are all $O(L)$ where `L` is the word length, independent of the dictionary size.
 
-Extends to **Aho-Corasick** (KMP over a trie) for matching many patterns at once in $O(n + m + z)$ where `z` is the number of matches.
+Extends to **Aho-Corasick** (KMP over a trie) for matching many patterns at once in $O(n + m + z)$, for text length `n`, total pattern length `m`, and `z` matches.
 
 > [!TIP]
 > [208 Implement Trie](https://leetcode.com/problems/implement-trie-prefix-tree/) · [211 Design Add and Search Words Data Structure](https://leetcode.com/problems/design-add-and-search-words-data-structure/) · [212 Word Search II](https://leetcode.com/problems/word-search-ii/) · [648 Replace Words](https://leetcode.com/problems/replace-words/)
@@ -60,6 +60,7 @@ Insert numbers by their bits, from the highest bit down, so each node has two ch
 // B: bit width, e.g. 31 for non-negative 32-bit ints
 class BinaryTrie {
   // flat arrays: child[node * 2 + bit], node 0 is the root
+  // 0 also means "no child", which is safe because the root is never anyone's child
   private child: number[] = [0, 0];
 
   insert(x: number, B = 31): void {
@@ -67,6 +68,7 @@ class BinaryTrie {
     for (let b = B - 1; b >= 0; b--) {
       const bit = (x >> b) & 1;
       if (!this.child[node * 2 + bit]) {
+        // new node's id is the current node count
         this.child[node * 2 + bit] = this.child.length / 2;
         this.child.push(0, 0);
       }
@@ -79,6 +81,7 @@ class BinaryTrie {
     let node = 0;
     let res = 0;
     for (let b = B - 1; b >= 0; b--) {
+      // the opposite of x's bit makes this bit of x ^ y a 1
       const want = ((x >> b) & 1) ^ 1;
       if (this.child[node * 2 + want]) {
         res |= 1 << b;

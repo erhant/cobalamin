@@ -79,7 +79,7 @@ function lcs(a: string, b: string): number {
 
 Each cell looks at three neighbors: NW (diagonal), N (above), W (left). Rolling-array optimization is possible (keep only two rows), but you'll need a temp variable for the NW value or to write the recurrence diagonally.
 
-To **reconstruct** the actual subsequence, walk back from `(a.length, b.length)`: if `a[i-1] === b[j-1]`, emit the char and go NW; else step in whichever direction equals the cell value.
+To **reconstruct** the actual subsequence, walk back from `(a.length, b.length)`: if `a[i-1] === b[j-1]`, emit the char and go NW; else step to whichever of N / W holds the same value as the current cell (that's the branch the max took).
 
 ### Longest Common Substring (contiguous)
 
@@ -130,7 +130,7 @@ for (let i = 1; i <= s.length; i++)
     if (s[i - 1] === t[j - 1]) dp[j] += dp[j - 1];
 ```
 
-$O(nm)$ time, $O(m)$ space. Counting DPs overflow fast — 115 promises the answer fits in 32 bits, but the intermediate `dp` values are not similarly bounded in the general version; use `BigInt` or a modulus if the problem doesn't guarantee it.
+$O(nm)$ time, $O(m)$ space. Counting DPs overflow fast — LeetCode 115 promises the answer fits in 32 bits, but the intermediate `dp` values are not similarly bounded in the general version; use `BigInt` or a modulus if the problem doesn't guarantee it.
 
 > [!TIP]
 > [115 Distinct Subsequences](https://leetcode.com/problems/distinct-subsequences/) · [940 Distinct Subsequences II](https://leetcode.com/problems/distinct-subsequences-ii/) (one string, dedupe by last character) · [1638 Substrings That Differ by One Character](https://leetcode.com/problems/count-substrings-that-differ-by-one-character/)
@@ -146,6 +146,7 @@ function editDistance(a: string, b: string): number {
   );
   for (let i = 1; i <= a.length; i++) {
     for (let j = 1; j <= b.length; j++) {
+      // mismatch: replace (NW), delete a[i-1] (N), or insert b[j-1] (W)
       dp[i][j] = a[i - 1] === b[j - 1]
         ? dp[i - 1][j - 1]
         : 1 + Math.min(dp[i - 1][j - 1], dp[i - 1][j], dp[i][j - 1]);
@@ -196,10 +197,11 @@ Iterate by **interval length**, not by `i` or `j` directly — the recurrence re
 Contiguous variant. `dp[i][j]` is **boolean** — is `s[i..j]` a palindrome? — and the recurrence reads only the inner palindrome:
 
 ```typescript
+// length <= 2: matching endpoints suffice
 dp[i][j] = (s[i] === s[j]) && (j - i < 2 || dp[i + 1][j - 1]);
 ```
 
-Track the best `(i, j)` as you fill. $O(n^2)$ time and space. The expand-around-center trick (see [Strings § Expand-Around-Center](./strings.md#expand-around-center)) achieves the same $O(n^2)$ time with $O(1)$ space and is usually preferred. For optimal $O(n)$, use [Manacher's](./strings.md#manachers-algorithm).
+Fill with `i` descending (or by length) so `dp[i + 1][j - 1]` is ready. Track the best `(i, j)` as you fill. $O(n^2)$ time and space. The expand-around-center trick (see [Strings § Expand-Around-Center](./strings.md#expand-around-center)) achieves the same $O(n^2)$ time with $O(1)$ space and is usually preferred. For optimal $O(n)$, use [Manacher's](./strings.md#manachers-algorithm).
 
 > [!TIP]
 > [516 Longest Palindromic Subsequence](https://leetcode.com/problems/longest-palindromic-subsequence/) · [5 Longest Palindromic Substring](https://leetcode.com/problems/longest-palindromic-substring/) · [647 Palindromic Substrings](https://leetcode.com/problems/palindromic-substrings/) · [1312 Minimum Insertion Steps to Make a String Palindrome](https://leetcode.com/problems/minimum-insertion-steps-to-make-a-string-palindrome/) (= $n - \text{LPS}$)
@@ -213,6 +215,7 @@ For grids, the state is the cell coordinate `(r, c)` and the transitions are "fr
 Count monotonic paths from `(0, 0)` to `(m - 1, n - 1)` moving only right or down.
 
 ```typescript
+// row 0 is all 1s; dp[0] stays 1 (column 0), so c starts at 1
 const dp = new Array(n).fill(1);
 for (let r = 1; r < m; r++)
   for (let c = 1; c < n; c++) dp[c] += dp[c - 1];

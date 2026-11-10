@@ -128,6 +128,7 @@ function linearSieve(N: number): { spf: number[]; primes: number[] } {
       spf[i] = i;
       primes.push(i);
     }
+    // p <= spf[i] keeps p the smallest prime factor of p * i
     for (const p of primes) {
       if (p > spf[i] || p * i > N) break;
       spf[p * i] = p;
@@ -168,9 +169,10 @@ Memory drops from $O(R)$ to $O(\sqrt{R} + (R - L))$. Time is the same $O((R - L)
 
 ### Memory note
 
-For $N$ up to $\sim 10^8$, the boolean array is ~100 MB — too big in most environments. Pack into a `Uint8Array` (1 byte/slot, ~100 MB) or better a bitset (1 bit/slot, ~12 MB). In JavaScript:
+For $N$ up to $\sim 10^8$, a plain `Array` of booleans costs 4–8 bytes per slot (several hundred MB) — too big in most environments. Pack into a `Uint8Array` (1 byte/slot, ~100 MB) or better a bitset (1 bit/slot, ~12 MB). In JavaScript:
 
 ```typescript
+// slot i lives in byte i >> 3 (i / 8), at bit i & 7 (i % 8)
 const bits = new Uint8Array((N >> 3) + 1);
 const get = (i: number) => (bits[i >> 3] >> (i & 7)) & 1;
 const set = (i: number) => {

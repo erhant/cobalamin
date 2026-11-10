@@ -16,13 +16,14 @@ Iterate by interval **length** so smaller intervals are filled first.
 
 ## Burst Balloons
 
-Burst balloons one at a time; bursting the $k$-th in interval $[i, j]$ yields $\text{nums}[i-1] \cdot \text{nums}[k] \cdot \text{nums}[j+1]$ (using sentinels for the edges). The trick is to fix $k$ as the **last** balloon burst in $(i, j)$, so the two halves are independent.
+Burst balloons one at a time; bursting the $k$-th in interval $[i, j]$ yields $\text{nums}[i-1] \cdot \text{nums}[k] \cdot \text{nums}[j+1]$ (using sentinels for the edges). The trick is to fix $k$ as the **last** balloon burst in $(i, j)$, so the two halves are independent. In the code, `dp[i][j]` covers the open interval: balloons strictly between `i` and `j` of the padded array.
 
 ```typescript
 function maxCoins(nums: number[]): number {
   const a = [1, ...nums, 1];
   const n = a.length;
   const dp: number[][] = Array.from({ length: n }, () => new Array(n).fill(0));
+  // len = j - i; need at least one balloon strictly inside
   for (let len = 2; len < n; len++) {
     for (let i = 0; i + len < n; i++) {
       const j = i + len;
@@ -45,6 +46,7 @@ Min cuts to partition `s` into palindromes. Two DPs in tandem: an `isPal[i][j]` 
 function minCut(s: string): number {
   const n = s.length;
   const pal: boolean[][] = Array.from({ length: n }, () => new Array(n).fill(false));
+  // i descending so pal[i + 1][*] is filled before row i reads it
   for (let i = n - 1; i >= 0; i--)
     for (let j = i; j < n; j++)
       pal[i][j] = s[i] === s[j] && (j - i < 2 || pal[i + 1][j - 1]);
@@ -54,6 +56,7 @@ function minCut(s: string): number {
   cuts[0] = -1;
   for (let i = 1; i <= n; i++)
     for (let j = 0; j < i; j++)
+      // last piece s[j..i) is a palindrome: one cut after the best split of s[0..j)
       if (pal[j][i - 1]) cuts[i] = Math.min(cuts[i], cuts[j] + 1);
   return cuts[n];
 }

@@ -43,6 +43,7 @@ Sum of $\text{nums}[l..r]$ (inclusive) is $\text{pfx}[r + 1] - \text{pfx}[l]$. T
 For range updates. Given many "add $v$ to every element in $[l, r]$" updates, applying each directly is $O(n)$ per update. Instead, apply each in $O(1)$ and reconstruct once at the end:
 
 ```typescript
+// one extra slot so d[r + 1] stays in bounds when r = n - 1
 const d = new Array(n + 1).fill(0);
 
 function rangeAdd(l: number, r: number, v: number) {
@@ -76,7 +77,7 @@ Track prefix sum frequencies. At each position, ask "how many previous prefix su
 
 ```typescript
 let sum = 0;
-// empty prefix
+// empty prefix, so subarrays starting at index 0 can match
 const seen = new Map<number, number>([[0, 1]]);
 
 for (const n of nums) {
@@ -116,7 +117,7 @@ for (const n of nums) {
 
 ## Counting Triplets with Prefix Factoring
 
-For counting triplets $(i < j < k)$ where values must be distinct, count frequencies and compute:
+To count triples of elements with pairwise distinct values, bucket the elements by value into `counts` (one entry per distinct value, $d$ of them) and compute:
 
 $$
 \sum_{i < j < k} \text{counts}[i] \cdot \text{counts}[j] \cdot \text{counts}[k]
@@ -125,11 +126,14 @@ $$
 This nested sum can be **factored** into running accumulators:
 
 ```typescript
+// sum of counts[k] over k > i
 let sumCounts = 0;
+// sum of counts[j] * counts[k] over i < j < k
 let sumPairs = 0;
 let ans = 0;
 
 for (let i = counts.length - 1; i >= 0; i--) {
+  // pairs (i, k > i), computed before i joins sumCounts
   const pairCount = counts[i] * sumCounts;
   ans += counts[i] * sumPairs;
   sumCounts += counts[i];
@@ -199,7 +203,7 @@ Any **monotone** per-rectangle property can ride along in a parallel 1D array, u
 
 ```typescript
 const hasX = new Array(cols).fill(false);
-// inside the inner loop:
+// inside the inner loop (rowHasX resets to false at the start of each row):
 rowHasX ||= grid[r][c] === "X";
 hasX[c] ||= rowHasX;
 ```

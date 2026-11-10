@@ -88,7 +88,7 @@ Why it's $O((n + q)\sqrt n)$: within one block of `l`, `r` only moves forward �
 The other flavor splits the _operations_ rather than the array. Anything with a stride, a group size, or a repetition count $k$ has two regimes on either side of $T = \sqrt n$:
 
 - **Light** ($k \ge T$) — few steps per query ($n / k \le \sqrt n$), so brute-force each one.
-- **Heavy** ($k < T$) — many steps per query, but only $\sqrt n$ distinct values of $k$ exist, so batch queries by $k$ and pay once per bucket.
+- **Heavy** ($k < T$) — many steps per query, but only $\sqrt n$ distinct values of $k$ exist, so batch queries by $k$ and pay $O(n)$ once per bucket.
 
 Applied to strided range multiply — "multiply `nums[i]` by `v` for every $i \in [l, r]$ with $i \equiv l \pmod k$":
 
@@ -112,6 +112,7 @@ for (let k = 1; k < T; k++) {
   diffs.fill(1);
   for (const [l, r, v] of buckets[k]) {
     diffs[l] = mulmod(diffs[l], v);
+    // first index past r in l's residue class
     const cancel = l + (Math.floor((r - l) / k) + 1) * k;
     if (cancel < diffs.length) diffs[cancel] = mulmod(diffs[cancel], modInverse(v));
   }
@@ -131,6 +132,7 @@ $O((n + q)\sqrt n)$ instead of $O(qn)$. The cancellation sits one **stride** pas
 function mulmod(a: number, b: number): number {
   const aHi = Math.floor(a / 65536);
   const aLo = a % 65536;
+  // a * b = aHi * b * 2^16 + aLo * b; reducing aHi * b first keeps every term under 2^53
   return (((aHi * b) % M) * 65536 + aLo * b) % M;
 }
 ```

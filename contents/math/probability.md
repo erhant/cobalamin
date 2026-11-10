@@ -116,7 +116,7 @@ Operational reading: **XOR-with-uniform "kills" the distribution of $X$**. The o
 > **Theorem.** Let $r_1, \ldots, r_n$ be independent uniform samples from a set of size $B$. If $n \ge 1.2 \sqrt{B}$, then
 > $$\Pr[\,\exists\, i \ne j : r_i = r_j\,] \;\ge\; \tfrac{1}{2}.$$
 
-In plain English: sampling about $\sqrt{B}$ items from a universe of size $B$ is enough to almost certainly see a repeat. The naive guess is $\sim B$; the surprise is the square root.
+In plain English: sampling about $\sqrt{B}$ items from a universe of size $B$ is enough for a better-than-even chance of a repeat. The naive guess is $\sim B$; the surprise is the square root.
 
 **Proof.** Bound the complement (no collisions among $n$ samples):
 
@@ -127,10 +127,10 @@ $$
 Use $1 - x \le e^{-x}$:
 
 $$
-\;\le\; \prod_{i=1}^{n-1} e^{-i/B} \;=\; \exp\!\left(-\frac{1}{B} \sum_{i=1}^{n-1} i\right) \;\le\; \exp\!\left(-\frac{n^2}{2B}\right).
+\;\le\; \prod_{i=1}^{n-1} e^{-i/B} \;=\; \exp\!\left(-\frac{1}{B} \sum_{i=1}^{n-1} i\right) \;=\; \exp\!\left(-\frac{n(n-1)}{2B}\right) \;\approx\; \exp\!\left(-\frac{n^2}{2B}\right).
 $$
 
-Plug in $n = 1.2 \sqrt{B}$: the no-collision probability is at most $e^{-0.72} \approx 0.487$, so the collision probability is at least $\approx 0.513 > 1/2$. ∎
+Plug in $n = 1.2 \sqrt{B}$: for large $B$ the no-collision probability is at most $\approx e^{-0.72} \approx 0.487$, so the collision probability is at least $\approx 0.513 > 1/2$. ∎
 
 You can convince yourself empirically:
 

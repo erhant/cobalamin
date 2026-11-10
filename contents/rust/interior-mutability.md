@@ -51,7 +51,8 @@ let cell = RefCell::new(vec![1, 2, 3]);
 let r1 = cell.borrow();
 // ok: many readers
 let r2 = cell.borrow();
-// let w = cell.borrow_mut();            // panic: already borrowed
+// panic: already borrowed
+// let w = cell.borrow_mut();
 drop((r1, r2));
 // ok now
 let mut w = cell.borrow_mut();
@@ -66,7 +67,7 @@ Still single-threaded (`!Sync`).
 
 ## `Mutex<T>` and `RwLock<T>`: threaded versions
 
-Cross-thread interior mutability needs synchronization. `Mutex<T>` gives `&mut T` access under a lock; `RwLock<T>` gives many `&T` readers _or_ one `&mut T` writer. Both implement `Sync` (provided `T: Send`).
+Cross-thread interior mutability needs synchronization. `Mutex<T>` gives `&mut T` access under a lock; `RwLock<T>` gives many `&T` readers _or_ one `&mut T` writer. `Mutex<T>` is `Sync` when `T: Send`; `RwLock<T>` also needs `T: Sync`, since its readers share `&T` across threads.
 
 ```rust
 use std::sync::{Arc, Mutex};
@@ -137,7 +138,7 @@ The progression `Cell` → `RefCell` → `Mutex` / `RwLock` → `Atomic` trades 
 
 - `Cell` has the fewest features (no borrows) but zero checking overhead.
 - `RefCell` adds real borrows at the cost of a runtime panic risk.
-- `Mutex`/`RwLock` extend that to threads at the cost of a syscall.
+- `Mutex`/`RwLock` extend that to threads at the cost of atomics, plus a syscall under contention.
 - Atomics skip locks entirely but only work on small, fixed-layout values.
 
 Shared ownership (`Rc`, `Arc`) is orthogonal — combine as needed.

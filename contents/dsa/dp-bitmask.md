@@ -13,9 +13,9 @@ Use bitmask DP when the state has to remember the **identity** of the set, not j
 | `mask & ~(1 << i)`   | remove element $i$                     |
 | `mask ^ (1 << i)`    | toggle element $i$                     |
 | `mask & (mask - 1)`  | clear lowest set bit                   |
-| `s = (s - 1) & mask` | step to next non-empty submask of mask |
+| `s = (s - 1) & mask` | step to next smaller submask of mask   |
 
-Iteration order is the natural topological order on the subset lattice: if transitions only _add_ elements, iterate `mask` ascending — every `mask'` with `mask' ⊃ mask` comes later. If transitions _remove_ elements, iterate descending.
+Iteration order is the natural topological order on the subset lattice: if transitions only _add_ elements, iterate `mask` ascending — every `mask'` with `mask' ⊃ mask` comes later, since a strict superset is numerically larger. If transitions _remove_ elements, iterate descending.
 
 See [Bit Manipulation](./bits.md) for the cheat-sheet, popcount tricks, and JS-specific pitfalls (32-bit overflow, operator precedence).
 
@@ -48,6 +48,7 @@ function tsp(d: number[][]): number {
     // every reachable mask contains city 0
     if (!(mask & 1)) continue;
     for (let i = 0; i < n; i++) {
+      // i must be in mask and the state reachable
       if (!(mask & (1 << i)) || dp[mask][i] === Infinity) continue;
       for (let j = 0; j < n; j++) {
         // already visited
@@ -59,6 +60,7 @@ function tsp(d: number[][]): number {
     }
   }
 
+  // close the tour back to city 0
   let best = Infinity;
   for (let i = 1; i < n; i++) best = Math.min(best, dp[FULL][i] + d[i][0]);
   return best;
@@ -80,7 +82,7 @@ function tsp(d: number[][]): number {
 
 ### Assignment Problem
 
-$n$ workers, $n$ jobs, cost matrix. `dp[mask]` = min cost to give the jobs in `mask` to the first `popcount(mask)` workers. Transition: pick which job in `mask` worker `popcount(mask) - 1` takes. $O(2^n \cdot n)$, no position dimension.
+$n$ workers, $n$ jobs, cost matrix. `dp[mask]` = min cost to give the jobs in `mask` to the first `popcount(mask)` workers. Transition: worker `popcount(mask)` takes any job not yet in `mask`. $O(2^n \cdot n)$, no position dimension.
 
 ```typescript
 function assignmentCost(cost: number[][]): number {
@@ -106,7 +108,7 @@ function assignmentCost(cost: number[][]): number {
 
 ### Iterate submasks
 
-When a transition splits `mask` into two parts (partition into groups, set cover by overlapping subsets), enumerate non-empty submasks via:
+When a transition splits `mask` into two parts (partition into groups, set cover by overlapping subsets), enumerate non-empty submasks via the code below. `s - 1` clears the lowest set bit of `s` and sets every bit below it; `& mask` keeps only bits of `mask`, giving the next smaller submask.
 
 ```typescript
 for (let s = mask; s > 0; s = (s - 1) & mask) {
@@ -121,7 +123,7 @@ Total work across all masks is $O(3^n)$ — each pair $(\text{sub}, \text{mask})
 
 ### SOS DP (sum-over-subsets)
 
-Compute $f(\text{mask}) = \sum_{\text{sub} \subseteq \text{mask}} g(\text{sub})$ in $O(2^n \cdot n)$, beating the naive $O(3^n)$. Process one bit at a time: for $k$ in $0 \dots n-1$, if `mask & (1 << k)` then `f[mask] += f[mask ^ (1 << k)]`. Dual to a multi-dimensional prefix sum over the boolean cube.
+Compute $f(\text{mask}) = \sum_{\text{sub} \subseteq \text{mask}} g(\text{sub})$ in $O(2^n \cdot n)$, beating the naive $O(3^n)$. Process one bit at a time: for $k$ in $0 \dots n-1$, if `mask & (1 << k)` then `f[mask] += f[mask ^ (1 << k)]`. It's an $n$-dimensional prefix sum over the boolean cube, one axis per pass: after pass $k$, `f[mask]` sums `g` over submasks that differ from `mask` only in bits $0..k$.
 
 ```typescript
 function sosDP(g: number[]): number[] {

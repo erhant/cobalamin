@@ -42,7 +42,7 @@ $$
 a^{|G|} = e \quad\text{for all } a \in G.
 $$
 
-When $G = (\mathbb{F}_p^{\ast},\, \cdot)$ with $|G| = p - 1$, this _is_ Fermat's little theorem. When $G = (\mathbb{Z}/n\mathbb{Z})^{\ast}$, this _is_ Euler's theorem. One inequality, two theorems.
+When $G = (\mathbb{F}_p^{\ast},\, \cdot)$ with $|G| = p - 1$, this _is_ Fermat's little theorem. When $G = (\mathbb{Z}/n\mathbb{Z})^{\ast}$, this _is_ Euler's theorem. One fact, two theorems.
 
 > **Cryptographic takeaway.** Lagrange is why we want groups of **prime order**: if $|G| = n$ is prime, the only subgroups are $\{e\}$ and $G$. No hidden small subgroup = no Pohlig-Hellman shortcut on the discrete log.
 
@@ -84,7 +84,7 @@ $$
 g^{n / p_i} \neq e \quad\text{for every prime } p_i \mid n.
 $$
 
-You don't have to check $g^d \neq e$ for _every_ proper divisor $d$ — only the maximal ones. Pick random elements and test; a $\varphi(n) / n$ fraction of the group are generators, so a few tries suffice.
+You don't have to check $g^d \neq e$ for _every_ proper divisor $d$ — only the maximal ones. If $g$ is not a generator, its order is a proper divisor of $n$, which divides some $n / p_i$, so that test catches it. Pick random elements and test; a $\varphi(n) / n$ fraction of the group are generators, so a few tries suffice.
 
 ## Cosets
 
@@ -157,7 +157,7 @@ The modular inverses come from XGCD (see [Modular Inverse](../math/arithmetic.md
 
 CRT is one of the quietest but most load-bearing tools in this section:
 
-- **RSA-CRT decryption / signing (~$4\times$ speedup).** With the private $(p, q)$, compute $c^d \bmod p$ and $c^d \bmod q$ on half-sized moduli and recombine. Since schoolbook modular exponentiation is cubic in bit-length, the total cost drops from $\sim L^3$ to $\sim L^3 / 4$. A single bit-flip during one of the two half-computations also enables the classic **RSA-CRT fault attack** — a $\gcd$ on the faulty signature leaks a factor of $N$.
+- **RSA-CRT decryption / signing (~$4\times$ speedup).** With the private $(p, q)$, compute $c^d \bmod p$ and $c^d \bmod q$ on half-sized moduli and recombine. Since schoolbook modular exponentiation is cubic in bit-length, each half costs $(L/2)^3 = L^3/8$, so the total drops from $\sim L^3$ to $\sim L^3 / 4$. A single bit-flip during one of the two half-computations also enables the classic **RSA-CRT fault attack** — a $\gcd$ on the faulty signature leaks a factor of $N$.
 - **Pohlig-Hellman reduction.** If $|G| = n = \prod p_i^{e_i}$, CRT on exponents decomposes a discrete log in $G$ into independent DLs in each subgroup of order $p_i^{e_i}$. Total cost becomes $O\!\bigl(\sum_i e_i \sqrt{p_i}\bigr)$ — devastating if any $p_i$ is small. **This is the reason cryptographic groups insist on prime (or near-prime) order:** composite orders leak their prime-factor structure, and CRT is the exact statement of that leak.
 - **Secret sharing via residues.** Mignotte's and Asmuth-Bloom's constructions use pairwise-coprime moduli $n_1 < n_2 < \cdots$: the secret $s$ lives in a range above the product of any $k - 1$ moduli but below the product of any $k$, and shares are $s \bmod n_i$. Any $k$ shareholders reconstruct $s$ via CRT; fewer than $k$ leave $s$ uniformly ambiguous in a large window.
 
@@ -201,7 +201,7 @@ The single most important fact for crypto:
 
 So for any finite field, there exists a single element $g$ whose powers run through every non-zero element. This is exactly what lets us pose the discrete log problem over $\mathbb{F}_p^{\ast}$ or $\mathbb{F}_{2^k}^{\ast}$.
 
-Consequence: the equation $x^d = 1$ has at most $d$ solutions in $\mathbb{F}_q^{\ast}$ — because the solutions form a subgroup, and cyclic subgroups of order dividing $d$ are unique and of size $\gcd(d, q - 1)$.
+Consequence: the equation $x^d = 1$ has exactly $\gcd(d, q - 1) \le d$ solutions in $\mathbb{F}_q^{\ast}$ — they form the unique subgroup of that order.
 
 ### Squares, cubes, and residues
 

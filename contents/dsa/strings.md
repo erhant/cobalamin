@@ -69,6 +69,7 @@ function longestPalindrome(s: string): string {
       l--;
       r++;
     }
+    // the loop overshot by one on each side: the palindrome is s[l+1..r)
     if (r - l - 1 > end - start) {
       start = l + 1;
       end = r;
@@ -92,6 +93,7 @@ $O(n)$ for longest palindromic substring, by reusing work. Transform `s` into `^
 
 ```typescript
 function manacher(s: string): number[] {
+  // ^ and $ are distinct sentinels, so the expansion loop stops without bounds checks
   const t = "^#" + s.split("").join("#") + "#$";
   const p = new Array(t.length).fill(0);
   let center = 0,
@@ -99,6 +101,7 @@ function manacher(s: string): number[] {
 
   for (let i = 1; i < t.length - 1; i++) {
     const mirror = 2 * center - i;
+    // inside the window, i's palindrome reflects mirror's, capped at the window edge
     if (i < right) p[i] = Math.min(right - i, p[mirror]);
 
     while (t[i + p[i] + 1] === t[i - p[i] - 1]) p[i]++;
@@ -108,7 +111,7 @@ function manacher(s: string): number[] {
       right = i + p[i];
     }
   }
-  // p[i] = palindrome radius in original string at position i in t
+  // p[i] = length of the longest palindrome in s centered at t[i]
   return p;
 }
 ```
@@ -129,9 +132,11 @@ Precompute, for each prefix of `p`, the length of the longest proper prefix that
 ```typescript
 function buildLPS(p: string): number[] {
   const lps = new Array(p.length).fill(0);
+  // len: length of the longest proper prefix of p[0..i) that is also its suffix
   let len = 0;
   for (let i = 1; i < p.length; ) {
     if (p[i] === p[len]) lps[i++] = ++len;
+    // mismatch: fall back to the next shorter prefix-suffix and retry
     else if (len > 0) len = lps[len - 1];
     else lps[i++] = 0;
   }
@@ -141,12 +146,14 @@ function buildLPS(p: string): number[] {
 function kmp(t: string, p: string): number[] {
   const lps = buildLPS(p);
   const out: number[] = [];
+  // j: how many characters of p currently match the text ending at i
   for (let i = 0, j = 0; i < t.length; ) {
     if (t[i] === p[j]) {
       i++;
       j++;
       if (j === p.length) {
         out.push(i - j);
+        // keep the matched suffix, so overlapping occurrences are found
         j = lps[j - 1];
       }
     } else if (j > 0) j = lps[j - 1];
@@ -158,7 +165,7 @@ function kmp(t: string, p: string): number[] {
 
 $O(n + m)$. The `i` pointer in the text never goes backward — that's the core efficiency.
 
-**Bonus**: $n - \text{lps}[n-1]$ is the shortest period of `p` if it divides `n`; otherwise `p` has no full periodic structure. This gives another route to "repeated substring pattern": `s` is $t^k$ iff `n % (n - lps[n-1]) === 0` and `lps[n-1] > 0`.
+**Bonus**: for a string of length $n$, $n - \text{lps}[n-1]$ is its shortest period. If that period divides $n$, the string is its prefix of that length repeated; otherwise it has no full periodic structure. This gives another route to "repeated substring pattern": `s` is $t^k$ iff `n % (n - lps[n-1]) === 0` and `lps[n-1] > 0`.
 
 ### Z-Function
 
@@ -168,9 +175,11 @@ $O(n + m)$. The `i` pointer in the text never goes backward — that's the core 
 function zFunction(s: string): number[] {
   const n = s.length;
   const z = new Array(n).fill(0);
+  // [l, r): the rightmost window seen so far that matches a prefix of s
   let l = 0,
     r = 0;
   for (let i = 1; i < n; i++) {
+    // s[i..r) equals s[i-l..r-l), so z[i - l] is a free lower bound
     if (i < r) z[i] = Math.min(r - i, z[i - l]);
     while (i + z[i] < n && s[z[i]] === s[i + z[i]]) z[i]++;
     if (i + z[i] > r) {
@@ -182,7 +191,7 @@ function zFunction(s: string): number[] {
 }
 ```
 
-To find `p` in `t`: compute `z` of `p + "#" + t` and look for positions where `z[i] === p.length`.
+To find `p` in `t`: compute `z` of `p + "#" + t` and look for positions where `z[i] === p.length`. The separator `#` (any character in neither string) caps every `z[i]` at `p.length`.
 
 Often easier to reason about than KMP, with the same $O(n + m)$ cost.
 
@@ -200,8 +209,10 @@ Shifting by one: $h' = (h - s[i] \cdot b^{m-1}) \cdot b + s[i + m]$, all $\bmod 
 function rabinKarp(t: string, p: string): number[] {
   const m = p.length,
     n = t.length;
+  if (m === 0 || m > n) return [];
   const B = 257n,
     MOD = (1n << 61n) - 1n;
+  // power ends as B^(m-1), the weight of the character leaving the window
   let hp = 0n,
     ht = 0n,
     power = 1n;
@@ -215,6 +226,7 @@ function rabinKarp(t: string, p: string): number[] {
   for (let i = 0; i + m <= n; i++) {
     if (hp === ht && t.slice(i, i + m) === p) out.push(i);
     if (i + m < n) {
+      // drop t[i], shift left, append t[i + m]; adding MOD * MOD keeps it non-negative
       ht =
         ((ht - ((BigInt(t.charCodeAt(i)) * power) % MOD) + MOD * MOD) * B +
           BigInt(t.charCodeAt(i + m))) %

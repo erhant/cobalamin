@@ -54,7 +54,7 @@ $$
 f(n) \;=\; \begin{cases} 1/n & n \text{ even} \\ 2^{-n} & n \text{ odd} \end{cases}
 $$
 
-This is non-negligible (at every even $n$ it exceeds $1/n$) but not noticeable (at every odd $n$ it dips below every inverse polynomial). Such pathologies don't usually occur in practice, but the formal distinction is why some security definitions specify "noticeable" rather than the seemingly-equivalent "non-negligible".
+This is non-negligible (at every even $n$ it equals $1/n$, so it never stays below $1/n$) but not noticeable (at every odd $n$ it dips below every inverse polynomial). Such pathologies don't usually occur in practice, but the formal distinction is why some security definitions specify "noticeable" rather than the seemingly-equivalent "non-negligible".
 
 ## Overwhelming functions
 

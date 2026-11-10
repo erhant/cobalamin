@@ -69,7 +69,9 @@ For large graphs ($10^6$ edges and up), an array of arrays costs one heap alloca
 ```typescript
 // counting sort of edges by source vertex
 const start = new Int32Array(n + 1);
+// count out-degrees, shifted one slot right
 for (const [u] of edges) start[u + 1]++;
+// prefix sum: start[u] = number of edges with source < u
 for (let u = 0; u < n; u++) start[u + 1] += start[u];
 const to = new Int32Array(edges.length);
 // next free slot per vertex

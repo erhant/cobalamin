@@ -19,6 +19,7 @@ function longestValid(nums: number[]): number {
   let best = 0;
   let l = 0;
   for (let r = 0; r < nums.length; r++) {
+    // add/remove maintain whatever window state isValid reads (counts, sum, ...)
     add(nums[r]);
     // shrink until the window is legal again
     while (!isValid()) {
@@ -138,6 +139,7 @@ for (let ai = 0; ai < nums.length - 2; ai++) {
     // never let the shared pointer fall behind the inner index
     if (ti <= bi) ti = bi + 1;
     while (ti < nums.length && stillValid(ai, bi, ti)) ti++;
+    // every t in (bi, ti) is valid for this (ai, bi)
     ans += ti - bi - 1;
   }
 }

@@ -18,7 +18,7 @@ impl Foo {
 
 `Foo` must be `Sync` (it's shared across threads via `Arc`), so any mutable state needs an interior-mutability wrapper. See [Interior Mutability](./interior-mutability.md) for the underlying rules.
 
-Below are four `std`-only solutions, in roughly increasing order of how much rope you give yourself.
+Below are five `std`-only solutions, in roughly increasing order of how much rope you give yourself.
 
 ## Mutex + Condvar
 
@@ -46,6 +46,7 @@ impl Foo {
 
     fn second<F: FnOnce()>(&self, print_second: F) {
         let mut s = self.step.lock().unwrap();
+        // parks with the lock released until step >= 1
         s = self.cv.wait_while(s, |s| *s < 1).unwrap();
         print_second();
         *s = 2;
@@ -60,7 +61,7 @@ impl Foo {
 }
 ```
 
-`wait_while` releases the lock atomically with parking and reacquires it before returning — that atomicity is what prevents the lost-wakeup bug. `notify_all` is safe with at most two waiters; `notify_one` works too because `wait_while` re-checks the predicate on spurious wakeup.
+`wait_while` releases the lock atomically with parking and reacquires it before returning — that atomicity is what prevents the lost-wakeup bug. `notify_all` is required, not just safe: if `second` and `third` are both parked, a `notify_one` from `first` may wake `third`, which re-checks, parks again, and leaves `second` asleep forever.
 
 > [!NOTE]
 >
@@ -70,7 +71,8 @@ impl Foo {
 > loop {
 >     let s = self.step.lock().unwrap();
 >     if *s >= 1 { break; }
->     drop(s); // release so the writer can take the lock
+>     // release so the writer can take the lock
+>     drop(s);
 > }
 > ```
 >
@@ -224,6 +226,7 @@ impl Foo {
     }
 
     fn second<F: FnOnce()>(&self, print_second: F) {
+        // register before checking the flag (rule 1 below)
         *self.waiter_2.lock().unwrap() = Some(thread::current());
         while !self.first_done.load(Ordering::Acquire) { thread::park(); }
         print_second();

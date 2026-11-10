@@ -96,6 +96,7 @@ function quickSort(a: number[], lo = 0, hi = a.length - 1): void {
   if (lo >= hi) return;
   // random pivot: sorted or adversarial input no longer forces O(n^2)
   const p = lo + Math.floor(Math.random() * (hi - lo + 1));
+  // park the pivot at the end, out of the scan's way
   [a[p], a[hi]] = [a[hi], a[p]];
   const pivot = a[hi];
   // Lomuto partition: a[lo..store) < pivot
@@ -106,6 +107,7 @@ function quickSort(a: number[], lo = 0, hi = a.length - 1): void {
       store++;
     }
   }
+  // drop the pivot into its final slot, right after the smaller block
   [a[store], a[hi]] = [a[hi], a[store]];
   quickSort(a, lo, store - 1);
   quickSort(a, store + 1, hi);
@@ -195,6 +197,7 @@ For keys in $[\min, \max]$, offset by `min` so that $k = \max - \min + 1$. It's 
 ```typescript
 function countingSortBy<T>(items: T[], key: (x: T) => number, k: number): T[] {
   const start = new Array(k + 1).fill(0);
+  // count key v into slot v + 1, so the prefix sum below is exclusive
   for (const x of items) start[key(x) + 1]++;
   // start[v]: first output index for key v
   for (let v = 0; v < k; v++) start[v + 1] += start[v];

@@ -31,6 +31,7 @@ BFS visits vertices in order of edge-count distance from the source. Queue + vis
 
 ```typescript
 function bfs(start: number, adj: number[][]): number[] {
+  // -1 = unvisited, so dist doubles as the visited set
   const dist = new Array(adj.length).fill(-1);
   dist[start] = 0;
   const queue: number[] = [start];
@@ -169,6 +170,7 @@ function eulerPath(adj: number[][], start: number): number[] {
   while (stack.length) {
     const u = stack[stack.length - 1];
     if (ptr[u] < adj[u].length) {
+      // walk the next unused edge out of u
       stack.push(adj[u][ptr[u]++]);
     } else {
       // u is exhausted: it is final at this position

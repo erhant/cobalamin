@@ -35,9 +35,11 @@ R' &= [u_1]G + [u_2]Q \\
 \end{aligned}
 $$
 
+Why it works: $[u_1]G + [u_2]Q = [s^{-1}(H(m) + r d)]G = [k]G = R$.
+
 ### Issues
 
-- **Nonce reuse is catastrophic.** Two signatures $(r, s_1),\, (r, s_2)$ on different messages $m_1 \neq m_2$ with the same $k$ give
+- **Nonce reuse is catastrophic.** Two signatures $(r, s_1),\, (r, s_2)$ on different messages $m_1 \neq m_2$ with the same $k$ (same $k$ means same $r$) give
 
   $$
   k = \frac{H(m_1) - H(m_2)}{s_1 - s_2}, \qquad d = \frac{s_1 \cdot k - H(m_1)}{r}
@@ -79,11 +81,11 @@ $$
 
 - **Provable security** in the random oracle model under the DL assumption (via the forking lemma). ECDSA has no analogous reduction.
 - **Linearity** enables:
-  - **Batch verification** — verify $N$ signatures at cost $\sim N + \log n$ group operations instead of $2N$.
+  - **Batch verification** — check a random linear combination of $N$ signatures as one multi-scalar multiplication of size $2N + 1$; with Pippenger's algorithm that costs roughly $1/\log N$ of $N$ separate verifications.
   - **Multi-signatures (MuSig / MuSig2).** A set of signers produces a _single_ Schnorr signature valid under the sum of their public keys.
   - **Threshold signatures (FROST).** $t$-of-$n$ signing without a trusted dealer.
   - **Adaptor signatures / scriptless scripts.** Used for Lightning, atomic swaps, CoinSwap.
-- **Non-malleable** (with proper key-prefixing — hashing $Q$ into $e$).
+- **Non-malleable**: a valid signature can't be tweaked into a different valid signature on the same message (strong unforgeability). Separately, **key-prefixing** (hashing $Q$ into $e$, as BIP 340 does) blocks related-key attacks on derived or tweaked keys.
 - **Deterministic nonces** standard (BIP 340), same idea as RFC 6979.
 
 Schnorr was patented until 2008, which is why ECDSA won Bitcoin's original design. Taproot activation (2021) added BIP 340 Schnorr to Bitcoin.
@@ -102,7 +104,7 @@ flowchart LR
     G2["G₂<br/>(public keys live here)"] -->|pairing e| GT
 ```
 
-Let $H: \{0, 1\}^{\ast} \to G_1$ be a hash-to-curve function.
+Let $H: \{0, 1\}^{\ast} \to G_1$ be a hash-to-curve function. Below, $G_2$ also names the fixed generator of the group $G_2$.
 
 $$
 \text{Sign:} \quad \sigma = [d] \cdot H(m) \in G_1
@@ -136,7 +138,7 @@ $$
 
   One constant-size signature attests to $N$ independent sign-events. This is why **Ethereum 2.0's consensus layer** uses BLS — one slot can have hundreds of thousands of validator attestations aggregated into a single 48-byte signature. Also used by **Dfinity / Internet Computer** and **Chia**.
 
-- **Rogue-key attack:** a naive aggregation scheme (same $m$ signed by all) lets an attacker pick $Q' = Q_{\text{adv}} - \sum Q_{\text{others}}$ and forge aggregate signatures. Defenses: proof-of-possession on registration, or distinct-message aggregation, or BLS-MuSig style coefficients.
+- **Rogue-key attack:** a naive aggregation scheme (same $m$ signed by all) lets an attacker publish $Q' = Q_{\text{adv}} - \sum Q_{\text{others}}$; the aggregate key then collapses to $Q_{\text{adv}}$, so the attacker alone can forge aggregate signatures. Defenses: proof-of-possession on registration, or distinct-message aggregation, or BLS-MuSig style coefficients.
 
 ### Cost
 

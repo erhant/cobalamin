@@ -21,7 +21,7 @@ Three things determine efficiency, in order of importance:
 ```ts
 function backtrack(state: State): void {
     // full solution
-    if (isComplete(state)) {
+    if (IS_COMPLETE(state)) {
       // record a copy of `state`, not the live one!
       record(snapshot of state);
       return;

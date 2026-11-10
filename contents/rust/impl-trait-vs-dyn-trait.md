@@ -103,7 +103,7 @@ fn choose(b: bool) -> Box<dyn Iterator<Item = u32>> {
 
 **`dyn Trait` in return position without a pointer.** `fn f() -> dyn Trait` is a compile error — `dyn Trait` is unsized. You need `Box<dyn Trait>` or `&dyn Trait`.
 
-**`impl Trait` leaks auto traits.** If the hidden type is `Send`, the `impl Trait` is `Send`; if it isn't, downstream generic code breaks. `dyn Trait` requires you to spell it out: `dyn Trait + Send`.
+**`impl Trait` leaks auto traits.** If the hidden type is `Send`, the `impl Trait` is `Send` too, and callers can come to rely on it; changing the body so the hidden type stops being `Send` silently breaks them. `dyn Trait` requires you to spell it out: `dyn Trait + Send`.
 
 **Trait upcasting.** Going from `Box<dyn Sub>` to `Box<dyn Super>` is now supported (stable since Rust 1.86), but older code often used explicit `as_super(&self) -> &dyn Super` methods — you'll still see the pattern in the wild.
 

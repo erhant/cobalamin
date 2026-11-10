@@ -23,6 +23,7 @@ class SparseTable {
 
   // op over a[l..r], inclusive
   query(l: number, r: number): number {
+    // largest k with 2^k <= length; one window starts at l, the other ends at r
     const k = 31 - Math.clz32(r - l + 1);
     return this.op(this.sp[k][l], this.sp[k][r - (1 << k) + 1]);
   }

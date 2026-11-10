@@ -69,6 +69,8 @@ $$
 m = \frac{c_2}{c_1^x} = \frac{m \cdot g^{rx}}{g^{xr}}
 $$
 
+The mask $h^r = g^{xr}$ can be rebuilt from $c_1 = g^r$ only by someone who knows $x$.
+
 ElGamal is **semantically secure** under **DDH** — distinguishing $(g^a,\, g^b,\, g^{ab})$ from random is exactly what an attacker needs to distinguish ciphertexts of two chosen plaintexts.
 
 It is **multiplicatively homomorphic**: $\operatorname{Enc}(m_1) \cdot \operatorname{Enc}(m_2) = \operatorname{Enc}(m_1 \cdot m_2)$ component-wise. Exponential ElGamal (encrypt $g^m$ instead of $m$) becomes additively homomorphic, used in e-voting.
@@ -83,7 +85,7 @@ It is **multiplicatively homomorphic**: $\operatorname{Enc}(m_1) \cdot \operator
 | **Baby-step Giant-step (BSGS)** | $O(\sqrt{n})$ time, $O(\sqrt{n})$ memory — meet in the middle                                                                                                                            |
 | **Pollard's rho (for logs)**    | $O(\sqrt{n})$ time, $O(1)$ memory                                                                                                                                                        |
 | **Pollard's kangaroo / lambda** | $O(\sqrt{b - a})$ when $x$ is known to lie in $[a, b]$                                                                                                                                   |
-| **Pohlig-Hellman**              | If $n = \prod p_i^{e_i}$, reduces DLP to DLPs in subgroups of prime order $p_i$. Total cost $O\!\left(\sum \sqrt{p_i}\right)$ — so **always use a group of prime (or near-prime) order** |
+| **Pohlig-Hellman**              | If $n = \prod p_i^{e_i}$, reduces DLP to DLPs in subgroups of prime-power order $p_i^{e_i}$, each solved digit-by-digit in order $p_i$. Total cost $O\!\left(\sum e_i \sqrt{p_i}\right)$ — so **always use a group of prime (or near-prime) order** |
 | **Shor's algorithm**            | Polynomial on a quantum computer                                                                                                                                                         |
 
 ### Specific to $(\mathbb{Z}/p\mathbb{Z})^{\ast}$ and extension fields

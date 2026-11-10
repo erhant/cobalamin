@@ -14,6 +14,7 @@ const nextGreater = new Array<number>(nums.length).fill(-1);
 const stack: number[] = [];
 
 for (let i = 0; i < nums.length; i++) {
+  // nums[i] is the first greater value to the right of every index it pops
   while (stack.length && nums[stack[stack.length - 1]] < nums[i]) {
     nextGreater[stack.pop()!] = nums[i];
   }
@@ -42,8 +43,10 @@ const isStacked = new Set<string>();
 const stack: string[] = [];
 
 for (let i = 0; i < s.length; i++) {
+  // already in the stack; keep the earlier copy
   if (isStacked.has(s[i])) continue;
 
+  // pop a larger top only if another copy of it comes later
   while (
     stack.length &&
     s[i] < stack[stack.length - 1] &&
@@ -83,7 +86,7 @@ for (const num of nums) {
 }
 ```
 
-Each element's removal step = $\max(\text{steps of popped elements}) + 1$. If nothing larger is to the left, it's never removed ($\text{step} = 0$).
+An element is removed by the nearest strictly larger element to its left, but only after every element between them (exactly the ones it pops) is gone. So its removal step $= \max(\text{steps of popped elements}) + 1$. If nothing larger is to the left, it's never removed ($\text{step} = 0$).
 
 ## Monotonic Queue
 
@@ -107,6 +110,7 @@ for (let i = 0; i < nums.length; i++) {
 
   dq.push(i);
 
+  // the first full window ends at index k - 1
   if (i >= k - 1) ans.push(nums[dq[0]]);
 }
 ```

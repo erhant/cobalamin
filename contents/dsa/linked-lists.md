@@ -84,7 +84,7 @@ function reverseRec(head: ListNode | null): ListNode | null {
 
 ## Fast/Slow Pointers
 
-Walk two pointers down the list at different speeds. After $k$ steps, the fast pointer is $k$ ahead (or $2k - k = k$ ahead at speed 2 vs. 1). This yields three common idioms.
+Walk two pointers down the list at different speeds. At speeds 2 and 1, after $k$ steps `fast` is at node $2k$ and `slow` at node $k$, so the gap grows by one per step. This yields three common idioms.
 
 ### Finding the middle
 
@@ -121,9 +121,9 @@ $O(n)$ time, $O(1)$ space — strictly better than a `Set`-based "have I seen th
 
 ### Finding the cycle's start
 
-A small piece of modular arithmetic does the work. Let $L$ be the distance from `head` to the cycle entrance and $C$ the cycle length. When `slow` and `fast` meet, `slow` has walked some distance $d$ and `fast` has walked $2d$, with $2d - d = d$ being a multiple of $C$. So $d = kC$ for some $k$. The meeting point sits at distance $L + (kC - L) \bmod C$ from the head.
+A small piece of modular arithmetic does the work. Let $L$ be the distance from `head` to the cycle entrance and $C$ the cycle length. When `slow` and `fast` meet, `slow` has walked some distance $d$ and `fast` has walked $2d$; the extra $d$ is whole laps of the cycle, so $d = kC$ for some $k$.
 
-The consequence: after the meeting, walk one pointer from `head` and one from the meeting point, both at speed 1. They collide exactly at the cycle's start.
+The consequence: after the meeting, walk one pointer from `head` and one from the meeting point, both at speed 1. After $L$ steps the first is at the entrance; the second has walked $kC + L$ from `head` in total, which is $L$ steps plus whole laps, so it is at the entrance too. They collide exactly at the cycle's start.
 
 ```typescript
 function cycleStart(head: ListNode | null): ListNode | null {
@@ -156,6 +156,7 @@ Reusing two of the above: find the middle, reverse the second half, compare from
 function isPalindrome(head: ListNode | null): boolean {
   if (!head || !head.next) return true;
   const mid = middle(head);
+  // the first half still ends at `mid`, so it is never shorter than `r`
   let r = reverse(mid);
   let l = head;
   while (r) {
@@ -209,9 +210,9 @@ class LRUNode {
 class LRUCache {
   private cap: number;
   private map = new Map<number, LRUNode>();
-  // sentinel
+  // sentinel: head.next is the most recently used entry
   private head = new LRUNode(0, 0);
-  // sentinel
+  // sentinel: tail.prev is the least recently used entry
   private tail = new LRUNode(0, 0);
 
   constructor(capacity: number) {

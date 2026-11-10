@@ -90,6 +90,7 @@ Pair it with `n & (n - 1)`, which _clears_ the lowest set bit, to walk the set b
 function popcount(n: number): number {
   let c = 0;
   while (n) {
+    // clear the lowest set bit
     n &= n - 1;
     c++;
   }
@@ -101,9 +102,13 @@ Cost is $O(\text{popcount}(n))$ rather than $O(\log n)$ — beats the naive loop
 
 ```typescript
 function popcount32(n: number): number {
+  // each 2-bit field now holds the count of its two bits
   n = n - ((n >>> 1) & 0x55555555);
+  // add neighboring 2-bit counts into 4-bit fields
   n = (n & 0x33333333) + ((n >>> 2) & 0x33333333);
+  // add neighboring nibbles into bytes
   n = (n + (n >>> 4)) & 0x0f0f0f0f;
+  // the top byte of n * 0x01010101 is the sum of all four bytes
   return (n * 0x01010101) >>> 24;
 }
 ```
@@ -182,10 +187,15 @@ Reverse the order of bits in a 32-bit word. Each step swaps adjacent groups of s
 
 ```typescript
 function reverse32(n: number): number {
+  // swap adjacent bits
   n = ((n & 0xaaaaaaaa) >>> 1) | ((n & 0x55555555) << 1);
+  // swap adjacent 2-bit pairs
   n = ((n & 0xcccccccc) >>> 2) | ((n & 0x33333333) << 2);
+  // swap nibbles
   n = ((n & 0xf0f0f0f0) >>> 4) | ((n & 0x0f0f0f0f) << 4);
+  // swap bytes
   n = ((n & 0xff00ff00) >>> 8) | ((n & 0x00ff00ff) << 8);
+  // swap 16-bit halves
   return ((n >>> 16) | (n << 16)) >>> 0;
 }
 ```

@@ -19,6 +19,7 @@ Preprocessing is $O(n \log n)$ time and space; each query is $O(\log n)$. It app
 Row $0$ is the parent array; fill upward with the doubling recurrence. Use a sentinel (here `-1`) for jumps that leave the tree, and make the sentinel absorbing so out-of-range queries stay `-1`:
 
 ```typescript
+// enough rows that 2^(LOG - 1) covers any depth < n
 const LOG = Math.ceil(Math.log2(n)) + 1;
 const up: number[][] = Array.from({ length: LOG }, () => new Array(n).fill(-1));
 
@@ -67,7 +68,7 @@ function lca(u: number, v: number): number {
       v = up[j][v];
     }
   }
-  // one step above the meeting frontier
+  // u and v are now children of the LCA
   return up[0][u];
 }
 ```

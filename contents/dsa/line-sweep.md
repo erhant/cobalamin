@@ -47,6 +47,7 @@ Removing an arbitrary height from a heap is awkward, so use **lazy deletion**: s
 
 ```typescript
 function skyline(buildings: [number, number, number][]): [number, number][] {
+  // the height can only change at a building edge
   const xs = [...new Set(buildings.flatMap(([l, r]) => [l, r]))].sort((a, b) => a - b);
   // [height, right]; MinHeap from the Heap chapter, flipped into a max-heap by height
   const heap = new MinHeap<[number, number]>((a, b) => a[0] > b[0]);
@@ -60,6 +61,7 @@ function skyline(buildings: [number, number, number][]): [number, number][] {
     }
     // lazily drop buildings that have ended
     while (heap.size() && heap.peek()![1] <= x) heap.pop();
+    // the tallest live building is the outline height just right of x
     const h = heap.size() ? heap.peek()![0] : 0;
     if (!res.length || res[res.length - 1][1] !== h) res.push([x, h]);
   }

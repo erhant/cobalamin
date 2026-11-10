@@ -54,7 +54,7 @@ static CONFIG: OnceLock<Config> = OnceLock::new();
 struct Config { endpoint: String, retries: u32 }
 
 fn init(cfg: Config) {
-    // Err(cfg) if already set — value handed back
+    // returns Err(cfg) if already set; .ok() discards it
     CONFIG.set(cfg).ok();
 }
 
@@ -123,7 +123,7 @@ Access goes through `with(|v| ...)` in general; `Cell`-typed keys get the shorth
 ## `static mut` — don't
 
 ```rust
-// taking a reference to this is denied since 2024
+// taking a reference to this is denied since the 2024 edition
 static mut COUNTER: u64 = 0;
 ```
 

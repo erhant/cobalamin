@@ -9,7 +9,7 @@ Pad every number $\le N$ to $\text{len}(N)$ digits with leading zeros. Walk left
 - **Tight** — yes, equal so far. The next digit is bounded by $N[k]$. Placing anything strictly less drops you into "free" forever; placing exactly $N[k]$ keeps you tight.
 - **Free** — already strictly less than $N$'s prefix. The rest of the digits range freely over $0..9$.
 
-The whole DP is a two-mode walk. Free states share structure across totally different bounded prefixes — that's where memoization pays.
+The whole DP is a two-mode walk. Once free, the number of valid completions depends only on `pos` and the property state, not on which prefix got you there — that's where memoization pays.
 
 **Worked example: count integers in $[0, 357]$.**
 
@@ -62,6 +62,8 @@ function countWithDigitSum(N: number, s: number): number {
   return solve(0, 0, true);
 }
 ```
+
+No `leadingZero` here: leading zeros add $0$ to the sum, so they're harmless.
 
 ## Recipe
 

@@ -14,6 +14,7 @@ At each step, square the base and conditionally multiply into the result when th
 
 ```typescript
 function pow(x: number, a: number): number {
+  // invariant: ans * x^a equals the original x^a
   let ans = 1;
   while (a > 0) {
     if (a & 1) {
@@ -43,11 +44,11 @@ function powmod(x: number, a: number, mod: number): number {
 }
 ```
 
-> Use `BigInt` if `mod` is large enough that intermediate products overflow `Number.MAX_SAFE_INTEGER`.
+> `x * x` must stay below `Number.MAX_SAFE_INTEGER` ($2^{53}$), so a `number` version is only exact for `mod` $< 2^{26.5} \approx 9.4 \cdot 10^7$. That already excludes $10^9 + 7$, whose products reach $10^{18}$: use `BigInt` there.
 
 ### Shamir-Strauss Trick (Multi-Exponentiation)
 
-Efficiently computes $x^a \cdot y^b$ in a **single pass** over the bits of both exponents (MSB to LSB). Instead of two separate exponentiations ($\sim 2 \log n$ squarings), this uses $\sim \log n$ squarings by precomputing $xy$ and handling all four bit-pair combinations per step:
+Efficiently computes $x^a \cdot y^b$ in a **single pass** over the bits of both exponents (MSB to LSB). Instead of two separate exponentiations ($\sim 2 \log \max(a, b)$ squarings), this uses $\sim \log \max(a, b)$ squarings by precomputing $xy$ and handling all four bit-pair combinations per step:
 
 | bit of $a$ | bit of $b$ | multiply by |
 | ---------- | ---------- | ----------- |
@@ -73,6 +74,7 @@ function shamirStraus(
   // Scan from highest bit to lowest
   const bits = Math.max(a, b).toString(2).length;
   for (let i = bits - 1; i >= 0; i--) {
+    // squaring shifts both accumulated exponents left by one bit
     result = (result * result) % mod;
     const bitA = (a >> i) & 1;
     const bitB = (b >> i) & 1;
@@ -89,14 +91,14 @@ function shamirStraus(
 }
 ```
 
-> In additive group notation (e.g. elliptic curves), this computes $[a]B + [c]D$ — the same idea powers fast ECDSA signature verification.
+> In additive group notation (e.g. elliptic curves), this computes $[a]P + [b]Q$ — the same idea powers fast ECDSA signature verification.
 
 > [!TIP]
 > [50 Pow(x, n)](https://leetcode.com/problems/powx-n/) · [372 Super Pow](https://leetcode.com/problems/super-pow/) · [1922 Count Good Numbers](https://leetcode.com/problems/count-good-numbers/)
 
 ## GCD (Greatest Common Divisor)
 
-Euclidean algorithm — repeatedly replace the larger number with the remainder until one reaches zero. Runs in $O(\log \min(a, b))$.
+Euclidean algorithm — repeatedly replace the larger number with the remainder until one reaches zero. It works because $\gcd(a, b) = \gcd(b, a \bmod b)$: any common divisor of $a$ and $b$ also divides $a - qb$. Runs in $O(\log \min(a, b))$.
 
 ```typescript
 function gcd(a: number, b: number): number {
@@ -138,7 +140,7 @@ $$
 a \cdot a^{-1} \equiv 1 \pmod{m}
 $$
 
-It exists iff $\gcd(a, m) = 1$ — non-coprime elements have no inverse, since they can't generate the full group $(\mathbb{Z}/m)^{\ast}$. Two standard ways to compute it.
+It exists iff $\gcd(a, m) = 1$: $a x \equiv 1$ means $a x - m y = 1$ for some $y$, and the left side is always a multiple of $\gcd(a, m)$. Two standard ways to compute it.
 
 ### Via XGCD (any modulus)
 

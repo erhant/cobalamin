@@ -2,7 +2,7 @@
 
 State indexed by a single integer — almost always **a position in a sequence**. Recurrence reads "the answer ending at (or up to) index $i$ is some combination of the answers at a few smaller indices." If you can write $V(i) = f(V(i - 1), V(i - 2), \ldots, V(i - k))$ with $k$ small and constant, you're in 1D DP territory, and the loop is usually one line.
 
-The classic shape is "best / count / feasibility involving a sequence of choices, where each choice depends only on a constant number of previous outcomes." When $V(i)$ depends only on a constant prefix of prior values, drop the array and keep $k$ scalars — that's the **rolling-window** optimization.
+The classic shape is "best / count / feasibility involving a sequence of choices, where each choice depends only on a constant number of previous outcomes." When $V(i)$ depends only on the last $k$ values, drop the array and keep $k$ scalars — that's the **rolling-window** optimization.
 
 ## Climbing Stairs
 
@@ -10,6 +10,7 @@ The Hello-World of DP. $V(n)$ = number of ways to reach stair $n$ taking 1 or 2 
 
 ```typescript
 function climbStairs(n: number): number {
+  // a = V(i-2), b = V(i-1)
   let a = 1, b = 1;
   for (let i = 2; i <= n; i++) [a, b] = [b, a + b];
   return b;
@@ -27,6 +28,7 @@ Max sum of non-adjacent picks. The choice at each house is "rob (skip the previo
 
 ```typescript
 function rob(nums: number[]): number {
+  // prev1 = best over the houses before x; prev2 = same, excluding x's left neighbor
   let prev2 = 0, prev1 = 0;
   for (const x of nums) {
     const curr = Math.max(prev1, prev2 + x);
@@ -52,6 +54,7 @@ The right state is **not** "answer using `nums[0..i]`" — it's "best subarray *
 
 ```typescript
 function maxSubArray(nums: number[]): number {
+  // here = best sum of a subarray ending at i; best = max over all i so far
   let best = nums[0], here = nums[0];
   for (let i = 1; i < nums.length; i++) {
     here = Math.max(nums[i], here + nums[i]);
@@ -69,6 +72,7 @@ Same shape, but with **two states per position** because a large-negative `here`
 
 ```typescript
 function maxProduct(nums: number[]): number {
+  // lo / hi = min / max product of a subarray ending at i
   let lo = nums[0], hi = nums[0], best = nums[0];
   for (let i = 1; i < nums.length; i++) {
     const a = nums[i] * lo, b = nums[i] * hi;
@@ -107,12 +111,13 @@ Simple, easy to extend (e.g. track predecessor for reconstruction, change `<` to
 
 ### $O(n \log n)$ Patience Sorting
 
-Maintain a sorted array `tails` where `tails[k]` = smallest possible tail of any increasing subsequence of length `k + 1`. For each `num`, binary-search the position to replace (or append at the end).
+Maintain a sorted array `tails` where `tails[k]` = smallest possible tail of any increasing subsequence of length `k + 1`. For each `num`, binary-search the first tail $\ge$ `num` and overwrite it (or append if none). Lowering a tail never hurts: any subsequence that could extend the old tail can extend the smaller one.
 
 ```typescript
 function lengthOfLIS(nums: number[]): number {
   const tails: number[] = [];
   for (const num of nums) {
+    // lower bound: first index with tails[l] >= num
     let l = 0, r = tails.length;
     while (l < r) {
       const m = (l + r) >> 1;
@@ -147,7 +152,7 @@ function coinChange(coins: number[], amount: number): number {
 }
 ```
 
-Looping `a` outer / coins inner is the classic "unbounded knapsack" indexing — each coin is reusable, so a given amount can be reached from multiple coins in the same iteration. To **count the number of ways** instead, swap loop order (coins outer, amount inner) — see [Coin Change II](https://leetcode.com/problems/coin-change-ii/) and the 0/1 vs. unbounded discussion in [2D DP § Knapsack](./dp-2d.md#01-knapsack).
+Looping `a` outer / coins inner is the classic "unbounded knapsack" indexing — each coin is reusable, since `dp[a - c]` may itself already use `c`. For a min the loop order doesn't matter; for **counting the ways** it does: amount-outer counts ordered sequences (`1+2` and `2+1` separately), coins-outer counts each multiset once — see [Coin Change II](https://leetcode.com/problems/coin-change-ii/) and the 0/1 vs. unbounded discussion in [2D DP § Knapsack](./dp-2d.md#01-knapsack).
 
 > [!TIP]
 > [322 Coin Change](https://leetcode.com/problems/coin-change/) · [518 Coin Change II](https://leetcode.com/problems/coin-change-ii/) · [279 Perfect Squares](https://leetcode.com/problems/perfect-squares/) · [983 Minimum Cost For Tickets](https://leetcode.com/problems/minimum-cost-for-tickets/)
@@ -160,6 +165,7 @@ Count the ways to decode a digit string under the mapping `1→A, 2→B, …, 26
 function numDecodings(s: string): number {
   const n = s.length;
   if (s[0] === "0") return 0;
+  // prev2 = dp[i-1], prev1 = dp[i]; curr becomes dp[i+1]
   let prev2 = 1, prev1 = 1;
   for (let i = 1; i < n; i++) {
     let curr = 0;
@@ -196,7 +202,7 @@ function wordBreak(s: string, wordDict: string[]): boolean {
 }
 ```
 
-$O(n^2 L)$ where $L$ is the max word length (the `slice` and `has`). Capping the inner range to $j \ge i - L$ shaves it to $O(n \cdot L^2)$, useful when the dictionary has bounded-length words.
+$O(n^3)$ (the `slice` and `has` are $O(n)$ each). Capping the inner range to $j \ge i - L$ shaves it to $O(n \cdot L^2)$ where $L$ is the max word length, useful when the dictionary has bounded-length words.
 
 > [!TIP]
 > [139 Word Break](https://leetcode.com/problems/word-break/) · [140 Word Break II](https://leetcode.com/problems/word-break-ii/) (enumerate all segmentations — needs reconstruction via memoized recursion or a back-edge graph)
@@ -208,7 +214,7 @@ A cluster of problems "given an array of step bounds / costs, reach the end." Ea
 - **Jump Game I** — _feasibility_, $\oplus =$ OR. Greedy beats DP (track the farthest reachable index in one pass).
 - **Jump Game II** — _min jumps_, $\oplus =$ min. Greedy (BFS in disguise — track the current and next "fringes") in $O(n)$.
 - **Jump Game VI** — _max score_ with bounded step. $V(i) = \text{nums}[i] + \max_{i - k \le j < i} V(j)$. The inner max over a sliding window is a [monotonic deque](./monotonic-stack-queue.md#sliding-window-maximum) — $O(n)$ amortized.
-- **Jump Game VII** — _feasibility_ with bounded step. $V(i) = \text{OR}_{i - \text{maxJ} \le j \le i - \text{minJ}} V(j)$ when `s[i] === '0'`. Range-OR is monotone, so a prefix-sum-of-reachable count + window check gives $O(n)$.
+- **Jump Game VII** — _feasibility_ with bounded step. $V(i) = \text{OR}_{i - \text{maxJ} \le j \le i - \text{minJ}} V(j)$ when `s[i] === '0'`. A window OR is just "count of reachable indices in the window $> 0$", and that count is a prefix-sum difference — $O(n)$.
 
 The shared moral: a 1D DP with a **sliding-window** dependency over the last $k$ states upgrades from $O(nk)$ to $O(n)$ via either a deque (for min/max) or a running sum (for additive aggregates).
 

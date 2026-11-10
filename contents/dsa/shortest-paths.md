@@ -22,7 +22,7 @@ function bfs01(start: number, adj: [number, number][][]): number[] {
   const n = adj.length;
   const dist = new Array(n).fill(Infinity);
   dist[start] = 0;
-  // ring buffer as a deque: a vertex sits in it at most twice per improvement
+  // ring-buffer deque: entries hold only distances D and D + 1, at most one per vertex each
   const cap = 2 * n + 1;
   const dq = new Int32Array(cap);
   let head = 0;
@@ -36,9 +36,11 @@ function bfs01(start: number, adj: [number, number][][]): number[] {
       if (dist[u] + w < dist[v]) {
         dist[v] = dist[u] + w;
         if (w === 0) {
+          // push front
           head = (head - 1 + cap) % cap;
           dq[head] = v;
         } else {
+          // push back
           dq[(head + size) % cap] = v;
         }
         size++;
@@ -100,7 +102,7 @@ Variations that keep the same skeleton:
 
 ## Bellman-Ford
 
-Relax **every edge**, $V - 1$ times. A shortest path without cycles has at most $V - 1$ edges, and after round $i$, every shortest path that uses at most $i$ edges is correct. No ordering is needed, so negative weights are fine.
+Relax **every edge**, $V - 1$ times. A shortest path without cycles has at most $V - 1$ edges, and after round $i$, every vertex whose shortest path uses at most $i$ edges has its final distance: round $i$ relaxes the last edge of that path. No ordering is needed, so negative weights are fine.
 
 ```typescript
 // returns null if a negative cycle is reachable from start
@@ -141,7 +143,7 @@ All-pairs shortest paths. Allow vertex `k` as a possible stop, for $k = 0, 1, \d
 // d: V×V matrix, d[i][i] = 0, d[i][j] = w or Infinity; updated in place
 function floydWarshall(d: number[][]): void {
   const n = d.length;
-  // k must be the outermost loop
+  // k outermost: step k needs d[i][k] and d[k][j] to already allow stops 0..k-1
   for (let k = 0; k < n; k++) {
     for (let i = 0; i < n; i++) {
       for (let j = 0; j < n; j++) {

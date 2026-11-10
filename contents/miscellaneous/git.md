@@ -13,13 +13,13 @@ This will tell GitHub to treat files with the `.myext` extension as Python files
 
 ## Linguist-Ignored Code
 
-You can use `.gitattributes` to ignore certain files or directories from being displayed in diffs on GitHub. Such files can be auto-generated / vendored, so you would not want them to populate your diffs.
+You can use `.gitattributes` to mark auto-generated or vendored files so GitHub leaves them out of the repo's language stats; `linguist-generated` files are also collapsed in PR diffs.
 
 ```sh
-# ignore docs
+# exclude docs from language stats
 docs/* linguist-vendored
 
-# ignore auto-generated proto files
+# exclude generated protos from stats and collapse them in diffs
 proto/* linguist-generated
 ```
 
@@ -31,7 +31,7 @@ You can use `git log --follow <file>` to see the commit history of a file, inclu
 git log --follow path/to/your/file
 ```
 
-You can get a short summary of commits between your current version and the last version of the file with:
+For a one-line-per-commit summary:
 
 ```sh
 git log --follow --oneline path/to/your/file

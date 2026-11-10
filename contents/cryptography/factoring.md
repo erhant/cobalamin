@@ -31,7 +31,7 @@ $$
 c = m^e \bmod N \qquad\qquad m = c^d \bmod N
 $$
 
-Correctness follows from Euler's theorem:
+Correctness: $e d \equiv 1 \pmod{\varphi(N)}$ means $e d = 1 + k \varphi(N)$ for some integer $k$, and Euler's theorem gives $m^{\varphi(N)} \equiv 1$ (for $m$ coprime to $N$; CRT extends it to all $m$):
 
 $$
 m^{e \cdot d} \;=\; m^{1 + k \cdot \varphi(N)} \;\equiv\; m \pmod{N}
@@ -59,7 +59,7 @@ $$
 
 Computing square roots mod $N = pq$ requires knowing $p, q$ (use CRT to combine the roots mod $p$ and mod $q$). This is **provably equivalent to factoring**: an algorithm that extracts arbitrary square roots mod $N$ can be turned into a factoring algorithm.
 
-> **Decryption ambiguity:** $c$ has _four_ square roots mod $N$. The decrypter must add redundancy (structured padding, a hash, repeated bits) to pick the right one.
+> **Decryption ambiguity:** $c$ has _four_ square roots mod $N$. The sender must add redundancy (structured padding, a hash, repeated bits) so the decrypter can pick the right one.
 
 ## Attacks on Factoring-Based Schemes
 
@@ -77,7 +77,7 @@ Computing square roots mod $N = pq$ requires knowing $p, q$ (use CRT to combine 
 | **GNFS** (General Number Field Sieve) | Best known classical: $\displaystyle \exp\!\left(\bigl((\tfrac{64}{9})^{1/3} + o(1)\bigr)\,(\ln N)^{1/3} (\ln \ln N)^{2/3}\right)$ |
 | **Shor's algorithm**                  | Polynomial time on a quantum computer                                                                                              |
 
-Key-generation countermeasures: $p$ and $q$ must be of similar but not too-close size, and $p-1,\; q-1,\; p+1,\; q+1$ must each have a large prime factor (_safe primes_) to defeat Pollard-family attacks.
+Key-generation countermeasures: $p$ and $q$ must be of similar but not too-close size, and $p-1,\; q-1,\; p+1,\; q+1$ must each have a large prime factor (_strong primes_) to defeat Pollard-family attacks.
 
 ### RSA-specific attacks (assume factoring is still hard)
 
@@ -97,4 +97,4 @@ Key-generation countermeasures: $p$ and $q$ must be of similar but not too-close
 
 ### Rabin-specific
 
-Rabin is vulnerable to a **chosen-ciphertext attack**: an attacker who can submit ciphertexts to a decryption oracle learns square roots, and two distinct square roots of the same $c$ give a non-trivial factor of $N$ via $\gcd(x - y,\; N)$. This is why Rabin is rarely deployed without strong padding (Rabin-SAEP, etc.).
+Rabin is vulnerable to a **chosen-ciphertext attack**: the attacker picks a random $x$, submits $c = x^2 \bmod N$ to a decryption oracle, and gets back a root $y$. With probability $1/2$, $y \ne \pm x$, and then $\gcd(x - y,\; N)$ is a non-trivial factor of $N$. This is why Rabin is rarely deployed without strong padding (Rabin-SAEP, etc.).

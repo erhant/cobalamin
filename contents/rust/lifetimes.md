@@ -20,9 +20,9 @@ Which input's lifetime does the return share? Without annotations, it's ambiguou
 fn longest<'a>(a: &'a str, b: &'a str) -> &'a str { /* ... */ }
 ```
 
-Read `'a` as "some lifetime I'll call 'a'." The signature says: _the return lives at least as long as the shorter of the two inputs_. The caller is now free to use the result for that duration and no longer.
+Read `'a` as "some lifetime I'll call 'a'." The signature says: _both inputs live for at least `'a`, and so does the return_. The caller picks `'a` as the overlap of the two borrows, so the result is usable as long as the shorter input and no longer.
 
-`'a` is introduced in the generic list `<'a>` exactly like a type parameter. It's monomorphized away — at runtime, there is no `'a`.
+`'a` is introduced in the generic list `<'a>` exactly like a type parameter. It's erased after borrow-checking — at runtime, there is no `'a`.
 
 ## Elision rules
 
@@ -44,7 +44,8 @@ fn field(&self) -> &Field { &self.field }
 This doesn't — two inputs, no `self`, so rule 2 can't fire:
 
 ```rust
-// fn longest(a: &str, b: &str) -> &str  // error: missing lifetime
+// error: missing lifetime specifier
+// fn longest(a: &str, b: &str) -> &str
 ```
 
 Elision is a **syntactic shortcut**, not inference. The rules cover the common cases exactly; when they don't apply, you annotate explicitly.
@@ -70,7 +71,7 @@ A struct with lifetime parameters can't be placed into a `static` or stored for 
 ```rust
 // string literals are baked into the binary
 let s: &'static str = "hello";
-// likewise for const/static items
+// constant expressions are promoted to 'static
 let b: &'static [u8] = &[1, 2, 3];
 ```
 

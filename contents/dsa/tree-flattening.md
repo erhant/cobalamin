@@ -21,11 +21,11 @@ dfs(0, -1);
 
 - **Ancestor test in $O(1)$**: $u$ is an ancestor of $v$ iff $\text{tin}[u] \le \text{tin}[v]$ and $\text{tout}[v] \le \text{tout}[u]$.
 - **Subtree queries with point updates**: store node $u$'s value at index `tin[u]` in a [Fenwick Tree](./fenwick-tree.md) or [Segment Tree](./segment-tree.md). The subtree sum is then `query(tin[u] + 1, tout[u] + 1)`, using 1-indexed Fenwick positions.
-- **Root-to-node path sums with point updates**: reverse the roles with a difference trick. Adding $d$ to node $u$ affects every path that passes through $u$, which is exactly the nodes in $u$'s subtree. So call `update(tin[u] + 1, d)` and `update(tout[u] + 2, -d)`. The path sum from the root to $v$ is then `prefix(tin[v] + 1)`.
+- **Root-to-node path sums with point updates**: reverse the roles with a difference trick. Adding $d$ to node $u$ changes the root-to-$v$ sum for exactly the $v$ in $u$'s subtree, so add $d$ over that range: `update(tin[u] + 1, d)` and `update(tout[u] + 2, -d)`. The path sum from the root to $v$ is then `prefix(tin[v] + 1)`, which collects the $d$ of every ancestor of $v$ (including $v$).
 
 ## LCA via Euler Tour
 
-Use a fuller tour that records $u$ again after returning from each child, which gives $2n - 1$ entries. The LCA of $u$ and $v$ is the **shallowest vertex** in the tour between their first occurrences. A [sparse table](./sparse-table.md) answers that range-min query in $O(1)$ after $O(n \log n)$ preprocessing:
+Use a fuller tour that records $u$ again after returning from each child, which gives $2n - 1$ entries. The LCA of $u$ and $v$ is the **shallowest vertex** in the tour between their first occurrences: that stretch of the tour walks from $u$ up to the LCA and down to $v$, never leaving the LCA's subtree. A [sparse table](./sparse-table.md) answers that range-min query in $O(1)$ after $O(n \log n)$ preprocessing:
 
 ```typescript
 const tour: number[] = [];
@@ -51,6 +51,7 @@ const sp: number[][] = [tour];
 for (let k = 1; 1 << k <= tour.length; k++) {
   const prev = sp[k - 1];
   const half = 1 << (k - 1);
+  // a window of length 2^k is two halves; only starts i <= len - 2^k fit
   sp.push(prev.slice(0, tour.length - (1 << k) + 1).map((x, i) => shallower(x, prev[i + half])));
 }
 
@@ -58,7 +59,7 @@ function lca(u: number, v: number): number {
   let l = first[u];
   let r = first[v];
   if (l > r) [l, r] = [r, l];
-  // two overlapping power-of-two windows cover [l, r]
+  // k = floor(log2(len)); two overlapping 2^k windows cover [l, r]
   const k = 31 - Math.clz32(r - l + 1);
   return shallower(sp[k][l], sp[k][r - (1 << k) + 1]);
 }

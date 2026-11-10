@@ -2,7 +2,7 @@
 
 A **spanning tree** of a connected, undirected, weighted graph connects all $V$ vertices using exactly $V - 1$ edges. A **minimum spanning tree (MST)** is one with the smallest total weight.
 
-Both classic algorithms are greedy and rest on the **cut property**: for any split of the vertices into two sides, the lightest edge crossing the split belongs to some MST. Kruskal and Prim differ only in which cut they look at.
+Both classic algorithms are greedy and rest on the **cut property**: for any split of the vertices into two sides, the lightest edge crossing the split belongs to some MST. Kruskal and Prim differ only in which cut they look at: Kruskal's separates the two components an edge would join, Prim's separates the current tree from everything else.
 
 ## Kruskal (Sort Edges + DSU)
 
@@ -38,6 +38,7 @@ function prim(adj: [number, number][][]): number {
   const inTree = new Array(adj.length).fill(false);
   // [weight, node]
   const pq = new MinHeap<[number, number]>((a, b) => a[0] < b[0]);
+  // seed: vertex 0 joins for free
   pq.push([0, 0]);
   let total = 0;
   let count = 0;

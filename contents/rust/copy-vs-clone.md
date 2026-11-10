@@ -14,7 +14,8 @@ By default, Rust values _move_ on assignment:
 ```rust
 let s = String::from("hi");
 let t = s;
-// println!("{s}");  // error: value moved
+// error: value moved
+// println!("{s}");
 ```
 
 For `Copy` types, the compiler quietly duplicates instead:
@@ -44,8 +45,8 @@ impl Drop for FileHandle {
     fn drop(&mut self) { /* close fd */ }
 }
 
-// impl Copy for FileHandle {}  // error[E0184]: the trait `Copy` cannot
-//                              // be implemented for a type with a destructor
+// error[E0184]: the trait `Copy` cannot be implemented for a type with a destructor
+// impl Copy for FileHandle {}
 ```
 
 That's why `String`, `Vec<T>`, `Box<T>`, `File`, `Mutex<T>` — anything owning a heap allocation or OS resource — cannot be `Copy`. Their `Drop` impl is what frees the resource.
@@ -84,7 +85,7 @@ You do **not** write `impl Copy` manually in practice — the behavior is fixed 
 
 ## Performance intuition
 
-"`Copy` is cheap, `Clone` might not be" is the usual heuristic, but it's about _semantics_, not size. A `[u8; 10_000]` is `Copy` and cloning it memcpys 10 KB every pass-by-value. A `Rc<T>` is `Clone` (bumps a refcount, ~one atomic/non-atomic increment) but not `Copy`.
+"`Copy` is cheap, `Clone` might not be" is the usual heuristic, but it's about _semantics_, not size. A `[u8; 10_000]` is `Copy` and cloning it memcpys 10 KB every pass-by-value. A `Rc<T>` is `Clone` (one non-atomic refcount increment; `Arc` makes it atomic) but not `Copy`.
 
 If you have a large `Copy` struct, passing it by value is not free — prefer `&T`. `Copy` is about whether moves are allowed to duplicate, not about whether duplication is fast.
 

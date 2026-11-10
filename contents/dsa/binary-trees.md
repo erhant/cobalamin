@@ -171,9 +171,10 @@ To detect duplicate subtrees, serialize each subtree into a string key.
 
 ### Which traversal order works?
 
-**Preorder** (`cur_left_right`) works without parens:
+**Preorder** (`cur_left_right`) works without parens, as long as nulls are written out. The root comes first and every subtree ends at a known point, so the string parses back into exactly one tree:
 
 ```typescript
+// left, right: keys of the children, "NULL" for a missing child
 const key = `${node.val}_${left}_${right}`;
 ```
 
@@ -221,20 +222,20 @@ The parens explicitly encode tree structure, making ordering irrelevant.
 
 For maximum width of a binary tree (counting nulls between endpoints), assign heap indices:
 
-- Root has index $0$
+- Root has index $1$
 - Left child of index $i$: $2i$
 - Right child of index $i$: $2i + 1$
 
-Width of a level $= \text{lastIndex} - \text{firstIndex} + 1$.
+Width of a level $= \text{lastIndex} - \text{firstIndex} + 1$. The indices are positions in the full tree at that depth, so missing nodes between the endpoints are counted automatically.
 
 ```mermaid
 graph TD
-    I0((0)) --> I1((1))
-    I0 --> I2((2))
+    I1((1)) --> I2((2))
     I1 --> I3((3))
-    I1 --> I4((4))
+    I2 --> I4((4))
     I2 --> I5((5))
-    I2 --> I6((6))
+    I3 --> I6((6))
+    I3 --> I7((7))
 ```
 
 Use DFS tracking first index per depth:
@@ -243,8 +244,10 @@ Use DFS tracking first index per depth:
 const firstAt: Record<number, bigint> = {};
 let maxWidth = 0n;
 
+// call as dfs(root, 0, 1n)
 function dfs(node: TreeNode | null, depth: number, idx: bigint) {
   if (!node) return;
+  // left goes first, so the first node seen at a depth is the leftmost
   if (!(depth in firstAt)) firstAt[depth] = idx;
 
   const width = idx - firstAt[depth] + 1n;
@@ -255,4 +258,4 @@ function dfs(node: TreeNode | null, depth: number, idx: bigint) {
 }
 ```
 
-Use `BigInt` since indices double each level and can overflow.
+Use `BigInt` since indices double each level and pass $2^{53}$ (the limit of exact `number` integers) past depth 53.

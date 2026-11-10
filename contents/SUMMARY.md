@@ -68,7 +68,7 @@
 - [Digital Signatures](./cryptography/signatures.md)
 - [Hashing](./cryptography/hashing.md)
 
-# Rust Programming
+# Rust
 
 - [Associated Types vs. Generics](./rust/associated-types-vs-generics.md)
 - [`Copy` vs. `Clone`](./rust/copy-vs-clone.md)
@@ -77,6 +77,13 @@
 - [Interior Mutability](./rust/interior-mutability.md)
 - [Global State](./rust/global-state.md)
 - [Ordering Threads](./rust/ordering-threads.md)
+
+# TypeScript
+
+- [Built-in Types](./typescript/types.md)
+- [Variance](./typescript/variance.md)
+- [Async & Timers](./typescript/async.md)
+- [Performance](./typescript/performance.md)
 
 # Miscellaneous
 

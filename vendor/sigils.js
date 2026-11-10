@@ -547,6 +547,50 @@ const SIGILS = {
 ......#....
 +++++++#+++`,
 
+  "typescript/types": `
+++++++++++++
++..........+
++.###.####.+
++..#..#....+
++..#..####.+
++..#.....#.+
++..#..####.+
++..........+
+++++++++++++`,
+  "typescript/variance": `
+....##....
+....##....
+...+..+...
+..+....+..
+##......##
+##......##
+..+....+..
+...+..+...
+....##....
+....##....`,
+  "typescript/async": `
+...####...
+.##....##.
+.#..#...#.
+#...#....#
+#...#....#
+#...####.#
+#........#
+.#......#.
+.##....##.
+...####...`,
+  "typescript/performance": `
+.....####
+....####.
+...####..
+..####...
+.#######.
+...####..
+..####...
+.####....
+.##......
+#........`,
+
   "miscellaneous/pdf": `
 ######...
 #....##..
@@ -627,6 +671,9 @@ const PALETTE = [
   "#66a80f",
 ];
 
+// brand colors that override the palette for a whole directory
+const DIR_COLORS = { typescript: "#3178c6" };
+
 // fixed px per grid pixel, so every sigil has the same grain
 const SIDEBAR_SCALE = 2;
 const TITLE_SCALE = 4;
@@ -653,7 +700,7 @@ const colors = {};
 for (const line of summary.split("\n").slice(1)) {
   if (/^# /.test(line) || /^-{3,}\s*$/.test(line)) group++;
   const m = line.match(/\]\(\.\/(.+?)\.md\)/);
-  if (m) colors[m[1]] = PALETTE[group % PALETTE.length];
+  if (m) colors[m[1]] = DIR_COLORS[m[1].split("/")[0]] ?? PALETTE[group % PALETTE.length];
 }
 
 const vars = [];

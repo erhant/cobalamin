@@ -1,4 +1,4 @@
-# Heap
+# Heaps
 
 A **heap** is a complete binary tree maintaining a partial order: every parent is $\le$ both children (**min-heap**) or $\ge$ both children (**max-heap**). It's the data structure underneath a **priority queue** — fast access to the smallest (or largest) element of a changing set.
 

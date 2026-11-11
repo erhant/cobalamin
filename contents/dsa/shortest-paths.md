@@ -84,7 +84,7 @@ function dijkstra(start: number, adj: [number, number][][]): number[] {
 }
 ```
 
-$O((V + E) \log V)$ with a binary heap. JS has no built-in priority queue — bring your own ([Heap](./heap.md) has a ~30 line array-backed one).
+$O((V + E) \log V)$ with a binary heap. JS has no built-in priority queue — bring your own ([Heaps](./heap.md) has a ~30 line array-backed one).
 
 **"Stale entry" trick.** Instead of implementing decrease-key, push a fresh `(nd, v)` whenever we improve `dist[v]`, and on pop skip entries whose `d` is worse than the current `dist[u]`. Simpler code, same asymptotics.
 

@@ -6,7 +6,7 @@ In practice, call `arr.sort(cmp)`. It runs in $O(n \log n)$, it's stable (guaran
 | ------------- | ------------------------------ | ------------ | ------ | ---------------------------------------------- |
 | Merge sort    | $O(n \log n)$                  | $O(n)$       | yes    | inversion counting, linked lists, external sort |
 | Quicksort     | $O(n \log n)$ avg, $O(n^2)$ worst | $O(\log n)$  | no     | in-place sorting, quickselect, partitioning     |
-| Heap sort     | $O(n \log n)$                  | $O(1)$       | no     | see [Heap](./heap.md)                          |
+| Heap sort     | $O(n \log n)$                  | $O(1)$       | no     | see [Heaps](./heap.md)                          |
 | Counting sort | $O(n + k)$                     | $O(n + k)$   | yes    | integer keys in $[0, k)$                       |
 | Radix sort    | $O(d \cdot (n + b))$           | $O(n + b)$   | yes    | fixed-width integers or strings                |
 

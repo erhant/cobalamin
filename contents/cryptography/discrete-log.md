@@ -1,4 +1,4 @@
-# Discrete Logarithm
+# Discrete Log & Diffie-Hellman
 
 ## The Assumption
 

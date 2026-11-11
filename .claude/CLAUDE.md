@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this repo is
 
-Personal notes on Data Structures & Algorithms, Math, and Cryptography, authored as an [mdBook](https://rust-lang.github.io/mdBook/). All prose lives in `contents/` as Markdown; `book/` is the generated HTML output (gitignored but may be present locally — never edit it by hand).
+Personal notes on Data Structures & Algorithms, Mathematics, Cryptography, Rust, TypeScript, and miscellaneous tooling, authored as an [mdBook](https://rust-lang.github.io/mdBook/). All prose lives in `contents/` as Markdown; `book/` is the generated HTML output (gitignored but may be present locally — never edit it by hand).
 
 ## Commands
 
@@ -27,16 +27,16 @@ If `mdbook serve` fails, first check that both preprocessors are installed (`car
 
 **Always update `contents/SUMMARY.md` in the same change.** It is the table of contents mdBook reads to decide what to build — pages not listed there do not appear in the rendered book, and stale entries pointing at renamed/deleted files break the build.
 
-1. Create / rename / delete the `.md` file under the appropriate subdirectory of `contents/` (`dsa/`, `math/`, or `cryptography/`).
-2. Update the matching entry in `contents/SUMMARY.md` under the right top-level section (`# Techniques`, `# Math`, `# Cryptography`) — adjust both the title and the path.
+1. Create / rename / delete the `.md` file under the appropriate subdirectory of `contents/` (`dsa/`, `math/`, `cryptography/`, `rust/`, `typescript/`, or `miscellaneous/`).
+2. Update the matching entry in `contents/SUMMARY.md` under the right top-level part (`# Data Structures & Algorithms`, `# Mathematics`, `# Cryptography`, `# Rust`, `# TypeScript`, `# Miscellaneous`) — adjust both the title and the path. Keep the SUMMARY title in line with the page's `#` heading (the sidebar may use a shorter form). `---` lines split a part into visual groups.
 
 This applies even to small edits: if you rename a page, fix the `SUMMARY.md` link; if you delete one, remove the line.
 
-Each page also has a pixel-art sigil (sidebar + title icon). The grids live in `vendor/sigils.js`, keyed by page path (`dsa/heap`); after adding/renaming/removing a page, update its grid there and regenerate the committed CSS with `node vendor/sigils.js` (writes `vendor/sigils.css`; it throws if a sigil's page is missing from `SUMMARY.md`). Colors come from the page's group in `SUMMARY.md` (each `#` part and `---` spacer starts a new one).
+Each page also has a pixel-art sigil (sidebar + title icon). The grids live in `vendor/sigils.js`, keyed by page path (`dsa/heap`); after adding/renaming/removing a page, update its grid there and regenerate the committed CSS with `node vendor/sigils.js` (writes `vendor/sigils.css`; it throws if a sigil's page is missing from `SUMMARY.md`). Colors come from the page's group in `SUMMARY.md` (each `#` part and `---` spacer starts a new one), unless `DIR_COLORS` pins a whole directory (TypeScript is TS blue). DSA pages also get a difficulty level in `LEVELS`.
 
 ## Conventions
 
-- Code examples are written in **TypeScript**, even for algorithm/crypto content.
+- Code examples are written in **TypeScript**, even for algorithm/crypto content (Rust pages use Rust).
 - **Comments go on their own line above the code they describe, never trailing it.** Write `// explain\nconst x = f();`, not `const x = f(); // explain`. Applies to every language in the book.
 - Math uses KaTeX inline (`$...$`) and display (`$$...$$`) syntax — not MathJax.
 - Diagrams use mermaid fenced blocks (` ```mermaid `).

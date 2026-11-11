@@ -18,3 +18,5 @@ additional-css = ["./vendor/mermaid-center.css", "./vendor/sigils.css"]
 additional-js = ["./vendor/mermaid.min.js", "./vendor/mermaid-init.js"]
 git-repository-url = "https://github.com/erhant/cobalamin"
 default-theme = "light"
+# sigils already mark each page, so drop the "1.2." chapter numbers
+no-section-label = true

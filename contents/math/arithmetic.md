@@ -1,4 +1,4 @@
-# Arithmetic
+# Modular Arithmetic
 
 Fast algorithms for the basic arithmetic operations that show up everywhere — exponentiation, GCD, and modular inverse.
 

@@ -2,7 +2,7 @@
 
 Divisors come in pairs. If $d \mid n$, then $n/d \mid n$ too, and one of the two is $\le \sqrt{n}$. Almost every divisor technique is built on that pairing or on the prime factorization.
 
-For GCD and LCM, see [Arithmetic](./arithmetic.md). For factorization, see [Primes](./primes.md).
+For GCD and LCM, see [Modular Arithmetic](./arithmetic.md). For factorization, see [Primes](./primes.md).
 
 ## Enumerating Divisors
 

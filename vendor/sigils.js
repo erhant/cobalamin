@@ -172,6 +172,16 @@ const SIGILS = {
 ..+..++..+..
 .+...++...+.
 #....##....#`,
+  "dsa/range-queries": `
+............
+......#.....
+..+...#.#...
+..+.#.#.#...
+..+.#.#.#.+.
++.+.#.#.#.+.
++.+.#.#.#.+.
+............
+....#####...`,
   "dsa/segment-tree": `
 +++++++++++
 +++++++++++
@@ -636,6 +646,7 @@ const LEVELS = {
   "dsa/linked-lists": 1,
   "dsa/heap": 1,
   "dsa/union-find": 2,
+  "dsa/range-queries": 2,
   "dsa/segment-tree": 3,
   "dsa/fenwick-tree": 2,
   "dsa/sparse-table": 3,

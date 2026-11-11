@@ -190,7 +190,7 @@ function merge(a: ListNode | null, b: ListNode | null): ListNode | null {
 }
 ```
 
-For **merging $k$ sorted lists**, push every head into a min-heap keyed on value and pop one at a time, pushing the popped node's successor. $O(N \log k)$ for $N$ total nodes — see the merge-K idiom in [Heap](./heap.md).
+For **merging $k$ sorted lists**, push every head into a min-heap keyed on value and pop one at a time, pushing the popped node's successor. $O(N \log k)$ for $N$ total nodes — see the merge-K idiom in [Heaps](./heap.md).
 
 ## LRU Cache: DLL + HashMap
 

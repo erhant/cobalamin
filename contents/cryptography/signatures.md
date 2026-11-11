@@ -1,4 +1,4 @@
-# Signatures
+# Digital Signatures
 
 A digital signature scheme is a triple $(\operatorname{KeyGen},\, \operatorname{Sign},\, \operatorname{Verify})$:
 

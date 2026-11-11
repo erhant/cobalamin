@@ -1,4 +1,4 @@
-# Copy vs. Clone
+# `Copy` vs. `Clone`
 
 Both traits duplicate a value, but they sit at very different layers.
 

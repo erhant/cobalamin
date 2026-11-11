@@ -149,7 +149,7 @@ function firstCollision(B: number): number {
 
 **Why crypto cares.** A hash with $k$-bit output has $B = 2^k$ possible digests, so finding _any_ collision takes $\approx 2^{k/2}$ hashes — not $2^k$. To get 128-bit collision security you need a 256-bit hash. The same square-root law governs:
 
-- generic discrete-log attacks (Pollard's rho — see [Discrete Logarithm](../cryptography/discrete-log.md)),
+- generic discrete-log attacks (Pollard's rho — see [Discrete Log & Diffie-Hellman](../cryptography/discrete-log.md)),
 - meet-in-the-middle attacks on double encryption,
 - nonce collision in stream-cipher modes,
 - any "are these two random samples equal?" question.

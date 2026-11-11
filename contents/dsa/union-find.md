@@ -1,4 +1,4 @@
-# Union-Find
+# Union-Find (DSU)
 
 Also known as **Disjoint Set Union (DSU)**. Maintains a partition of $\{0, 1, ..., n−1\}$ into disjoint sets, supporting two operations:
 

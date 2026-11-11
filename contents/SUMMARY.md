@@ -26,7 +26,7 @@
 
 - [Linked Lists](./dsa/linked-lists.md)
 - [Heaps](./dsa/heap.md)
-- [Union-Find](./dsa/union-find.md)
+- [Union-Find (DSU)](./dsa/union-find.md)
 - [Range Queries](./dsa/range-queries.md)
   - [Segment Tree](./dsa/segment-tree.md)
   - [Fenwick Tree](./dsa/fenwick-tree.md)

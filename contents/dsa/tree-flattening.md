@@ -1,6 +1,6 @@
 # Euler Tour of a Tree (Flattening)
 
-A tree's **Euler tour** is the order in which DFS enters and leaves its vertices. It has nothing to do with the [Eulerian path](./graphs.md#eulerian-path--circuit) except the name. Record the DFS **entry time** `tin[u]` and the last entry time inside `u`'s subtree, `tout[u]`. Every subtree then becomes the **contiguous range** $[\text{tin}[u], \text{tout}[u]]$ in entry order, which turns tree problems into array problems.
+A tree's **Euler tour** is the order in which DFS enters and leaves its vertices. The name is apt: walking down and back up every edge is an [Eulerian circuit](./graphs.md#eulerian-path--circuit) of the tree with each edge doubled. Record the DFS **entry time** `tin[u]` and the last entry time inside `u`'s subtree, `tout[u]`. Every subtree then becomes the **contiguous range** $[\text{tin}[u], \text{tout}[u]]$ in entry order, which turns tree problems into array problems.
 
 ```typescript
 const tin = new Array(n);
@@ -15,6 +15,8 @@ function dfs(u: number, p: number): void {
 }
 dfs(0, -1);
 ```
+
+On a general graph the same entry/exit times still work, but they flatten the **DFS spanning tree**, not the graph. They answer "is $u$ an ancestor of $v$ in the DFS tree" and drive the low-link algorithms for bridges and articulation points. The subtree-as-range trick only describes that spanning tree.
 
 ## What It Enables
 

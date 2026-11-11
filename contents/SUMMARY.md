@@ -35,7 +35,8 @@
 
 ---
 
-- [Binary Trees](./dsa/binary-trees.md)
+- [Trees](./dsa/trees.md)
+  - [Binary Trees](./dsa/binary-trees.md)
   - [Binary Lifting](./dsa/binary-lifting.md)
   - [Tree Flattening](./dsa/tree-flattening.md)
   - [Heavy-Light Decomposition](./dsa/heavy-light-decomposition.md)

@@ -95,6 +95,16 @@
 - [Async & Timers](./typescript/async.md)
 - [Performance](./typescript/performance.md)
 
+# System Design
+
+- [Numbers to Know](./system-design/numbers.md)
+- [Load Balancing](./system-design/load-balancing.md)
+- [Caching](./system-design/caching.md)
+- [Partitioning & Replication](./system-design/partitioning-replication.md)
+- [Consistency & CAP](./system-design/consistency.md)
+- [Queues & Streams](./system-design/queues-streams.md)
+- [Rate Limiting](./system-design/rate-limiting.md)
+
 # Miscellaneous
 
 - [PDF](./miscellaneous/pdf.md)

@@ -4,6 +4,7 @@
 
 # Data Structures & Algorithms
 
+- [Complexities](./dsa/complexities.md)
 - [Sorting](./dsa/sorting.md)
 - [Binary Search](./dsa/binary-search.md)
 - [Two Pointers](./dsa/two-pointers.md)
@@ -59,6 +60,7 @@
 - [Divisors](./math/divisors.md)
 - [Counting](./math/counting.md)
 - [Probability](./math/probability.md)
+- [Game Theory](./math/game-theory.md)
 
 # Cryptography
 

@@ -95,6 +95,11 @@
 - [Async & Timers](./typescript/async.md)
 - [Performance](./typescript/performance.md)
 
+# SQL
+
+- [SQL Basics](./sql/basics.md)
+- [Interview Patterns](./sql/patterns.md)
+
 # System Design
 
 - [Numbers to Know](./system-design/numbers.md)

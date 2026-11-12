@@ -27,8 +27,8 @@ If `mdbook serve` fails, first check that both preprocessors are installed (`car
 
 **Always update `contents/SUMMARY.md` in the same change.** It is the table of contents mdBook reads to decide what to build — pages not listed there do not appear in the rendered book, and stale entries pointing at renamed/deleted files break the build.
 
-1. Create / rename / delete the `.md` file under the appropriate subdirectory of `contents/` (`dsa/`, `math/`, `cryptography/`, `rust/`, `typescript/`, or `miscellaneous/`).
-2. Update the matching entry in `contents/SUMMARY.md` under the right top-level part (`# Data Structures & Algorithms`, `# Mathematics`, `# Cryptography`, `# Rust`, `# TypeScript`, `# Miscellaneous`) — adjust both the title and the path. Keep the SUMMARY title in line with the page's `#` heading (the sidebar may use a shorter form). `---` lines split a part into visual groups.
+1. Create / rename / delete the `.md` file under the appropriate subdirectory of `contents/` (`dsa/`, `math/`, `cryptography/`, `rust/`, `typescript/`, `sql/`, `system-design/`, or `miscellaneous/`).
+2. Update the matching entry in `contents/SUMMARY.md` under the right top-level part (`# Data Structures & Algorithms`, `# Mathematics`, `# Cryptography`, `# Rust`, `# TypeScript`, `# SQL`, `# System Design`, `# Miscellaneous`) — adjust both the title and the path. Keep the SUMMARY title in line with the page's `#` heading (the sidebar may use a shorter form). `---` lines split a part into visual groups.
 
 This applies even to small edits: if you rename a page, fix the `SUMMARY.md` link; if you delete one, remove the line.
 
@@ -36,7 +36,7 @@ Each page also has a pixel-art sigil (sidebar + title icon). The grids live in `
 
 ## Conventions
 
-- Code examples are written in **TypeScript**, even for algorithm/crypto content (Rust pages use Rust).
+- Code examples are written in **TypeScript**, even for algorithm/crypto content (Rust pages use Rust, SQL pages use SQL).
 - **Comments go on their own line above the code they describe, never trailing it.** Write `// explain\nconst x = f();`, not `const x = f(); // explain`. Applies to every language in the book.
 - Math uses KaTeX inline (`$...$`) and display (`$$...$$`) syntax — not MathJax.
 - Diagrams use mermaid fenced blocks (` ```mermaid `).

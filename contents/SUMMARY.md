@@ -105,6 +105,12 @@
 - [Queues & Streams](./system-design/queues-streams.md)
 - [Rate Limiting](./system-design/rate-limiting.md)
 
+---
+
+- [Sandboxing](./system-design/sandboxing.md)
+  - [Containers & Docker](./system-design/containers.md)
+  - [gVisor, MicroVMs & Wasm](./system-design/microvms.md)
+
 # Miscellaneous
 
 - [PDF](./miscellaneous/pdf.md)

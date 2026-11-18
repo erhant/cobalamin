@@ -5,6 +5,7 @@
 # Data Structures & Algorithms
 
 - [Complexities](./dsa/complexities.md)
+- [Reading Input](./dsa/reading-input.md)
 - [Sorting](./dsa/sorting.md)
 - [Binary Search](./dsa/binary-search.md)
 - [Two Pointers](./dsa/two-pointers.md)

@@ -29,6 +29,16 @@ const SIGILS = {
 #.#.+++.....
 ##.++.......
 ############`,
+  "dsa/reading-input": `
+++++++++++++
++..........+
++.#........+
++..#.......+
++...#......+
++..#.......+
++.#...####.+
++..........+
+++++++++++++`,
   "dsa/sorting": `
 ..........##
 ..........##
@@ -777,6 +787,7 @@ const SIGILS = {
 // difficulty marker for DSA pages: 1 = beginner, 2 = intermediate, 3 = advanced
 const LEVELS = {
   "dsa/complexities": 1,
+  "dsa/reading-input": 1,
   "dsa/sorting": 1,
   "dsa/binary-search": 1,
   "dsa/two-pointers": 1,

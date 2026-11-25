@@ -197,49 +197,7 @@ Often easier to reason about than KMP, with the same $O(n + m)$ cost.
 
 ### Rabin-Karp (Rolling Hash)
 
-Slide a fixed-width window over `t`, updating a polynomial hash in $O(1)$ per step. On a hash match, confirm with a direct compare:
-
-$$
-h(s) = \sum_{i=0}^{m-1} s[i] \cdot b^{m-1-i} \pmod{M}
-$$
-
-Shifting by one: $h' = (h - s[i] \cdot b^{m-1}) \cdot b + s[i + m]$, all $\bmod M$.
-
-```typescript
-function rabinKarp(t: string, p: string): number[] {
-  const m = p.length,
-    n = t.length;
-  if (m === 0 || m > n) return [];
-  const B = 257n,
-    MOD = (1n << 61n) - 1n;
-  // power ends as B^(m-1), the weight of the character leaving the window
-  let hp = 0n,
-    ht = 0n,
-    power = 1n;
-  for (let i = 0; i < m; i++) {
-    hp = (hp * B + BigInt(p.charCodeAt(i))) % MOD;
-    ht = (ht * B + BigInt(t.charCodeAt(i))) % MOD;
-    if (i < m - 1) power = (power * B) % MOD;
-  }
-
-  const out: number[] = [];
-  for (let i = 0; i + m <= n; i++) {
-    if (hp === ht && t.slice(i, i + m) === p) out.push(i);
-    if (i + m < n) {
-      // drop t[i], shift left, append t[i + m]; adding MOD * MOD keeps it non-negative
-      ht =
-        ((ht - ((BigInt(t.charCodeAt(i)) * power) % MOD) + MOD * MOD) * B +
-          BigInt(t.charCodeAt(i + m))) %
-        MOD;
-    }
-  }
-  return out;
-}
-```
-
-Average $O(n + m)$, worst case $O(nm)$ on adversarial hash collisions. A large prime modulus (e.g. Mersenne $2^{61} - 1$) and a good base make collisions vanishingly unlikely.
-
-The reason to reach for it: multiple patterns, 2D matching, comparing arbitrary substrings in $O(1)$ after $O(n)$ preprocessing.
+Hash every length-$m$ window of `t` in $O(1)$ per step, and compare each against the hash of `p`. Average $O(n + m)$. For a single pattern KMP or the Z-function are exact and just as fast; hashing earns its keep with many patterns, 2D matching, or $O(1)$ equality of arbitrary substrings. See [Rolling Hash](./rolling-hash.md) for the template and the collision math.
 
 > [!TIP]
 > [28 Find the Index of the First Occurrence](https://leetcode.com/problems/find-the-index-of-the-first-occurrence-in-a-string/) · [438 Find All Anagrams in a String](https://leetcode.com/problems/find-all-anagrams-in-a-string/) · [187 Repeated DNA Sequences](https://leetcode.com/problems/repeated-dna-sequences/) · [49 Group Anagrams](https://leetcode.com/problems/group-anagrams/) · [387 First Unique Character in a String](https://leetcode.com/problems/first-unique-character-in-a-string/)
@@ -254,5 +212,5 @@ The reason to reach for it: multiple patterns, 2D matching, comparing arbitrary 
 | Longest palindromic substring | Manacher's                      | $O(n)$              |
 | Single pattern in text        | KMP / Z-function                | $O(n + m)$          |
 | Multiple patterns in text     | Aho-Corasick                    | $O(n + m + z)$      |
-| Arbitrary substring equality  | Rolling hash                    | $O(1)$ after $O(n)$ |
+| Arbitrary substring equality  | [Rolling hash](./rolling-hash.md) | $O(1)$ after $O(n)$ |
 | Prefix queries                | [Trie](./trie.md)               | $O(L)$              |

@@ -51,6 +51,7 @@
 
 - [Strings](./dsa/strings.md)
   - [Trie](./dsa/trie.md)
+  - [Rolling Hash](./dsa/rolling-hash.md)
 - [Geometry](./dsa/geometry.md)
   - [Line Sweep](./dsa/line-sweep.md)
 

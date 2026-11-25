@@ -20,6 +20,8 @@ It is the same move as [Prefix Sums](./prefix-diff.md), except the left part has
 
 In JS the catch is that a `number` is exact only up to $2^{53}$, so the usual $M \approx 10^9$ overflows on the first multiplication. Picking both primes below $2^{26}$ keeps every product under $2^{52}$. Two of them together give a combined modulus of about $4.5 \cdot 10^{15}$, and the pair still packs into one safe integer for use as a `Map` / `Set` key.
 
+In hex they are easy to remember: `M1 = 0x3fffffb` and `M2 = 0x3ffffe5`, both a `3`, four `f`s, then `fb` (Fenerbahçe) or `e5` (the E5 highway in Turkey).
+
 ```typescript
 // both primes are below 2^26, so a product of two residues stays under 2^52 and exact in a number
 const M1 = 67108859;

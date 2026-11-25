@@ -98,18 +98,18 @@ function shamirStraus(
 
 ## GCD (Greatest Common Divisor)
 
-Euclidean algorithm — repeatedly replace the larger number with the remainder until one reaches zero. It works because $\gcd(a, b) = \gcd(b, a \bmod b)$: any common divisor of $a$ and $b$ also divides $a - qb$. Runs in $O(\log \min(a, b))$.
+Euclidean algorithm — repeatedly replace the larger number with the remainder until one reaches zero. It works because $\gcd(a, b) = \gcd(b, a \bmod b)$: with $a = qb + r$, anything dividing $a$ and $b$ divides $r$, and anything dividing $b$ and $r$ divides $a$. Runs in $O(\log \min(a, b))$.
 
 ```typescript
 function gcd(a: number, b: number): number {
   while (b !== 0) {
     [a, b] = [b, a % b];
   }
-  return a;
+  return Math.abs(a);
 }
 ```
 
-LCM follows directly: $\operatorname{lcm}(a, b) = \frac{a}{\gcd(a, b)} \cdot b$ (divide first to avoid overflow).
+LCM follows directly: $\operatorname{lcm}(a, b) = \frac{a}{\gcd(a, b)} \cdot b$ (divide first to avoid overflow), with $\operatorname{lcm}(0, b) = 0$ as a special case.
 
 > [!TIP]
 > [1979 Find Greatest Common Divisor of Array](https://leetcode.com/problems/find-greatest-common-divisor-of-array/) · [914 X of a Kind in a Deck of Cards](https://leetcode.com/problems/x-of-a-kind-in-a-deck-of-cards/) · [365 Water and Jug Problem](https://leetcode.com/problems/water-and-jug-problem/) (Bézout's identity)
@@ -126,9 +126,9 @@ function xgcd(a: number, b: number): [number, number, number] {
   }
   const [g, x1, y1] = xgcd(b, a % b);
   // b*x1 + (a % b)*y1 = g
-  // b*x1 + (a - floor(a/b)*b)*y1 = g
-  // a*y1 + b*(x1 - floor(a/b)*y1) = g
-  return [g, y1, x1 - Math.floor(a / b) * y1];
+  // b*x1 + (a - trunc(a/b)*b)*y1 = g, since JS % rounds toward zero
+  // a*y1 + b*(x1 - trunc(a/b)*y1) = g
+  return [g, y1, x1 - Math.trunc(a / b) * y1];
 }
 ```
 
@@ -182,6 +182,6 @@ $O(\log p)$ multiplications. Slower than XGCD by a small constant (fast-exp does
 
 - **Arbitrary modulus** — XGCD. Always works.
 - **Prime modulus, already using `powmod`** — Fermat. One line, no new machinery.
-- **Many inverses modulo the same prime $p$** — precompute $\operatorname{inv}[1 .. p-1]$ via the $O(p)$ recurrence $\operatorname{inv}[i] = -\lfloor p/i \rfloor \cdot \operatorname{inv}[p \bmod i] \bmod p$, with $\operatorname{inv}[1] = 1$. Cheaper than $p$ separate `powmod` calls, and amortizes even better if many queries.
+- **Many inverses modulo the same prime $p$** — precompute $\operatorname{inv}[1 .. n]$ for $n < p$ via the $O(n)$ recurrence $\operatorname{inv}[i] = -\lfloor p/i \rfloor \cdot \operatorname{inv}[p \bmod i] \bmod p$, with $\operatorname{inv}[1] = 1$. Cheaper than $n$ separate `powmod` calls, and amortizes even better if many queries.
 
 > See [Primes](./primes.md) for primality testing, sieves, and Euler's totient $\varphi$.
